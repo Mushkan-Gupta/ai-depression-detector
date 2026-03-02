@@ -1,0 +1,278 @@
+:root {
+  /* DARK – NIGHT THERAPY ROOM */
+  --bg: #050816;
+  --text: #eaeaf0;
+  --accent: #8b5cf6;
+  --mint: #5eead4;
+}
+
+/* LIGHT – PASTEL AURORA */
+.light {
+  --bg: #eef6ff;
+  --text: #0f172a;
+  --accent: #7aa2ff;
+  --mint: #6ee7b7;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* HEADER */
+.glass-header {
+  position: relative;
+  z-index: 10;
+  padding: 18px 40px;
+  display: flex;
+  justify-content: space-between;
+  backdrop-filter: blur(14px);
+}
+
+.logout {
+  background: #ef4444;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  color: white;
+}
+
+/* AURORA BACKGROUND */
+.aurora {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 30%, #7c3aed55, transparent 40%),
+    radial-gradient(circle at 80% 40%, #22d3ee55, transparent 45%),
+    radial-gradient(circle at 50% 80%, #34d39955, transparent 40%);
+  filter: blur(80px);
+  animation: drift 20s infinite alternate ease-in-out;
+  z-index: 0;
+}
+
+@keyframes drift {
+  0% { transform: translate(0,0); }
+  100% { transform: translate(-60px, -40px); }
+}
+
+/* MUSIC ORB */
+.music-orb {
+  position: fixed;
+  left: 30px;
+  bottom: 100px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--mint));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 30px #7c3aed88;
+  z-index: 10;
+}
+
+/* MAIN SPACE */
+.space {
+  position: relative;
+  z-index: 2;
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60px;
+  padding-bottom: 140px; 
+  margin-bottom: 20px;
+}
+
+/* AI ORB */
+.ai-orb {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent), #000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  box-shadow: 0 0 60px var(--accent);
+  animation: breathe 5s infinite ease-in-out;
+}
+
+@keyframes breathe {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.chat-flow {
+  margin-top: 40px;
+  width: 100%;
+  max-width: 720px;
+  padding: 20px;
+  border-radius: 28px;
+
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(18px);
+
+  max-height: calc(100vh - 320px);
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.msg {
+  max-width: 80%;
+  padding: 16px 22px;
+  border-radius: 24px;
+  font-size: 15px;
+  line-height: 1.5;
+  animation: floatIn 0.4s ease-out;
+}
+
+.msg.bot {
+  align-self: flex-start;
+  background: rgba(255,255,255,0.35);
+  color: #0f172a;
+}
+
+.msg.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--accent), #6d28d9);
+  color: white;
+}
+
+
+.msg.bot {
+  background: rgba(255,255,255,0.15);
+}
+
+.msg.user {
+  background: linear-gradient(135deg, var(--accent), #6d28d9);
+  color: white;
+  margin-left: auto;
+}
+
+/* INPUT DOCK */
+.input-dock {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90%, 700px);
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 30px;
+  backdrop-filter: blur(16px);
+  background: rgba(255,255,255,0.15);
+}
+
+.input-dock input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+}
+
+.input-dock button {
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.send {
+  color: var(--mint);
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  margin: 40px 0 10px;
+  font-size: 13px;
+  opacity: 0.7;
+}
+/* EMOTION STATES */
+.ai-orb.calm {
+  box-shadow: 0 0 80px #5eead4;
+  background: radial-gradient(circle, #5eead4, #022c22);
+}
+
+.ai-orb.sad {
+  box-shadow: 0 0 90px #60a5fa;
+  background: radial-gradient(circle, #60a5fa, #020617);
+}
+
+.ai-orb.stressed {
+  box-shadow: 0 0 100px #f472b6;
+  background: radial-gradient(circle, #f472b6, #3b0764);
+}
+
+/* MESSAGE FLOAT IN */
+.msg {
+  animation: floatIn 0.6s ease-out;
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* RIPPLE EFFECT */
+.ripple {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 2px solid rgba(139,92,246,0.4);
+  animation: ripple 1.8s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  from {
+    transform: scale(0.3);
+    opacity: 1;
+  }
+  to {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+.floating-footer {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: var(--text);
+  opacity: 0.6;
+  z-index: 3;
+  pointer-events: none;
+}
+
+
+/* On very small screens, hide footer */
+@media (max-height: 600px) {
+  .floating-footer {
+    display: none;
+  }
+}

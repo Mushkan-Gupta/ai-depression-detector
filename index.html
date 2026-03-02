@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MindEase | Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+<header>
+  <h2>MindEase</h2>
+  <button id="themeToggle">🌙</button>
+</header>
+
+<div class="auth-container">
+  <div class="auth-box" id="loginBox">
+    <h2>Welcome Back 🌿</h2>
+    <p>Your peaceful mental space</p>
+
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+    <p class="error" id="loginError"></p>
+
+    <span>New here? <a onclick="showSignup()">Create account</a></span>
+  </div>
+
+  <div class="auth-box hidden" id="signupBox">
+    <h2>Create Account ✨</h2>
+    <p>Start your healing journey</p>
+
+    <input type="text" id="signupName" placeholder="Full Name">
+    <input type="email" id="signupEmail" placeholder="Email">
+    <input type="password" id="signupPassword" placeholder="Password">
+
+    <!-- <small>Password must contain uppercase, lowercase, number & symbol</small> -->
+
+    <button onclick="signup()">Sign Up</button>
+    <p class="error" id="signupError"></p>
+
+    <span>Already have an account? <a onclick="showLogin()">Login</a></span>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 MindEase · AI Mental Health Support</p>
+</footer>
+
+<script src="js/auth.js"></script>
+<script src="js/theme.js"></script>
+</body>
+</html>
