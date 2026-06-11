@@ -2,55 +2,217 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MindEase | Login</title>
+  <title>MindEase | AI Mental Health Journal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/auth.css">
+  <meta name="description" content="MindEase – Your private AI-powered mental health journal. Write your thoughts and receive a supportive, comprehensive emotional analysis.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/home.css">
 </head>
-
 <body>
-<header>
-  <h2>MindEase</h2>
-  <button id="themeToggle">🌙</button>
-</header>
 
-<div class="auth-container">
-  <div class="auth-box" id="loginBox">
-    <h2>Welcome Back 🌿</h2>
-    <p>Your peaceful mental space</p>
+  <!-- AMBIENT AURORA BACKGROUND -->
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="aurora-secondary" aria-hidden="true"></div>
 
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPassword" placeholder="Password">
+  <!-- ══════════════════════════════════════════════
+       LANDING PAGE VIEW
+  ══════════════════════════════════════════════ -->
+  <div id="landingPage" class="landing-container">
+    <header class="landing-header">
+      <div class="logo-mark">
+        <span class="logo-icon">🌿</span>
+        <span class="logo-text">MindEase</span>
+      </div>
+      <button class="theme-btn" id="landingThemeToggle" aria-label="Toggle theme">🌙</button>
+    </header>
 
-    <button onclick="login()">Login</button>
-    <p class="error" id="loginError"></p>
+    <main class="landing-hero">
+      <div class="hero-content">
+        <div class="hero-tag">AI-Powered Mental Health</div>
+        <h1 class="hero-title">
+          Your Safe Space<br>to <span class="gradient-text">Reflect & Heal</span>
+        </h1>
+        <p class="hero-subtitle">
+          Write your thoughts privately. Our AI reads the emotional depth of your words and provides a gentle, comprehensive assessment — like a compassionate therapist who listens without judgment.
+        </p>
+        <button id="enterBtn" class="cta-btn">
+          <span>Open Your Journal</span>
+          <span class="cta-arrow">→</span>
+        </button>
+        <p class="hero-disclaimer">Private · No signup required · Always free</p>
+      </div>
 
-    <span>New here? <a onclick="showSignup()">Create account</a></span>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <h3>Deep AI Analysis</h3>
+          <p>Goes beyond surface keywords. Our ML model trained on thousands of entries identifies emotional patterns, risk indicators, and themes in your writing.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Confidence Scoring</h3>
+          <p>Receive a nuanced risk assessment (Low / Moderate / High) with a statistical confidence score and a breakdown of contributing emotional signals.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💜</div>
+          <h3>Supportive Guidance</h3>
+          <p>Every analysis concludes with empathetic guidance, coping strategies, and professional resource recommendations tailored to your risk level.</p>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <div class="auth-box hidden" id="signupBox">
-    <h2>Create Account ✨</h2>
-    <p>Start your healing journey</p>
+  <!-- ══════════════════════════════════════════════
+       MAIN JOURNAL DASHBOARD (Initially hidden)
+  ══════════════════════════════════════════════ -->
+  <div id="appDashboard" class="dashboard-container hidden">
 
-    <input type="text" id="signupName" placeholder="Full Name">
-    <input type="email" id="signupEmail" placeholder="Email">
-    <input type="password" id="signupPassword" placeholder="Password">
+    <header class="dashboard-header">
+      <div class="logo-mark">
+        <span class="logo-icon">🌿</span>
+        <span class="logo-text">MindEase</span>
+      </div>
+      <div class="header-actions">
+        <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">🌙</button>
+        <button class="music-btn" id="musicToggle" onclick="toggleMusic()">
+          <span class="music-icon">🎧</span>
+          <span class="music-label">Calm Music</span>
+        </button>
+      </div>
+    </header>
 
-    <!-- <small>Password must contain uppercase, lowercase, number & symbol</small> -->
+    <!-- MAIN JOURNAL WORKSPACE (Full Width) -->
+    <main class="journal-workspace">
 
-    <button onclick="signup()">Sign Up</button>
-    <p class="error" id="signupError"></p>
+      <!-- LEFT SIDE: JOURNAL INPUT -->
+      <section class="journal-input-section">
+        <div class="section-header">
+          <h2>Self-Reflection Journal</h2>
+          <p class="section-subtitle">Write freely and honestly — the more detail you share, the more accurate and comprehensive the AI analysis will be.</p>
+        </div>
 
-    <span>Already have an account? <a onclick="showLogin()">Login</a></span>
+        <div class="journal-editor-card">
+          <div class="editor-toolbar">
+            <span class="editor-label">📝 Your private entry</span>
+            <span class="char-count" id="charCount">0 words</span>
+          </div>
+          <textarea
+            id="journalInput"
+            placeholder="Start writing your thoughts here…&#10;&#10;How are you feeling today? What's been on your mind? Describe your emotions, your experiences, your worries or joys. Write as much as you need — this is your safe space."
+            spellcheck="true"
+            aria-label="Journal entry textarea"
+          ></textarea>
+          <div class="editor-footer">
+            <button id="clearBtn" class="clear-btn" onclick="clearJournal()">✕ Clear</button>
+            <button id="analyzeBtn" class="analyze-btn" onclick="analyzeJournal()">
+              <span class="btn-icon">🔍</span>
+              <span>Analyze My Journal</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT SIDE: AI ANALYSIS RESULTS -->
+      <section class="analysis-section">
+        <div class="section-header">
+          <h2>AI Analysis Report</h2>
+          <p class="section-subtitle">Your personalized emotional health assessment will appear here after analysis.</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="analysis-empty-state" id="emptyState">
+          <div class="empty-orb">
+            <span class="orb-inner">AI</span>
+          </div>
+          <h3>Ready to listen</h3>
+          <p>Write your journal entry on the left and click <strong>"Analyze My Journal"</strong> to receive a comprehensive emotional assessment.</p>
+        </div>
+
+        <!-- Loading State (hidden by default) -->
+        <div class="analysis-loading hidden" id="loadingState">
+          <div class="loading-orb">
+            <span>AI</span>
+          </div>
+          <p class="loading-text">Reading your thoughts…</p>
+          <div class="loading-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <!-- Results Card (hidden by default) -->
+        <div class="analysis-results hidden" id="resultsState">
+
+          <!-- Risk Badge Header -->
+          <div class="risk-header" id="riskHeader">
+            <div class="risk-label-row">
+              <span class="risk-label">Depression Risk Level</span>
+              <span class="risk-badge" id="riskBadge">—</span>
+            </div>
+            <div class="risk-summary" id="riskSummary"></div>
+          </div>
+
+          <!-- Confidence Meter -->
+          <div class="metric-card" id="confidenceCard">
+            <div class="metric-header">
+              <span class="metric-name">📊 Model Confidence</span>
+              <span class="metric-value" id="confidenceValue">—%</span>
+            </div>
+            <div class="confidence-bar-outer">
+              <div class="confidence-bar-inner" id="confidenceBar"></div>
+            </div>
+          </div>
+
+          <!-- Emotional Signals Detected -->
+          <div class="metric-card" id="signalsCard">
+            <div class="metric-name">🔎 Emotional Signals Detected</div>
+            <div class="signals-grid" id="signalsList"></div>
+          </div>
+
+          <!-- Themes Detected -->
+          <div class="metric-card" id="themesCard">
+            <div class="metric-name">🗂 Key Themes in Your Entry</div>
+            <div class="themes-list" id="themesList"></div>
+          </div>
+
+          <!-- Supportive Guidance -->
+          <div class="guidance-card" id="guidanceCard">
+            <div class="guidance-header">
+              <span class="guidance-icon">💜</span>
+              <span>Compassionate Guidance</span>
+            </div>
+            <p class="guidance-text" id="guidanceText"></p>
+          </div>
+
+          <!-- Professional Resources -->
+          <div class="resources-card" id="resourcesCard">
+            <div class="resources-header">📞 If you need support</div>
+            <ul class="resources-list" id="resourcesList"></ul>
+          </div>
+
+          <!-- Disclaimer -->
+          <p class="disclaimer-text">⚠️ This AI assessment is for educational purposes only and is not a medical diagnosis. Please consult a licensed mental health professional for clinical advice.</p>
+        </div>
+
+        <!-- Error State (hidden by default) -->
+        <div class="analysis-error hidden" id="errorState">
+          <div class="error-icon">⚠️</div>
+          <h3>Analysis Unavailable</h3>
+          <p id="errorMessage">Unable to connect to the AI server. Please make sure the backend is running on port 5000.</p>
+          <button class="retry-btn" onclick="analyzeJournal()">Retry Analysis</button>
+        </div>
+
+      </section>
+
+    </main>
   </div>
-</div>
 
-<footer>
-  <p>© 2026 MindEase · AI Mental Health Support</p>
-</footer>
+  <!-- CALM MUSIC AUDIO -->
+  <audio id="calmMusic" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
+  </audio>
 
-<script src="js/auth.js"></script>
-<script src="js/theme.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/analyze.js"></script>
+  <script src="js/chat.js"></script>
 </body>
 </html>
