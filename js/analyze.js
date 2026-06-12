@@ -1,7 +1,29 @@
-const API_BASE_URL = 'http://127.0.0.1:5000';
+// API_BASE_URL is declared in dashboard.js (loaded before this file)
+// const API_BASE_URL = 'http://127.0.0.1:5000';  ← defined in dashboard.js
 
-// Word counter update
+// ── Landing Page CTA ──────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
+  // Wire the Enter button on landing page
+  const enterBtn = document.getElementById("enterBtn");
+  if (enterBtn) {
+    enterBtn.addEventListener("click", () => {
+      // Always go to auth; auth.html redirects back if already logged in
+      const token = localStorage.getItem('mindease_token');
+      if (token) {
+        showDashboard();
+      } else {
+        window.location.href = 'auth.html';
+      }
+    });
+  }
+
+  // If landed here with a token in URL hash (post-auth redirect), go straight to dashboard
+  const token = localStorage.getItem('mindease_token');
+  if (token && window.location.hash === '#dashboard') {
+    showDashboard();
+  }
+
+  // Word counter update
   const journalInput = document.getElementById("journalInput");
   const charCount    = document.getElementById("charCount");
   if (journalInput && charCount) {
@@ -11,6 +33,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// ── Show Dashboard ─────────────────────────────────────────
+function showDashboard() {
+  const landing   = document.getElementById("landingPage");
+  const dashboard = document.getElementById("appDashboard");
+  if (landing)   landing.classList.add("hidden");
+  if (dashboard) dashboard.classList.remove("hidden");
+  // Init dashboard (user profile, etc.)
+  if (typeof window.initDashboard === 'function') {
+    window.initDashboard();
+  }
+}
 
 // ── Clear Journal ──────────────────────────────────────
 window.clearJournal = function () {
@@ -248,13 +282,26 @@ window.analyzeJournal = async function () {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 10000);
 
+    // Attach JWT token if user is logged in
+    const authToken = localStorage.getItem('mindease_token');
+    const authHeaders = { "Content-Type": "application/json" };
+    if (authToken) authHeaders["Authorization"] = `Bearer ${authToken}`;
+
     const response = await fetch(`${API_BASE_URL}/predict`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders,
       body: JSON.stringify({ journal: text }),
       signal: controller.signal
     });
     clearTimeout(timeout);
+
+    if (response.status === 401) {
+      // Token expired — clear and redirect
+      localStorage.removeItem('mindease_token');
+      localStorage.removeItem('mindease_user');
+      window.location.href = 'auth.html';
+      return;
+    }
 
     if (!response.ok) throw new Error(`Server responded with ${response.status}`);
 
@@ -288,6 +335,11 @@ window.analyzeJournal = async function () {
   }
 
   renderResults(risk, confidence, detectedSignals, detectedThemes);
+
+  // Refresh history panel if it's open
+  if (typeof window.loadHistory === 'function' && window.historyPanelOpen) {
+    setTimeout(() => window.loadHistory(), 500);
+  }
 };
 
 // ── Music Toggle ───────────────────────────────────────

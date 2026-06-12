@@ -25,8 +25,19 @@ def start_backend():
         return None
     
     try:
+        # Robustly detect virtual environment Python executable
+        venv_python_win = backend_path / "venv" / "Scripts" / "python.exe"
+        venv_python_unix = backend_path / "venv" / "bin" / "python"
+        
+        if venv_python_win.exists():
+            py_exe = str(venv_python_win)
+        elif venv_python_unix.exists():
+            py_exe = str(venv_python_unix)
+        else:
+            py_exe = sys.executable
+
         backend_process = subprocess.Popen(
-            [sys.executable, "app.py"],
+            [py_exe, "app.py"],
             cwd=str(backend_path),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

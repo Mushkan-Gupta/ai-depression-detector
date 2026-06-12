@@ -1,16 +1,37 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, get_jwt_identity, verify_jwt_in_request
 import pickle
-import numpy as np
 import os
+from datetime import datetime, timezone
+
+from config import Config
+import db as _db
+from db import init_db
 
 app = Flask(__name__)
-CORS(app)
+app.config.from_object(Config)
 
+# ── CORS ────────────────────────────────────────────────────────────────────
+CORS(app, origins=Config.ALLOWED_ORIGINS)
+
+# ── JWT ─────────────────────────────────────────────────────────────────────
+jwt = JWTManager(app)
+
+# ── MongoDB ─────────────────────────────────────────────────────────────────
+init_db(app)
+
+# ── Blueprints ───────────────────────────────────────────────────────────────
+from routes.auth_routes import auth_bp
+app.register_blueprint(auth_bp)
+
+from routes.history_routes import history_bp
+app.register_blueprint(history_bp)
+
+# ── Model Loading ──────────────────────────────────────────────────────────
 model = None
 vectorizer = None
 
-# ── Model Loading ──────────────────────────────────────────────────────────
 try:
     base_dir        = os.path.dirname(os.path.abspath(__file__))
     model_path      = os.path.join(base_dir, "depression_model.pkl")
@@ -169,7 +190,6 @@ def predict():
         kw_risk, kw_confidence, evidence = keyword_classify(journal)
 
         # ── Secondary: ML model (used only for borderline cases) ────
-        ml_risk       = None
         ml_dep_prob   = None
 
         if model is not None and vectorizer is not None:
@@ -208,7 +228,27 @@ def predict():
             # (All other cases: trust keyword analysis fully)
 
         print(f"[PREDICT] risk={risk}  kw_conf={kw_confidence}  ml_dep_prob={ml_dep_prob}  words={len(journal.split())}")
-        return {"risk": risk, "confidence": confidence}
+
+        # ── Optional: save to MongoDB if JWT token present ─────────
+        try:
+            verify_jwt_in_request(optional=True)
+            identity = get_jwt_identity()
+        except Exception:
+            identity = None
+
+        if identity:
+            try:
+                _db.journal_entries_collection.insert_one({
+                    "user_id":    identity,   # identity is the user_id string (sub claim)
+                    "journal":    journal,
+                    "risk":       risk,
+                    "confidence": confidence,
+                    "created_at": datetime.now(timezone.utc),
+                })
+            except Exception as db_err:
+                print(f"[WARN] Failed to save prediction history: {db_err}")
+
+        return jsonify({"risk": risk, "confidence": confidence})
 
     except Exception as e:
         print(f"[ERROR] {e}")
@@ -217,4 +257,4 @@ def predict():
 
 if __name__ == "__main__":
     print("Starting MindEase API on http://127.0.0.1:5000 ...")
-    app.run(host="127.0.0.1", port=5000, debug=False)
+    app.run(host="127.0.0.1", port=Config.PORT, debug=Config.DEBUG)

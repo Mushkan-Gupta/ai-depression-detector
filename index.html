@@ -7,6 +7,7 @@
   <meta name="description" content="MindEase – Your private AI-powered mental health journal. Write your thoughts and receive a supportive, comprehensive emotional analysis.">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
 
@@ -23,14 +24,17 @@
         <span class="logo-icon">🌿</span>
         <span class="logo-text">MindEase</span>
       </div>
-      <button class="theme-btn" id="landingThemeToggle" aria-label="Toggle theme">🌙</button>
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <button class="theme-btn" id="landingThemeToggle" aria-label="Toggle theme">🌙</button>
+        <button class="landing-signin-btn" onclick="window.location.href='auth.html'" id="landingSignInBtn">Sign In</button>
+      </div>
     </header>
 
     <main class="landing-hero">
       <div class="hero-content">
         <div class="hero-tag">AI-Powered Mental Health</div>
         <h1 class="hero-title">
-          Your Safe Space<br>to <span class="gradient-text">Reflect & Heal</span>
+          Your Safe Space<br>to <span class="gradient-text">Reflect &amp; Heal</span>
         </h1>
         <p class="hero-subtitle">
           Write your thoughts privately. Our AI reads the emotional depth of your words and provides a gentle, comprehensive assessment — like a compassionate therapist who listens without judgment.
@@ -39,7 +43,7 @@
           <span>Open Your Journal</span>
           <span class="cta-arrow">→</span>
         </button>
-        <p class="hero-disclaimer">Private · No signup required · Always free</p>
+        <p class="hero-disclaimer">Private · Free forever · Your journal, your data</p>
       </div>
 
       <div class="features-grid">
@@ -78,8 +82,49 @@
           <span class="music-icon">🎧</span>
           <span class="music-label">Calm Music</span>
         </button>
+        <!-- History Toggle -->
+        <button class="history-toggle-btn" id="historyToggleBtn" onclick="toggleHistoryPanel()" title="Journal History">
+          <span>📋</span>
+          <span class="history-btn-label">History</span>
+        </button>
+        <!-- User Menu -->
+        <div class="user-menu-wrapper" id="userMenuWrapper">
+          <button class="user-avatar-btn" id="userAvatarBtn" onclick="toggleUserMenu()" aria-label="User menu">
+            <span class="user-avatar-initials" id="userInitials">?</span>
+          </button>
+          <div class="user-dropdown hidden" id="userDropdown">
+            <div class="user-dropdown-info">
+              <div class="user-dropdown-name" id="dropdownName">—</div>
+              <div class="user-dropdown-email" id="dropdownEmail">—</div>
+            </div>
+            <hr class="dropdown-divider">
+            <button class="dropdown-item logout-item" onclick="logout()">
+              <span>🚪</span> Sign Out
+            </button>
+          </div>
+        </div>
       </div>
     </header>
+
+    <!-- HISTORY SIDE PANEL -->
+    <div class="history-panel" id="historyPanel">
+      <div class="history-panel-header">
+        <h3>📋 Journal History</h3>
+        <button class="history-close-btn" onclick="toggleHistoryPanel()" aria-label="Close history">✕</button>
+      </div>
+      <div class="history-panel-body" id="historyPanelBody">
+        <div class="history-empty" id="historyEmpty">
+          <span class="history-empty-icon">📖</span>
+          <p>Your saved journals will appear here after analysis.</p>
+        </div>
+        <div class="history-list hidden" id="historyList"></div>
+        <div class="history-loading hidden" id="historyLoading">
+          <div class="history-spinner"></div>
+          <span>Loading history…</span>
+        </div>
+      </div>
+    </div>
+    <div class="history-overlay hidden" id="historyOverlay" onclick="toggleHistoryPanel()"></div>
 
     <!-- MAIN JOURNAL WORKSPACE (Full Width) -->
     <main class="journal-workspace">
@@ -212,6 +257,7 @@
   </audio>
 
   <script src="js/theme.js"></script>
+  <script src="js/dashboard.js"></script>
   <script src="js/analyze.js"></script>
   <script src="js/chat.js"></script>
 </body>

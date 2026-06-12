@@ -1,0 +1,45 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# MindEase Backend — .gitignore
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Environment & Secrets ────────────────────────────────────────────────────
+.env
+*.env
+
+# ── Python Virtual Environment ────────────────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── Python Cache ─────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# ── Distribution & Build ─────────────────────────────────────────────────────
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# ── Trained Model Files (large binaries — store in Git LFS or separately) ────
+# Uncomment the lines below if you do NOT want to commit the model files.
+# depression_model.pkl
+# vectorizer.pkl
+
+# ── Dataset (large file) ─────────────────────────────────────────────────────
+depression_dataset.csv
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── OS ───────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini

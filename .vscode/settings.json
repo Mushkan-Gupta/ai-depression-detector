@@ -1,2 +1,7 @@
 {
+  "python.defaultInterpreterPath": "f:/project/ai-depression-risk-assessment/backend/venv/Scripts/python.exe",
+  "python.analysis.extraPaths": [
+    "f:/project/ai-depression-risk-assessment/backend/venv/Lib/site-packages",
+    "f:/project/ai-depression-risk-assessment/backend"
+  ]
 }

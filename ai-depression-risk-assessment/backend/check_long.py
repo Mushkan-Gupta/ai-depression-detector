@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 import pickle, numpy as np
 
 with open('depression_model.pkl','rb') as f: model=pickle.load(f)

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MindEase | Sign In</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sign in or create your MindEase account to save your mental health journal entries and track your emotional wellbeing over time.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-body">
+
+  <!-- AMBIENT AURORA BACKGROUND -->
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="aurora-secondary" aria-hidden="true"></div>
+
+  <!-- HEADER -->
+  <header class="auth-header">
+    <a href="index.html" class="logo-mark auth-logo" aria-label="Go to MindEase home">
+      <span class="logo-icon">🌿</span>
+      <span class="logo-text">MindEase</span>
+    </a>
+    <button class="theme-btn" id="authThemeToggle" aria-label="Toggle theme">🌙</button>
+  </header>
+
+  <!-- AUTH CARD CONTAINER -->
+  <main class="auth-main">
+    <div class="auth-card" id="authCard">
+
+      <!-- === LOGIN PANEL === -->
+      <div class="auth-panel" id="loginPanel">
+        <div class="auth-panel-header">
+          <div class="auth-icon-ring">
+            <span class="auth-icon">🔐</span>
+          </div>
+          <h1 class="auth-title">Welcome Back</h1>
+          <p class="auth-subtitle">Sign in to continue your journey</p>
+        </div>
+
+        <form id="loginForm" class="auth-form" onsubmit="handleLogin(event)" novalidate>
+          <div class="form-group">
+            <label for="loginEmail" class="form-label">Email Address</label>
+            <div class="input-wrapper">
+              <span class="input-icon">✉️</span>
+              <input
+                type="email"
+                id="loginEmail"
+                class="form-input"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+              >
+            </div>
+            <div class="field-error" id="loginEmailError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="loginPassword" class="form-label">Password</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input
+                type="password"
+                id="loginPassword"
+                class="form-input"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required
+              >
+              <button type="button" class="password-toggle" onclick="togglePassword('loginPassword', this)" aria-label="Show/hide password">👁</button>
+            </div>
+            <div class="field-error" id="loginPasswordError"></div>
+          </div>
+
+          <div class="form-error-banner hidden" id="loginErrorBanner"></div>
+
+          <button type="submit" class="auth-btn" id="loginBtn">
+            <span class="auth-btn-text">Sign In</span>
+            <span class="auth-btn-spinner hidden" id="loginSpinner">
+              <span class="spinner-dot"></span>
+              <span class="spinner-dot"></span>
+              <span class="spinner-dot"></span>
+            </span>
+          </button>
+        </form>
+
+        <div class="auth-divider">
+          <span>New to MindEase?</span>
+        </div>
+        <button class="auth-switch-btn" onclick="switchToRegister()">
+          Create a free account →
+        </button>
+      </div>
+
+      <!-- === REGISTER PANEL === -->
+      <div class="auth-panel hidden" id="registerPanel">
+        <div class="auth-panel-header">
+          <div class="auth-icon-ring">
+            <span class="auth-icon">🌱</span>
+          </div>
+          <h1 class="auth-title">Create Account</h1>
+          <p class="auth-subtitle">Start your mental wellness journey</p>
+        </div>
+
+        <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)" novalidate>
+          <div class="form-group">
+            <label for="registerName" class="form-label">Full Name</label>
+            <div class="input-wrapper">
+              <span class="input-icon">👤</span>
+              <input
+                type="text"
+                id="registerName"
+                class="form-input"
+                placeholder="Your name"
+                autocomplete="name"
+                required
+              >
+            </div>
+            <div class="field-error" id="registerNameError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="registerEmail" class="form-label">Email Address</label>
+            <div class="input-wrapper">
+              <span class="input-icon">✉️</span>
+              <input
+                type="email"
+                id="registerEmail"
+                class="form-input"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+              >
+            </div>
+            <div class="field-error" id="registerEmailError"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="registerPassword" class="form-label">Password</label>
+            <div class="input-wrapper">
+              <span class="input-icon">🔒</span>
+              <input
+                type="password"
+                id="registerPassword"
+                class="form-input"
+                placeholder="Min 8 chars, upper, lower, digit"
+                autocomplete="new-password"
+                oninput="updatePasswordStrength(this.value)"
+                required
+              >
+              <button type="button" class="password-toggle" onclick="togglePassword('registerPassword', this)" aria-label="Show/hide password">👁</button>
+            </div>
+            <!-- Password Strength Meter -->
+            <div class="password-strength" id="passwordStrength">
+              <div class="strength-bar-track">
+                <div class="strength-bar-fill" id="strengthBarFill"></div>
+              </div>
+              <span class="strength-label" id="strengthLabel">Enter a password</span>
+            </div>
+            <div class="field-error" id="registerPasswordError"></div>
+          </div>
+
+          <div class="form-error-banner hidden" id="registerErrorBanner"></div>
+          <div class="form-success-banner hidden" id="registerSuccessBanner"></div>
+
+          <button type="submit" class="auth-btn" id="registerBtn">
+            <span class="auth-btn-text">Create Account</span>
+            <span class="auth-btn-spinner hidden" id="registerSpinner">
+              <span class="spinner-dot"></span>
+              <span class="spinner-dot"></span>
+              <span class="spinner-dot"></span>
+            </span>
+          </button>
+        </form>
+
+        <div class="auth-divider">
+          <span>Already have an account?</span>
+        </div>
+        <button class="auth-switch-btn" onclick="switchToLogin()">
+          Sign in instead →
+        </button>
+      </div>
+
+    </div><!-- /auth-card -->
+
+    <!-- Trust indicators -->
+    <div class="auth-trust">
+      <span>🔒 End-to-end secure</span>
+      <span>·</span>
+      <span>🛡️ Your data stays private</span>
+      <span>·</span>
+      <span>💜 Always free</span>
+    </div>
+  </main>
+
+  <script src="js/theme.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>
