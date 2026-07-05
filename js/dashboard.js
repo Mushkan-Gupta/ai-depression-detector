@@ -68,9 +68,24 @@ function populateUserHeader(user) {
   const nameEl     = document.getElementById('dropdownName');
   const emailEl    = document.getElementById('dropdownEmail');
 
-  if (initialsEl) initialsEl.textContent = initials;
-  if (nameEl)     nameEl.textContent     = user.name  || '—';
-  if (emailEl)    emailEl.textContent    = user.email || '—';
+  if (nameEl)  nameEl.textContent  = user.name  || '—';
+  if (emailEl) emailEl.textContent = user.email || '—';
+
+  // Show Google profile photo if available; fall back to initials
+  if (initialsEl) {
+    if (user.picture) {
+      // Replace text initials with a circular <img>
+      initialsEl.innerHTML = '';
+      const img = document.createElement('img');
+      img.src    = user.picture;
+      img.alt    = user.name || 'Profile';
+      img.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover;';
+      img.onerror = () => { initialsEl.innerHTML = initials; };  // fallback if URL breaks
+      initialsEl.appendChild(img);
+    } else {
+      initialsEl.textContent = initials;
+    }
+  }
 }
 
 // ── History Panel ───────────────────────────────────────────

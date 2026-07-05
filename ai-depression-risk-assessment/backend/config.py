@@ -78,3 +78,10 @@ class Config:
 
     # ── Pagination ───────────────────────────────────────────────────────
     HISTORY_PAGE_SIZE: int = int(_optional("HISTORY_PAGE_SIZE", "10"))
+
+    # ── Google OAuth ──────────────────────────────────────────────────────
+    # GOOGLE_CLIENT_ID is required for server-side ID-token verification.
+    # GOOGLE_CLIENT_SECRET is kept for completeness but not used in the
+    # stateless GIS sign-in flow (no server-side OAuth code exchange needed).
+    GOOGLE_CLIENT_ID: str     = _require("GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET: str = _optional("GOOGLE_CLIENT_SECRET", "")

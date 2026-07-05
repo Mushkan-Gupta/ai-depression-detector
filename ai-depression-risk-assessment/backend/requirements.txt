@@ -25,3 +25,14 @@ werkzeug>=3.0.0
 # ── Environment & Validation ──────────────────────────────────────────────────
 python-dotenv>=1.0.0
 email-validator>=2.1.0
+
+# ── Google Sign-In ────────────────────────────────────────────────────────────
+# google-auth provides google.oauth2.id_token.verify_oauth2_token() which
+# validates Google ID tokens (signature, audience, issuer, expiration)
+# without requiring a server-side OAuth code exchange.
+google-auth>=2.28.0
+
+# ── Testing & Additional Tools ───────────────────────────────────────────────
+requests>=2.31.0
+pandas>=2.0.0
+

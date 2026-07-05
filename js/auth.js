@@ -310,6 +310,14 @@ document.addEventListener('DOMContentLoaded', () => {
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('mindease_theme', next);
       toggleBtn.textContent = next === 'dark' ? '🌙' : '☀️';
+
+      // Re-render Google buttons with the new theme
+      ['loginGoogleBtn', 'registerGoogleBtn'].forEach(id => {
+        const container = document.getElementById(id);
+        if (container) {
+          renderGoogleButton(container, next);
+        }
+      });
     });
 
     // Apply saved theme
@@ -317,4 +325,144 @@ document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.setAttribute('data-theme', saved);
     toggleBtn.textContent = saved === 'dark' ? '🌙' : '☀️';
   }
+
+  // Check for Google GIS client loading (polls if loaded asynchronously)
+  function checkGsiLoaded() {
+    if (typeof google !== 'undefined' && google.accounts) {
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback:  _onGoogleCredential,
+        ux_mode:   'popup',
+      });
+
+      // Dynamically replace the custom buttons with official Google buttons
+      replaceWithOfficialGoogleButton('loginGoogleBtn');
+      replaceWithOfficialGoogleButton('registerGoogleBtn');
+      return true;
+    }
+    return false;
+  }
+
+  if (!checkGsiLoaded()) {
+    const interval = setInterval(() => {
+      if (checkGsiLoaded()) {
+        clearInterval(interval);
+      }
+    }, 100);
+    // Stop checking after 10 seconds to avoid infinite loops if offline
+    setTimeout(() => clearInterval(interval), 10000);
+  }
 });
+
+
+// ── Google Sign-In ───────────────────────────────────────────────────────────
+// Uses Google Identity Services (GIS) popup flow.
+const GOOGLE_CLIENT_ID = '80968643370-i72ufi81oifkp13sbn0ii2cn02i8if11.apps.googleusercontent.com';
+
+/**
+ * Fallback click handler in case the user clicks the button before GIS script has loaded.
+ */
+window.handleGoogleSignIn = function () {
+  const isRegister = isRegisterPanel();
+  showBanner(
+    isRegister ? 'registerErrorBanner' : 'loginErrorBanner',
+    'Google Sign-In is initializing. Please wait a moment and try again.'
+  );
+};
+
+/**
+ * Dynamically replaces a custom Google button with the official GSI container.
+ * @param {string} btnId
+ */
+function replaceWithOfficialGoogleButton(btnId) {
+  const oldBtn = document.getElementById(btnId);
+  if (!oldBtn) return;
+
+  const container = document.createElement('div');
+  container.id = btnId;
+  container.className = 'google-btn-container';
+  container.style.width = '100%';
+  container.style.height = '44px';
+  container.style.display = 'flex';
+  container.style.justifyContent = 'center';
+  container.style.alignItems = 'center';
+
+  oldBtn.parentNode.replaceChild(container, oldBtn);
+
+  // Initial render based on active theme
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+  renderGoogleButton(container, currentTheme);
+}
+
+/**
+ * Renders the official Google button inside the container.
+ * @param {HTMLElement} container
+ * @param {string} theme
+ */
+function renderGoogleButton(container, theme) {
+  const googleTheme = theme === 'dark' ? 'filled_black' : 'outline';
+  google.accounts.id.renderButton(container, {
+    theme: googleTheme,
+    size: 'large',
+    width: 376, // Matches input field width limits
+    shape: 'rectangular',
+  });
+}
+
+function isRegisterPanel() {
+  const regPanel = document.getElementById('registerPanel');
+  return regPanel && !regPanel.classList.contains('hidden');
+}
+
+/**
+ * Callback invoked by GIS after the user selects a Google account.
+ * @param {google.accounts.id.CredentialResponse} response
+ */
+async function _onGoogleCredential(response) {
+  const credential = response?.credential;
+  const isRegister = isRegisterPanel();
+
+  if (!credential) {
+    showBanner(
+      isRegister ? 'registerErrorBanner' : 'loginErrorBanner',
+      'Google sign-in was cancelled. Please try again.'
+    );
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/google`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ credential }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showBanner(
+        isRegister ? 'registerErrorBanner' : 'loginErrorBanner',
+        data.error || 'Google sign-in failed. Please try again.'
+      );
+      return;
+    }
+
+    // Success — same path as email/password login
+    saveSession(data.access_token, data.user);
+
+    const card = document.getElementById('authCard');
+    if (card) {
+      card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      card.style.opacity    = '0';
+      card.style.transform  = 'scale(0.95)';
+    }
+    setTimeout(() => { window.location.replace('index.html'); }, 300);
+
+  } catch (err) {
+    showBanner(
+      isRegister ? 'registerErrorBanner' : 'loginErrorBanner',
+      'Cannot connect to server. Please make sure the backend is running.'
+    );
+  }
+}
+

@@ -8,18 +8,21 @@ Handles all user account operations:
     GET   /auth/me        — return current user profile (JWT required)
     POST  /auth/logout    — server-side logout acknowledgement (JWT required)
     PUT   /auth/profile   — update display name (JWT required)
+    POST  /auth/google    — Google Sign-In (GIS ID-token), return JWT
 """
 
 from datetime import datetime, timezone
 
 from bson import ObjectId
 from email_validator import validate_email, EmailNotValidError
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import (
     create_access_token,
     get_jwt_identity,
     jwt_required,
 )
+from google.oauth2 import id_token as google_id_token
+from google.auth.transport import requests as google_requests
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import db as _db
@@ -33,12 +36,14 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 def _user_to_dict(user: dict) -> dict:
     """Return a safe, serialisable representation of a user document."""
     return {
-        "id":         str(user["_id"]),
-        "name":       user.get("name", ""),
-        "email":      user.get("email", ""),
-        "created_at": user.get("created_at", "").isoformat()
-                      if isinstance(user.get("created_at"), datetime)
-                      else str(user.get("created_at", "")),
+        "id":            str(user["_id"]),
+        "name":          user.get("name", ""),
+        "email":         user.get("email", ""),
+        "picture":       user.get("picture", ""),
+        "auth_provider": user.get("auth_provider", "email"),
+        "created_at":    user.get("created_at", "").isoformat()
+                         if isinstance(user.get("created_at"), datetime)
+                         else str(user.get("created_at", "")),
     }
 
 
@@ -331,3 +336,126 @@ def update_profile():
         "user":    _user_to_dict(result),
     }), 200
 
+
+# ── POST /auth/google ──────────────────────────────────────────────────────
+
+@auth_bp.route("/google", methods=["POST"])
+def google_signin():
+    """
+    Google Sign-In via Google Identity Services (GIS).
+
+    The frontend sends the ID token returned by the GIS popup directly to
+    this endpoint. The backend verifies it server-side using google-auth,
+    then upserts the user and issues the same JWT used by email/password
+    login — so all existing protected routes work unchanged.
+
+    Request body (JSON):
+        { "credential": "<google_id_token>" }
+
+    Success (200):
+        {
+            "message":      "Google sign-in successful.",
+            "access_token": "<jwt>",
+            "user":         { id, name, email, picture, auth_provider, created_at }
+        }
+
+    Errors: 400 (missing token), 401 (invalid/expired token), 500 (server)
+    """
+    data = request.get_json(silent=True)
+    if not data or not data.get("credential"):
+        return jsonify({"error": "Google credential token is required."}), 400
+
+    credential = data["credential"]
+    google_client_id = current_app.config.get("GOOGLE_CLIENT_ID")
+
+    # ── Server-side verification ───────────────────────────────
+    # verify_oauth2_token checks: signature, audience, issuer, expiration.
+    # Never skip this — never trust client-side Google auth data directly.
+    try:
+        id_info = google_id_token.verify_oauth2_token(
+            credential,
+            google_requests.Request(),
+            google_client_id,
+        )
+    except ValueError as exc:
+        # Covers: wrong audience, expired token, bad signature, malformed token
+        return jsonify({"error": f"Invalid Google token: {exc}"}), 401
+    except Exception:
+        return jsonify({"error": "Token verification failed. Please try again."}), 401
+
+    # ── Extract verified claims ────────────────────────────────
+    google_sub = id_info.get("sub")          # stable unique Google user ID
+    email      = id_info.get("email", "").lower().strip()
+    name       = id_info.get("name", "").strip()
+    picture    = id_info.get("picture", "")  # profile photo URL (may be empty)
+
+    if not email or not google_sub:
+        return jsonify({"error": "Google account did not provide an email address."}), 401
+
+    # ── Upsert user ────────────────────────────────────────────
+    # Strategy:
+    #   1. Look up by email (handles both new Google users and existing
+    #      email/password users linking their Google account).
+    #   2. If found: merge Google fields without touching password_hash.
+    #   3. If not found: create a new account (no password_hash — Google only).
+    try:
+        existing = _db.users_collection.find_one({"email": email})
+    except Exception:
+        return jsonify({"error": "Database error. Please try again later."}), 500
+
+    now = datetime.now(timezone.utc)
+
+    if existing:
+        # Merge Google identity onto the existing account.
+        # Only update fields that come from Google; never overwrite password_hash.
+        update_fields = {
+            "google_sub":     google_sub,
+            "picture":        picture,
+            "auth_provider":  "google" if not existing.get("password_hash") else "both",
+        }
+        # Only update name if the user has not customised it (i.e. it's still the
+        # Google name or is blank — preserves manual name changes from /auth/profile).
+        if not existing.get("name") or existing.get("google_sub") == google_sub:
+            update_fields["name"] = name or existing.get("name", "")
+
+        try:
+            user = _db.users_collection.find_one_and_update(
+                {"_id": existing["_id"]},
+                {"$set": update_fields},
+                return_document=True,
+            )
+        except Exception:
+            return jsonify({"error": "Database error. Please try again later."}), 500
+    else:
+        # First-time Google sign-in — create a new account.
+        # No password_hash stored; auth_provider="google".
+        new_user = {
+            "name":          name,
+            "email":         email,
+            "google_sub":    google_sub,
+            "picture":       picture,
+            "auth_provider": "google",
+            "created_at":    now,
+            # password_hash intentionally omitted — Google-only account
+        }
+        try:
+            result   = _db.users_collection.insert_one(new_user)
+            new_user["_id"] = result.inserted_id
+            user     = new_user
+        except Exception:
+            return jsonify({"error": "Failed to create account. Please try again."}), 500
+
+    # ── Issue JWT (same format as email/password login) ────────
+    access_token = create_access_token(
+        identity=str(user["_id"]),
+        additional_claims={
+            "email": email,
+            "name":  user.get("name", ""),
+        }
+    )
+
+    return jsonify({
+        "message":      "Google sign-in successful.",
+        "access_token": access_token,
+        "user":         _user_to_dict(user),
+    }), 200
