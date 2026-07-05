@@ -19,7 +19,19 @@ function getUser() {
 }
 
 // ── Logout ──────────────────────────────────────────────────
-window.logout = function () {
+window.logout = async function () {
+  const token = localStorage.getItem('mindease_token');
+
+  // Notify the server (best-effort — don't block redirect on failure)
+  if (token) {
+    try {
+      await fetch(`${API_BASE_URL}/auth/logout`, {
+        method:  'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+    } catch { /* backend offline — proceed with local logout */ }
+  }
+
   localStorage.removeItem('mindease_token');
   localStorage.removeItem('mindease_user');
   window.location.href = 'auth.html';
@@ -267,3 +279,15 @@ window.initDashboard = function () {
     }).catch(() => { /* backend offline — allow offline use */ });
   }
 };
+
+// ── Auto-init: if the user already has a session when index.html loads ──────
+// This handles the case where someone navigates directly to index.html
+// with a stored token (e.g. after a page refresh or a back-navigation).
+document.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('mindease_token');
+  const user  = getUser();
+  if (token && user) {
+    // Populate the header immediately from cached data
+    populateUserHeader(user);
+  }
+});

@@ -3,24 +3,24 @@
 
 // ── Landing Page CTA ──────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
+  // ── Auto-show dashboard if user is already logged in ──────
+  // Covers: direct navigation to index.html, page refresh, back-button.
+  const token = localStorage.getItem('mindease_token');
+  if (token) {
+    showDashboard();
+  }
+
   // Wire the Enter button on landing page
   const enterBtn = document.getElementById("enterBtn");
   if (enterBtn) {
     enterBtn.addEventListener("click", () => {
-      // Always go to auth; auth.html redirects back if already logged in
-      const token = localStorage.getItem('mindease_token');
-      if (token) {
+      const tok = localStorage.getItem('mindease_token');
+      if (tok) {
         showDashboard();
       } else {
         window.location.href = 'auth.html';
       }
     });
-  }
-
-  // If landed here with a token in URL hash (post-auth redirect), go straight to dashboard
-  const token = localStorage.getItem('mindease_token');
-  if (token && window.location.hash === '#dashboard') {
-    showDashboard();
   }
 
   // Word counter update
@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
 
 // ── Show Dashboard ─────────────────────────────────────────
 function showDashboard() {

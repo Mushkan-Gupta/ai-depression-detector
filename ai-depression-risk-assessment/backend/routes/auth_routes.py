@@ -6,6 +6,8 @@ Handles all user account operations:
     POST  /auth/register  — create a new account, return JWT
     POST  /auth/login     — verify credentials, return JWT
     GET   /auth/me        — return current user profile (JWT required)
+    POST  /auth/logout    — server-side logout acknowledgement (JWT required)
+    PUT   /auth/profile   — update display name (JWT required)
 """
 
 from datetime import datetime, timezone
@@ -253,3 +255,79 @@ def me():
         return jsonify({"error": "User account not found."}), 404
 
     return jsonify({"user": _user_to_dict(user)}), 200
+
+
+# ── POST /auth/logout ──────────────────────────────────────────────────────
+
+@auth_bp.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    """
+    Stateless JWT logout.
+
+    Because JWTs are self-contained and we do not maintain a token blocklist,
+    logout is implemented on the client side (the frontend clears its stored token).
+    This endpoint exists so that:
+      1. Clients have a standard endpoint to call for a clean logout flow.
+      2. Server-side logout logic (e.g. blocklist) can be added here in the future
+         without changing any frontend code.
+
+    Success (200):
+        { "message": "Logged out successfully." }
+
+    Errors: 401 (missing/invalid token)
+    """
+    return jsonify({"message": "Logged out successfully."}), 200
+
+
+# ── PUT /auth/profile ──────────────────────────────────────────────────────
+
+@auth_bp.route("/profile", methods=["PUT"])
+@jwt_required()
+def update_profile():
+    """
+    Update the authenticated user's display name.
+
+    Request body (JSON):
+        {
+            "name": "New Name"   -- required, 1–100 characters
+        }
+
+    Success (200):
+        {
+            "message": "Profile updated successfully.",
+            "user":    { id, name, email, created_at }
+        }
+
+    Errors: 400 (validation), 404 (user deleted), 500 (server)
+    """
+    user_id = get_jwt_identity()
+
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"error": "Request body must be JSON."}), 400
+
+    name = (data.get("name", "") or "").strip()
+
+    if not name:
+        return jsonify({"error": "Name is required."}), 400
+    if len(name) > 100:
+        return jsonify({"error": "Name must be 100 characters or fewer."}), 400
+
+    try:
+        result = _db.users_collection.find_one_and_update(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"name": name}},
+            return_document=True,
+        )
+    except Exception:
+        return jsonify({"error": "Database error. Please try again later."}), 500
+
+    if not result:
+        return jsonify({"error": "User account not found."}), 404
+
+    return jsonify({
+        "message": "Profile updated successfully.",
+        "user":    _user_to_dict(result),
+    }), 200
+

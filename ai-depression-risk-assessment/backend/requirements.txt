@@ -18,6 +18,9 @@ pymongo>=4.6.0
 
 # ── Authentication ────────────────────────────────────────────────────────────
 flask-jwt-extended>=4.6.0
+# werkzeug provides generate_password_hash / check_password_hash used in auth_routes.py.
+# It ships with Flask but is listed explicitly so the dependency is clear and auditable.
+werkzeug>=3.0.0
 
 # ── Environment & Validation ──────────────────────────────────────────────────
 python-dotenv>=1.0.0
