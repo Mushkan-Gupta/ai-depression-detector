@@ -24,8 +24,11 @@ from pymongo.errors import ConnectionFailure, ConfigurationError, ServerSelectio
 _client:   MongoClient | None = None
 _db                           = None
 
-users_collection:            Collection | None = None
-journal_entries_collection:  Collection | None = None
+users_collection:               Collection | None = None
+journal_entries_collection:     Collection | None = None
+connection_requests_collection: Collection | None = None
+conversations_collection:       Collection | None = None
+messages_collection:            Collection | None = None
 
 
 # ── Initialiser ────────────────────────────────────────────────────────────
@@ -42,7 +45,7 @@ def init_db(app) -> None:
     On failure, logs the error and exits — the server should not
     start without a valid database connection.
     """
-    global _client, _db, users_collection, journal_entries_collection
+    global _client, _db, users_collection, journal_entries_collection, connection_requests_collection, conversations_collection, messages_collection
 
     mongo_uri = app.config.get("MONGO_URI")
     if not mongo_uri:
@@ -95,8 +98,11 @@ def init_db(app) -> None:
     # Bind database and collections
     _db = _client["mindease"]
 
-    users_collection           = _db["users"]
-    journal_entries_collection = _db["journal_entries"]
+    users_collection                = _db["users"]
+    journal_entries_collection      = _db["journal_entries"]
+    connection_requests_collection  = _db["connection_requests"]
+    conversations_collection        = _db["conversations"]
+    messages_collection             = _db["messages"]
 
     # Ensure indexes exist (idempotent — safe to call on every startup)
     _ensure_indexes()
@@ -131,6 +137,14 @@ def _ensure_indexes() -> None:
             [("user_id", ASCENDING), ("risk", ASCENDING)],
             name="idx_entries_user_risk",
         )
+
+        # users: peer matching candidate query is covered by the pre-existing
+        # partial index idx_users_matching (created by the Stage 1 migration).
+        # That index has the same three key fields
+        # (available_for_matching, current_risk_level, matching_started_at)
+        # and its partialFilterExpression { available_for_matching: true }
+        # always applies because the candidate query always filters on
+        # available_for_matching: True. No additional index is needed here.
 
         print("[DB] Indexes verified.")
 

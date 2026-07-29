@@ -1,0 +1,66 @@
+============================================================
+  SINGLE-SPLIT PLAIN LR DIAGNOSTIC
+  (No calibration, no cross-validation)
+============================================================
+
+[1] Loading: F:\project\ai-depression-risk-assessment\backend\merged_depression_dataset.csv
+    Rows: 8816
+    Label distribution:
+is_depression
+0    5077
+1    3739
+
+[2] Fitting TfidfVectorizer (same params as train_model.py):
+    stop_words='english', max_features=20000, ngram_range=(1,2),
+    min_df=2, max_df=0.95, sublinear_tf=True, norm='l2'
+    Vocabulary size: 20000
+    Feature matrix shape: (8816, 20000)
+
+[3] Applying ONLY this split:
+    train_test_split(X_vec, y, test_size=0.2, random_state=42, stratify=y)
+    Train rows: 7052
+    Test  rows: 1764
+
+[4] Fitting PLAIN LogisticRegression (no CalibratedClassifierCV, no CV):
+    C=0.8, max_iter=1000, solver='lbfgs',
+    class_weight='balanced', random_state=42
+    Fit complete. Single coefficient vector produced.
+
+[5] Coefficient values for target words
+    (from the ONE model fitted on the 80% train partition above)
+--------------------------------------------------
+  Word: 'sad'
+    Vocabulary index : 14393
+    Coefficient      : -1.21339963
+  Word: 'happy'
+    Vocabulary index : 7152
+    Coefficient      : 1.00371664
+  Word: 'grateful'
+    Vocabulary index : 6789
+    Coefficient      : 0.12038978
+  Word: 'good'
+    Vocabulary index : 6563
+    Coefficient      : -0.53413699
+
+[6] Performance on held-out test set (20%)
+--------------------------------------------------
+  Accuracy : 0.960317
+  ROC-AUC  : 0.990232
+
+  Classification Report:
+                          precision    recall  f1-score   support
+
+Class 0 (Non-Depression)       0.96      0.97      0.97      1016
+    Class 1 (Depression)       0.96      0.95      0.95       748
+
+                accuracy                           0.96      1764
+               macro avg       0.96      0.96      0.96      1764
+            weighted avg       0.96      0.96      0.96      1764
+
+  Confusion Matrix:
+[[987  29]
+ [ 41 707]]
+
+============================================================
+  END OF DIAGNOSTIC
+============================================================

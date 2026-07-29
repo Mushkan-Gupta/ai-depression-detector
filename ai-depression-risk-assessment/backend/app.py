@@ -28,6 +28,9 @@ app.register_blueprint(auth_bp)
 from routes.history_routes import history_bp
 app.register_blueprint(history_bp)
 
+from routes.peer_routes import peer_bp
+app.register_blueprint(peer_bp)
+
 # ── Model Loading ──────────────────────────────────────────────────────────
 model = None
 vectorizer = None
@@ -50,81 +53,47 @@ except Exception as e:
 
 
 # ── Keyword Lexicons ───────────────────────────────────────────────────────
-
-# HIGH severity: clear crisis / suicidality signals → always forces High
-HIGH_RISK_KEYWORDS = [
-    'suicide', 'kill myself', 'end it all', 'want to die', 'better off dead',
-    'no reason to live', 'self harm', 'hurt myself', 'ending my life',
-    'taking my life', 'end my life', 'overdose', 'not want to be alive',
-    'wishing i was dead', 'thinking about death', 'no longer want to live',
-    'not wanting to exist', 'do not want to live', 'do not want to exist',
-    "don't want to live", "don't want to exist", 'want to disappear forever',
-    'searching for methods', 'searching online for', 'looking up how to',
-    'not worth living', 'life is not worth', 'no longer worth living',
-]
-
-# MODERATE severity: strong depression indicators but not crisis-level
-MODERATE_RISK_KEYWORDS = [
-    'depressed', 'depression', 'severely depressed', 'suicidal thoughts',
-    'panic attack', 'no will to live', 'completely exhausted and numb',
-    'numb inside', 'empty inside', 'hate myself', 'feel like a burden',
-    'nobody cares', 'all alone', 'disconnected from', 'meaningless',
-    "don't want to wake up", 'feel like disappearing', 'lost all hope',
-    'no motivation whatsoever', 'crying all the time', 'deeply depressed',
-]
-
-# MILD signals: common stress/sadness words that need to accumulate to matter
-MILD_NEGATIVE_KEYWORDS = [
-    'sad', 'lonely', 'anxious', 'anxiety', 'stressed', 'stress', 'overwhelmed',
-    'tired', 'exhausted', 'struggling', 'unmotivated', 'hard time', 'difficult',
-    'worried', 'fear', 'insomnia', 'can\'t sleep', 'low energy', 'withdrawn',
-    'down', 'crying', 'cried', 'numb', 'flat', 'irritable', 'frustrated',
-    'burned out', 'burnt out', 'lost', 'confused', 'empty', 'grief', 'grieving',
-    'loss', 'heartbroken', 'hopeless', 'worthless', 'give up', 'no point',
-    'no energy', 'not okay', 'falling apart', 'running on empty', 'no motivation',
-    'isolating', 'withdrawing', 'can\'t function', 'panic', 'dark days',
-    'really dark', 'very dark', 'bad days', 'dark place', 'heavy mood',
-    'miserable', 'dread', 'dreading', 'dreaded', 'guilt', 'guilty',
-    'shame', 'ashamed', 'disconnected', 'detached', 'isolated', 'avoid',
-]
-
-# POSITIVE signals: actively reduce depression probability
-POSITIVE_KEYWORDS = [
-    'happy', 'happiness', 'grateful', 'gratitude', 'excited', 'joy', 'joyful',
-    'peaceful', 'content', 'hopeful', 'motivated', 'thankful', 'loved', 'love',
-    'optimistic', 'wonderful', 'great day', 'feeling good', 'blessed', 'proud',
-    'energetic', 'rested', 'calm', 'connected', 'supported', 'inspired',
-    'fulfilled', 'relieved', 'laughter', 'laugh', 'smile', 'smiling',
-    'looking forward', 'positive', 'thriving', 'growing',
-]
+from constants.keywords import (
+    HIGH_RISK_KEYWORDS, 
+    MODERATE_RISK_KEYWORDS, 
+    MILD_NEGATIVE_KEYWORDS, 
+    POSITIVE_KEYWORDS, 
+    INDIRECT_IDEATION_PHRASES, 
+    CONTEXT_GATED_PHRASES
+)
 
 
 def keyword_classify(text: str):
     """
     Primary classifier using an evidence-weighted keyword scoring system.
-    Returns (risk: str, confidence: float, evidence: dict)
+    Returns (risk: str, confidence: float, evidence: dict, neg_score: float)
     
     Architecture:
-    - Crisis keywords → High (hard rule)
+    - Crisis keywords → High (hard rule, unchanged)
+    - Indirect ideation phrases → AT MINIMUM Moderate (safety floor, see
+      INDIRECT_IDEATION_PHRASES above for rationale)
     - Weighted score from strong/mild negatives minus positive counter-evidence
     - Score thresholds produce Low / Moderate / High
     """
     lower = text.lower()
     word_count = max(len(text.split()), 1)
 
-    high_hits     = [kw for kw in HIGH_RISK_KEYWORDS     if kw in lower]
-    moderate_hits = [kw for kw in MODERATE_RISK_KEYWORDS if kw in lower]
-    mild_hits     = [kw for kw in MILD_NEGATIVE_KEYWORDS if kw in lower]
-    positive_hits = [kw for kw in POSITIVE_KEYWORDS      if kw in lower]
+    high_hits     = [kw for kw in HIGH_RISK_KEYWORDS        if kw in lower]
+    indirect_hits = [kw for kw in INDIRECT_IDEATION_PHRASES if kw in lower]
+    moderate_hits = [kw for kw in MODERATE_RISK_KEYWORDS    if kw in lower]
+    mild_hits     = [kw for kw in MILD_NEGATIVE_KEYWORDS    if kw in lower]
+    positive_hits = [kw for kw in POSITIVE_KEYWORDS         if kw in lower]
 
-    # Crisis: immediate High
+    # Crisis: immediate High (unchanged — do NOT modify)
     if high_hits:
         n = len(high_hits)
         confidence = min(0.95, 0.72 + n * 0.08)
         return "High", round(confidence, 3), {
-            "crisis": high_hits, "moderate": moderate_hits,
-            "mild": mild_hits, "positive": positive_hits
-        }
+            "crisis": high_hits, "indirect": indirect_hits,
+            "moderate": moderate_hits, "mild": mild_hits, "positive": positive_hits,
+            "gated_indirect": [], "ungated_indirect": indirect_hits,
+            "gated_passes_kw": True,
+        }, 2.0  # arbitrary high score for crisis
 
     # Score = strong negatives + fractional mild negatives - positive counter-evidence
     # Mild negatives are capped at 0.5 weight each to require more to reach Moderate
@@ -133,35 +102,76 @@ def keyword_classify(text: str):
                  + min(len(mild_hits), 12) * 0.10   # cap mild contribution
                  - len(positive_hits) * 0.08)        # gentler positive dampening
 
-    # Normalise slightly by text length to prevent short texts from over-scoring
-    # (journal entries should be long — if short, cap the score)
-    if word_count < 50:
-        neg_score *= 0.7
+    # (Removed length penalty since we now blend with the ML model gracefully)
 
     neg_score = max(neg_score, 0.0)
+
+    # ── Indirect ideation floor ────────────────────────────────────────────
+    # Separate indirect hits into two buckets:
+    #   - ungated: specific enough to enforce the floor unconditionally
+    #   - gated:   short/ambiguous phrases that need corroboration (see
+    #              CONTEXT_GATED_PHRASES for the rationale)
+    ungated_indirect = [p for p in indirect_hits if p not in CONTEXT_GATED_PHRASES]
+    gated_indirect   = [p for p in indirect_hits if p in CONTEXT_GATED_PHRASES]
+
+    has_indirect = len(indirect_hits) > 0
+
+    # Context gate for gated phrases: check routes (a) and (c) here.
+    # Route (b) — ml_dep_prob — is checked in the /predict route where
+    # the ML probability is available.
+    #
+    # Route (a): any moderate or mild keyword hit that is NOT a substring
+    # of an already-matched gated phrase. E.g. "tired" is inside
+    # "tired of fighting", so it does NOT count as independent evidence.
+    def _is_independent(kw, gated_phrases):
+        """Return True if kw is not a substring of any matched gated phrase."""
+        return not any(kw in gp for gp in gated_phrases)
+
+    independent_moderate = [kw for kw in moderate_hits if _is_independent(kw, gated_indirect)]
+    independent_mild     = [kw for kw in mild_hits     if _is_independent(kw, gated_indirect)]
+    has_kw_corroboration = len(independent_moderate) > 0 or len(independent_mild) > 0
+    # Route (c): more than one *distinct* indirect phrase matched
+    has_multi_indirect   = len(indirect_hits) >= 2 and len(set(indirect_hits)) >= 2
+
+    gated_passes = has_kw_corroboration or has_multi_indirect
+
+    # Apply the neg_score floor only for:
+    #   1. Any ungated (specific) indirect phrase, OR
+    #   2. A gated phrase whose context gate passes via routes (a)/(c)
+    # The flag is_gated_only tells the predict route whether to apply route (b)
+    if ungated_indirect or (gated_indirect and gated_passes):
+        neg_score = max(neg_score, 0.55)   # 0.55 → sigmoid(4*(0.55-0.5)) ≈ 0.55, well into Moderate
+    # If only gated phrases matched and the keyword gate didn't pass,
+    # we defer the decision to the predict route (which can check ml_dep_prob).
 
     # Map score to risk level
     if neg_score >= 1.0:
         # Multiple strong indicators
         confidence = min(0.92, 0.62 + neg_score * 0.06)
         return "Moderate", round(confidence, 3), {
-            "crisis": high_hits, "moderate": moderate_hits,
-            "mild": mild_hits, "positive": positive_hits
-        }
+            "crisis": high_hits, "indirect": indirect_hits,
+            "moderate": moderate_hits, "mild": mild_hits, "positive": positive_hits,
+            "gated_indirect": gated_indirect, "ungated_indirect": ungated_indirect,
+            "gated_passes_kw": gated_passes,
+        }, neg_score
     elif neg_score >= 0.20:   # Lowered from 0.30 to catch grief/anxiety entries
         confidence = min(0.80, 0.45 + neg_score * 0.15)
         return "Moderate", round(confidence, 3), {
-            "crisis": high_hits, "moderate": moderate_hits,
-            "mild": mild_hits, "positive": positive_hits
-        }
+            "crisis": high_hits, "indirect": indirect_hits,
+            "moderate": moderate_hits, "mild": mild_hits, "positive": positive_hits,
+            "gated_indirect": gated_indirect, "ungated_indirect": ungated_indirect,
+            "gated_passes_kw": gated_passes,
+        }, neg_score
     else:
         # Positive score or very few negatives
         pos_score  = len(positive_hits) * 0.10
         confidence = min(0.88, 0.45 + pos_score * 0.12)
         return "Low", round(confidence, 3), {
-            "crisis": high_hits, "moderate": moderate_hits,
-            "mild": mild_hits, "positive": positive_hits
-        }
+            "crisis": high_hits, "indirect": indirect_hits,
+            "moderate": moderate_hits, "mild": mild_hits, "positive": positive_hits,
+            "gated_indirect": gated_indirect, "ungated_indirect": ungated_indirect,
+            "gated_passes_kw": gated_passes,
+        }, neg_score
 
 
 # ── Routes ─────────────────────────────────────────────────────────────────
@@ -187,9 +197,9 @@ def predict():
             return {"error": "Journal text is empty"}, 400
 
         # ── Primary: keyword-based classification ──────────────────
-        kw_risk, kw_confidence, evidence = keyword_classify(journal)
+        kw_risk, kw_confidence, evidence, neg_score = keyword_classify(journal)
 
-        # ── Secondary: ML model (used only for borderline cases) ────
+        # ── Secondary: ML model ─────────────────────────────────────
         ml_dep_prob   = None
 
         if model is not None and vectorizer is not None:
@@ -206,28 +216,100 @@ def predict():
                 ml_dep_prob = None
 
         # ── Blending strategy ──────────────────────────────────────
-        # The ML model was trained on short Reddit posts, not long journal entries.
-        # On long narrative text, it tends to output very high depression scores
-        # regardless of actual sentiment (probability >0.90 for almost all).
-        # 
-        # Blending rules:
-        #  1. Keyword classification is ALWAYS the base result.
-        #  2. ML can only DOWNGRADE (Low/Moderate → lower confidence), never upgrade.
-        #  3. Exception: if keyword says Low but there are mild negative words AND
-        #     ML also fires, treat with caution and output Low with lower confidence.
+        import math
+        
+        # 1. HARD CONSTRAINT: Crisis keywords are an unoverridable override
+        if len(evidence["crisis"]) > 0:
+            risk = "High"
+            confidence = kw_confidence
+            print(f"[PREDICT] CRISIS OVERRIDE: risk={risk} conf={confidence}")
+        else:
+            if ml_dep_prob is not None:
+                # 2. Normalize neg_score via a sigmoid function to keep it between 0 and 1
+                # Center it around 0.5 so a neg_score of 0.5 evaluates to ~0.5
+                norm_neg = 1 / (1 + math.exp(-4 * (neg_score - 0.5)))
+                
+                # 3. Blend the signals using tuned weights (60% KW / 40% ML)
+                W_KW = 0.6
+                W_ML = 0.4
+                blended_score = (W_KW * norm_neg) + (W_ML * ml_dep_prob)
+                
+                # 4. Map blended score to risk thresholds
+                if blended_score >= 0.65:
+                    risk = "High"
+                elif blended_score >= 0.32:
+                    risk = "Moderate"
+                else:
+                    risk = "Low"
+                    
+                confidence = round(min(0.95, 0.4 + blended_score * 0.55), 3)
 
-        risk       = kw_risk
-        confidence = kw_confidence
+                # 5. SAFETY FLOOR A — Indirect ideation detected
+                # CONTEXT-GATED: If only gated (short/ambiguous) phrases matched
+                # and keyword corroboration didn't pass, we check route (b) here:
+                # ml_dep_prob >= 0.4 means the model sees *some* depression signal.
+                # Threshold rationale: 0.4 is the lower edge of the existing
+                # "uncertain band" (floor B below). Below 0.4 the model is
+                # reasonably confident the text is NOT depressive.
+                gated_only = (len(evidence.get("gated_indirect", [])) > 0
+                              and len(evidence.get("ungated_indirect", [])) == 0
+                              and not evidence.get("gated_passes_kw", False))
 
-        if ml_dep_prob is not None:
-            if kw_risk == "Moderate" and ml_dep_prob < 0.10:
-                # ML strongly disagrees with Moderate keyword classification.
-                # Downgrade to Low — entry likely uses neutral/formal language.
-                risk       = "Low"
-                confidence = round(max(0.38, kw_confidence - 0.15), 3)
-            # (All other cases: trust keyword analysis fully)
+                if len(evidence["indirect"]) > 0 and risk == "Low":
+                    if gated_only:
+                        # Route (b): ML corroboration check
+                        if ml_dep_prob >= 0.4:
+                            risk = "Moderate"
+                            confidence = max(confidence, 0.60)
+                            print(f"[PREDICT] INDIRECT IDEATION FLOOR applied (gated, ML corroboration): "
+                                  f"phrases={evidence['indirect']} ml_prob={ml_dep_prob:.3f}")
+                        else:
+                            # All three routes failed — no corroboration at all.
+                            # Let the entry stay Low.  This is what prevents the
+                            # false-positive on everyday uses of short phrases.
+                            print(f"[PREDICT] CONTEXT GATE BLOCKED indirect floor: "
+                                  f"gated_phrases={evidence['gated_indirect']} "
+                                  f"ml_prob={ml_dep_prob:.3f} (below 0.4, no KW corroboration)")
+                    else:
+                        # Ungated phrases or keyword-corroborated gated phrases
+                        risk = "Moderate"
+                        confidence = max(confidence, 0.60)
+                        print(f"[PREDICT] INDIRECT IDEATION FLOOR applied: phrases={evidence['indirect']}")
 
-        print(f"[PREDICT] risk={risk}  kw_conf={kw_confidence}  ml_dep_prob={ml_dep_prob}  words={len(journal.split())}")
+                # 6. SAFETY FLOOR B — Low ML confidence (uncertain band)
+                # When the ML model's depression probability is in the 0.40–0.60 range
+                # the model itself is essentially at chance. Defaulting to "Low" in
+                # this uncertain band is a false-reassurance risk. We instead floor
+                # the output to "Moderate" and ensure crisis resources are displayed.
+                # Threshold rationale: <0.40 = model is reasonably confident non-dep;
+                #                     >0.60 = model is reasonably confident dep;
+                #                     0.40–0.60 = model is uncertain → treat cautiously.
+                # FIX: Require neg_score >= 0.10 (at least one mild keyword baseline) 
+                # so short positive/neutral text doesn't arbitrarily trigger the floor.
+                if 0.40 <= ml_dep_prob <= 0.60 and risk == "Low" and neg_score >= 0.10:
+                    risk = "Moderate"
+                    confidence = max(confidence, 0.55)
+                    print(f"[PREDICT] LOW-CONFIDENCE FLOOR applied (neg_score={neg_score:.3f}): ml_prob={ml_dep_prob:.3f} in uncertain band [0.40, 0.60]")
+
+
+                print(f"[PREDICT] BLEND: neg_score={neg_score:.3f} norm_neg={norm_neg:.3f} ml_prob={ml_dep_prob:.3f} blended={blended_score:.3f} -> risk={risk} conf={confidence}")
+            else:
+                risk = kw_risk
+                confidence = kw_confidence
+                # Apply indirect ideation floor even when ML is unavailable
+                # (same gating logic, but without route (b) since ML is absent)
+                if len(evidence["indirect"]) > 0 and risk == "Low":
+                    gated_only_no_ml = (len(evidence.get("gated_indirect", [])) > 0
+                                        and len(evidence.get("ungated_indirect", [])) == 0
+                                        and not evidence.get("gated_passes_kw", False))
+                    if not gated_only_no_ml:
+                        risk = "Moderate"
+                        confidence = max(confidence, 0.60)
+                        print(f"[PREDICT] INDIRECT IDEATION FLOOR (no ML): phrases={evidence['indirect']}")
+                    else:
+                        print(f"[PREDICT] CONTEXT GATE BLOCKED indirect floor (no ML): "
+                              f"gated_phrases={evidence['gated_indirect']}")
+                print(f"[PREDICT] NO ML: risk={risk} conf={confidence}")
 
         # ── Optional: save to MongoDB if JWT token present ─────────
         try:
@@ -247,6 +329,21 @@ def predict():
                 })
             except Exception as db_err:
                 print(f"[WARN] Failed to save prediction history: {db_err}")
+
+            # ── Keep current_risk_level fresh on the user document ──────
+            # Peer matching reads this field directly; it must reflect the
+            # most recent /predict result, not a cached or missing value.
+            # High-risk users are excluded from matching (see peer_routes.py).
+            try:
+                _db.users_collection.update_one(
+                    {"_id": __import__("bson").ObjectId(identity)},
+                    {"$set": {
+                        "current_risk_level":   risk,
+                        "risk_level_updated_at": datetime.now(timezone.utc),
+                    }},
+                )
+            except Exception as risk_err:
+                print(f"[WARN] Failed to update current_risk_level for user {identity}: {risk_err}")
 
         return jsonify({"risk": risk, "confidence": confidence})
 

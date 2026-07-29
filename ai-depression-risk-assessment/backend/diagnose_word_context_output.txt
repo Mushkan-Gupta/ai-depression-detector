@@ -1,0 +1,158 @@
+======================================================================
+  WORD CONTEXT DIAGNOSTIC
+======================================================================
+
+--- 1. merged_depression_dataset.csv ---
+  File size  : 3,469,073 bytes  (3.31 MB)
+  Shape      : 8,975 rows × 2 columns
+  Columns    : ['clean_text', 'is_depression']
+  Label dist :
+is_depression
+0    5185
+1    3790
+
+  Byte lengths of 5 random rows (raw clean_text field):
+    row  1332:     291 bytes | first 120 chars: 'i won t be able to start college until september so i ll be at home doing nothing till then so a job would be great righ'
+    row  1652:    1515 bytes | first 120 chars: 'so the other day i wa playing a game and chatting on the phone with a friend let s call her bri and i have a friend stay'
+    row  3753:      70 bytes | first 120 chars: 'octolinz it it count idk why i did either you never talk to me anymore'
+    row  8687:     645 bytes | first 120 chars: 'Now With Comments! YAY! Daysleeper rocks!! I just got an email from a Gaiman board buddy, who asked if I had the comment'
+    row  4126:      73 bytes | first 120 chars: 'sitting here wondering why quot ed quot still ha such a strong hold on me'
+
+  Memory usage per column (bytes):
+    clean_text          :    3,898,132 bytes  (3.72 MB)
+    is_depression       :       71,932 bytes  (0.07 MB)
+
+  Source file shapes (before merge filtering):
+    Reddit (depression_dataset.csv): 7,729 rows, cols=['clean_text', 'is_depression']
+    Synthetic (synthetic_journal_entries.csv): 265 rows, cols=['clean_text', 'is_depression']
+    Blog (filtered_blog_sample.csv): 1,199 rows, cols=['clean_text', 'is_depression']
+
+--- 2. Word 'happy' — per-source, per-class counts ---
+  Source: Reddit (depression_dataset.csv)
+    [Reddit (depression_dataset.csv)] Class 0:    30 /   3901 rows contain 'happy' (0.77%)
+    [Reddit (depression_dataset.csv)] Class 1:   285 /   3828 rows contain 'happy' (7.45%)
+  Source: Synthetic (synthetic_journal_entries.csv)
+    [Synthetic (synthetic_journal_entries.csv)] Class 0:    20 /    149 rows contain 'happy' (13.42%)
+    [Synthetic (synthetic_journal_entries.csv)] Class 1:     6 /    116 rows contain 'happy' (5.17%)
+  Source: Blog (filtered_blog_sample.csv)
+    [Blog (filtered_blog_sample.csv)] Class 0:    65 /   1199 rows contain 'happy' (5.42%)
+    [Blog (filtered_blog_sample.csv)] Class 1:     0 /      0 rows contain 'happy' (0.00%)
+
+  Totals across merged_depression_dataset.csv:
+    Class 0:   115 /   5185 rows (2.22%)
+    Class 1:   284 /   3790 rows (7.49%)
+
+--- 3. Word 'sad' — per-source, per-class counts ---
+  Source: Reddit (depression_dataset.csv)
+    [Reddit (depression_dataset.csv)] Class 0:   133 /   3901 rows contain 'sad' (3.41%)
+    [Reddit (depression_dataset.csv)] Class 1:   184 /   3828 rows contain 'sad' (4.81%)
+  Source: Synthetic (synthetic_journal_entries.csv)
+    [Synthetic (synthetic_journal_entries.csv)] Class 0:    29 /    149 rows contain 'sad' (19.46%)
+    [Synthetic (synthetic_journal_entries.csv)] Class 1:    21 /    116 rows contain 'sad' (18.10%)
+  Source: Blog (filtered_blog_sample.csv)
+    [Blog (filtered_blog_sample.csv)] Class 0:     0 /   1199 rows contain 'sad' (0.00%)
+    [Blog (filtered_blog_sample.csv)] Class 1:     0 /      0 rows contain 'sad' (0.00%)
+
+  Totals across merged_depression_dataset.csv:
+    Class 0:   162 /   5185 rows (3.12%)
+    Class 1:   189 /   3790 rows (4.99%)
+
+--- 4. 15 random Class-1 (depression) rows containing 'happy' ---
+  (Pool size: 284 rows)
+
+  [01] row 147:
+  m i have been dealing with depression anxiety panic attack for 0 year and also have adhd i kind of suck at everything i am failing my rd university almost have no social life have no girlfriend for year no job no goal and no achievement i have been trying to get my life together for year i quit alcohol and cannabis completely i am working out regularly forcing myself to socialize and learn new skill and trying to date failing miserably i am only successful at quitting drug which i can relapse anytime i suffer month of a year have some good day so what is the point of living if i won t be happy and achieve anything what kind of man i am who can not attract a woman and never be able to and why do i bother to live if i am failing every job i took and every university i went to i always feel lonely hate myself and can t look at the mirror anymore i am about to give up but i can t decide please answer objectively thanks
+
+  [02] row 1504:
+  over the past couple month i have been suffering a lot with my anxiety i am in an environment where i am surrounded by people who dont care for me are blantantly rude and fake and pressure me beyond belief i am exhausted and want to be happy i m not saying for a second that i am perfect and nice all the time im a know it all socially awkward lack of an ability to stand up for myself but i miss being around the few people that love me and share my interest while i am around bad people i am in a place where i am in a place surrounded by thing i love i cant miss out on this i need to grow and be more confident i can live an adventurous life alone i dont need company i dont need a boyfriend and i don t need friend with me all the time i have been taking leap and going to museum and social public setting all by myself ivd been taking it slow and going to one place everyday or every other day i allow myself to lay in bed after and sleep i am so unbelieveably anxiois and distressed when i am out doing these thing but i am seeing thing i truly love i am experiemcing life i am going on an oit of city trip for a few day soon and i am excited to push my limit a i lay im bed stressed in pain and sleep deprived i am still pushing myself in the morning to go on another adventure by myself
+
+  [03] row 938:
+  hi im an m and i just feel i am a lost cause i hate everything about my life and barley if at all want to do any of the work to make it better nothing about my life is horrible besides my relationship but thats another story lol i live in an average middle class house with my dad and have a decent setup for life i have friend who like me for me i hope and have started to go to party and etc but i just cant shake my depression or feeling of hating myself ive been like this since i wa or and nothing could help and all ive gotten is worse i wa a smart kid but now i haven t done any of my schoolwork and im supposed to graduate in month and i cheated through all of last year schooling because of covid i had a job then switched to doing doordash instacart since im but now i cant even motivate myself to go do that i hate my body the way i act i especially hate being gay i hate my adhd i hate that i get jealous of other people being happy with themselves it really hurt and i hate that i feel like i have no passion in life and i have nothing i really want to work towards besides having nice clothes and even then when i think of that i get more unmotivated because i already hate my body and wish clothes fit better on me already so i just get disappointed and think i will never look remotely close to the way i want i really think this is because of the tik tok era my body make me feel disgusting and i feel like i have the ugliest face in the world im like abnormally skinny 9 0 lb but i cant gain weight because even when i try i forget to eat or put it off to continue what im fixated on at the moment like i had my first meal at pm today ive asked my dad various time to get me setup with a psychiatrist but that will never happen knowing my parent ive been recommended to a therapist by my school counselor since th grade the only one ive had is the school provided one they gave for covid i just like in general hate myself and my life and i feel even worse about it because i shouldn t hate it i have a lot that i should be grateful for that i just take for granted for god sake i have been in my room for the past month doing nothing most people do not have that kind of luxury amp x 00b oh yeah and on the topic of my relationship which i think contriubutes to this feeling gt we ve been on and off for like year almost now i wa groomed im pretty sure he im you can do the math he is emotionally abusive and denies that he wa horribly abusive to me in the past for example he used to tell me about people asking to hookup with him constantly boost his own ego he put me down with insult and name accuses me of causing a scene or starting something when i have a reaction to a rude action he doe he didnt get me anything for valentine day or christmas he ha hit me twice but love to be like it wa a shirt i whipped you with and im sure he like that im depressed he ha said im going to end up a strung out drug addict like my mom that im a loser who will rot away who isn t even doing that bad rn and she isn t a strung out addict never wa she wa rich most her life im sorry if this isn t cohesive or whatever i just needed somewhere to vent my thought and hopefully get help i just really wish i didnt feel like this and my brain didnt hate me i wish i could just go to the gym and start doing my school work and get myself on track but i just cant
+
+  [04] row 2207:
+  i just want to get it over with i hate living every day knowing one day it s going to end i hate the fact that i exist at all i try to get advice from people they either tell me basically to deal with it or turn back to religion which isn t happening neither one of those doe a damn thing for me what the fuck do i do i want to blow my brain out so i don t have to worry about it anymore just get it over with losing religion wa the worst thing that ever happened to me i wa so happy when i thought god wa real now i know the truth and life mean nothing pointless
+
+  [05] row 579:
+  m and i did what i wanted to in life grew up poor got an education make ton of money hit the top of ladder in a respect profession and i m not happy i m not rich but money isn t a a big a concern a it used to be i have a job i like sometimes but the reality of it are physically and mentally destroying i have good friend and am finding myself making more a i go but i m miserable completely miserable i wa told that you become successful you work hard and have good moral invest in your friend develop hobby and fulfillment and happiness come a a by product but when in the actual fuck doe this fullfillent and happiness come
+
+  [06] row 1146:
+  hi friend i stopped using weed and caffeine and day ago respectively and i ve seen my anxiety increase exponentially obviously i used both to kinda suppress my normal anxiety but now i m going au natural and a you can tell it s not going ideally but i m happy to have made the choice i did i have felt a weird knot sensation in the right upper side of my abdomen feel like it s right under my rib cage and occasional pain throughout my digestive system i ve been constipated for about day too i know so much info and while i m able to still go i still feel a discomfort in my side like someone took a five pound weight and just placed it on the side of me is this normal with anxiety i haven t started any antidepressant i ve been prescribed because i want to see how naturally i can do this but my mind is telling me withdrawal and to just be patient but i don t want to be too patient in case it s something that i should have a doctor check out thought
+
+  [07] row 1574:
+  i m 0f and i ll start this by saying that my diagnosis is mostly a doctor telling once that i might have gad but i haven t had further test done yet not that i need them because the symptom are all there and it s pretty obvious to me amp nbsp i stress a lot about most thing future plan work health etc being on the phone is something that give me extreme anxiety a well and this is impacting my work i m lucky enough to be able to work from home which is great because i don t have to put on the happy sociable face all day long but there s still plenty of call meeting happening over team and those still give me a lot of anxiety to the point that even a minute talk with someone will leave me sweaty i m able to sound friendly and sociable on the call but a soon a it s over that s all gone and i ll just feel like crap i m not 0 and some day i honestly do not know how i am supposed to endure this for another 0 year the job i had previous to this one wa in customer support inbound call people told me that exposure to it would help me but honestly i hated every second of it and i feel it s only gotten worse since then amp nbsp right now i m at a loss and starting to consider quitting my job over this but i also don t know of many job that allow me to wfh while keeping meeting and call to a minimum if everything wa done via chat email i d honestly feel great about that but it feel like this society wa built by and for extrovert and i m just an outlier that doesn t fit anywhere
+
+  [08] row 469:
+  it s so strange waking up everyday with this sense that you want thing to go back to the way they were like your brain ha it own lil trumpster lying to you telling you your childhood wa better before or you were happy before you started this job etc the truth is it s always sucked though lol there are brief moment now where you feel like thing are okay but it s more of a lack of feeling i ve always thought i wa broken because this ha been my constant state since i wa so small i thought i d grow out of it or i wouldn t but life only continues to throw curveballs to others i seem high functioning though kind of emotional but i can t get myself to focus on anything i can t wake up on time for work i work in insurance sale so i hate what i do i have to pretend to care about people and their problem but it just hurt so bad all of the time i know my boyfriend doesn t understand he s in medical school and ha his own struggle but i know he feel love he tell me he doe i don t and even if i do see briefly in his eye that he doe care for me i quickly forget depression ha made me into a terrible person i should be so lucky to have someone who love me so much to have my look my wit and the opportunity i ve been afforded but i can t help but feel so completely destitute he ha helped me find some confidence in myself with pursing going back to school but i m just so tired of it the sale call the application car issue bill health stuff and every other fucking thing when will i be able to do the thing i need to do like eat meal a day have the energy to learn new thing exercise also ha anyone had any luck with any online therapy medication consultation
+
+  [09] row 438:
+  i hate what happened i thought i could be happy even just for a moment it make everything else so much worse and it couldn t have happened at a worse time
+
+  [10] row 1270:
+  my anxiety affect my life but it s not debilitating for me like it is for others i get panic attack very rarely my brain is never quiet though it s always going and cycling around thought even when i m trying to let them go i see my dog and feel happy then my brain immediately say what if he died though and it show me what that would look like stupid thing like that i also have ibs that worsens with stress i guess i wa just wondering if anyone out there ha tried any med even though they can deal with their symptom and if it helped i m a bit worried about side effect but if i could just live without having to ob over thing and feel defensive all the time that would be pretty amazing i will ask my doctor of course but wanted to hear from others in my situation
+
+  [11] row 1132:
+  i just need help man im quite a confident intelligent guy id say good looking and everything but the past year my anxiety is eating me alive might think what i say is weird but good luck i can do stuff but everything i do my body responds with anxiety i feel confident then my body stop me from being happy it like i need to be stressed all the time especially when im not alone anxiety make me tense up sweat panic oily face i feel dirty even thought i keep a real good hygiene just like that from just simply waiting in line at the store or just waiting in front of someone doing something during car ride i just instantly become awkward a duck i talk and everything cool but my body just feel tense a duck and it drain all my energy my face becomes oily because im stressing about my face becoming oily and im gon na panic and look sweaty i look and feel really uncomfortable just from being in front of someone for a minute on the sidewalk i feel like everyone looking at me how annoying i am and disgusting and i think i stand out from a normal person it just horrible people said im overthinking it and others dont really notice anything but i think they do idk im so lost
+
+  [12] row 767:
+  and i feel nothing nothing at all i almost flunked out of college twice and here i am with straight a s last quarter and i m slated for a similar gpa this quarter and yet i don t feel a thing about it everyone is telling me how proud i should be i went from a high school slacker to the one looking into med school to the family fuck up and now the one doing ok all within a few year fuck i should be proud and yet i literally do not give a shit all i feel is apathy i m just so fucking tired i feel like i m just going through the motion not sure what i m looking for with this post i just had to tell someone that i lack the capacity to care my parent and partner were so happy when i told them the grade i don t have the heart to tell them i don t really feel anything about it doe anyone else just not care about achievement anymore it d feel nice to know i m not the only one
+
+  [13] row 2592:
+  over the last year my life ha completely fallen apart i grew up happy a ever with a very well off family a brother i got along with friend i hung out with all the time then my baby sister died out of nowhere shortly after my parent said they were getting a divorce after having a loving caring family my entire life in the span of just a month everything flipped upside down i don t have a family outside of my mother and baby brother anymore and my mother ha robbed the house of peace by becoming fixated on an emotionally abusive boyfriend my entire life wa destroyed and it s only gotten worse year into the divorce my best friend died all of my other friend and friend group i wa in slowly just forgot about me due to depression and anxiety from everything i had going on making me become incredibly introverted and just not fun to be around anymore he wa the only person i had that i could talk to besides my girlfriend who i put through hell because of how much i hated myself and my situation and now he wa gone shortly after his death her and i broke up and i deserved it i wasn t abusive but i wasn t a good boyfriend i never wanted to go anywhere or do anything i stopped wanting sex and intimacy because i didn t think i deserved those thing the divorce ha only gotten worse over the year and after year of stress and anxiety being a constant my health ha now started to decline i ve lost my toned body i ve lost my nice smile i ve lost my sense of fashion i ve given up entirely on trying to form new relationship or make new friend because i know that i just don t have what it take to foster deep relationship anymore i ve seen a therapist about this and she said she belief it s because of my family and my best friend and that now my brain correlate love with loss which prevents me from getting attached to people or make me act in way to push others away before they can get attached to me with my health issue getting worse due to the constant stress i m now out of work on medical leave i sit in my room every day just watching youtube not talking to a single soul and no one talking to me i truly believe that my life ha reached a point where it just isn t worth living anymore besides my mother and baby brother i don t believe there is a single person that would even notice especially if i made it look like an accident with all the free time i now have i ve been reading a lot about spirituality and i ve stumbled across the plausibility of reincarnation the idea of death being the entry to a new life with life being a series of goal to fulfill a purpose from each life to the next it s been very difficult for me to try and think of any purpose my life ha at this point i m debilitatingly lonely i ve stopped caring about anything i ve become very cynical and i m letting thing that should be important to a person just waste away like just ceasing to pay my car bill because i no longer care if it get repossessed the idea of even the possibility of being able to start again since truly no one ha any idea what happens when you die is more appealing to me than continuing to live i m now and my life is going absolutely nowhere and i don t know what else to do i have no support system i have no one but myself and i hate myself more than anyone else the worst kind of lonely is when you aren t even there for yourself and that s where i m at now i ve always thought of myself a a great person i consistently go out of my way to help others even now if someone reach out to me for something i don t hesitate but i just can t get anyone to stick around not even my own father give a shit about me anymore i used to think the world wa just fucked up and bad thing happen to good people but it s becoming more and more evident a i witness the relationship other people have the family other people have the friend other people have that that theory just doesn t add up the more likely possibility is that i myself am the issue i m the problem and i ve come to that realization now the idea that death might not be the end but a new beginning is very appealing to me like to think ha anyone else thought about these concept ha anyone else found themselves in a similar situation and thought about what come after death and whether it s worth it just curious and looking for some input thank you
+
+  [14] row 672:
+  he always seemed happy we always fucked around and had a good time we always talked about thing that bothered u but he never showed any sign that he wa upset or depressed i still sit around thinking why and can never draw any conclusion that would make sense i m slowly coming out of the mental ditch but i handled it by stuffing a much alcohol in me a possible i m coming out if that ditch but it still bum me out i completely stopped taking care of myself and the house so i decided to clean up today because i just felt happier here is what a month of cope look like http imgur com a ce x there way more trash and beer can but i wa honestly too embarrassed to even show the rest glad to finally slowly be getting better
+
+  [15] row 2279:
+  over the past few month i ve felt like shit i ve been tired lonely and the depressed and on the verge of just doing it i ve had multiple occasion where parent haven t been home and i m just sitting there thinking about committing to doing it i can t handle the pressure of everyone around i feel like no body would really care even if i did end it all i don t have many friend and verbally abusive family member brother and mom i feel like nobody would miss me i m told several time a day at school to km and that no body would care i have alot of child hood trauma from growing up that i don t want to get into my home life and school is very verbally abusive to me i get shoved into locker at school jumped one kid even broke my tibia in the hallway i m never happy and haven t been happy in several year a soon a i get happy i go back to having bad thought again for example today my mom wa out picking up furniture and i wa at home watching tv she wa out for at least an hour at this point but then a little bit after i just had the sudden urge to do it i then called mom and tolled her that i threw up which wa a lie so she could come home and stop me from hurting myself tomorrow i m going to tell her everything that ha been happening and hopefully getting some therapy and medication do you guy have any suggestion for what i could do to be a little more happier sometimes
+
+--- 5. 15 random Class-0 (non-depression) rows containing 'sad' ---
+  (Pool size: 162 rows)
+
+  [01] row 5859:
+  is sad that the march break is over
+
+  [02] row 5520:
+  amyg0 thats really sad i wolud hate that but i had choco milk earlier d lol
+
+  [03] row 4503:
+  i miss being at home for calving season sad that black one died this morning wish i had some bottle calf
+
+  [04] row 6742:
+  tonight s episode of house incredibly sad and it ha nothing to do with meatloaf s usual bad acting
+
+  [05] row 5040:
+  why do people keep following me and then randomly stop it make me sad
+
+  [06] row 6345:
+  it s mum birthday im glad she like her pressies i m looking forward to party time later this week but sad im not going to cornwall
+
+  [07] row 5560:
+  devakishor oh oh that s sad
+
+  [08] row 5598:
+  well that made me sad i sat down to watch tv and then remembered i dont have cable anymore lol
+
+  [09] row 4680:
+  can t believe cutner is dead on house sad day in santa rosa ca http loopt u orpl a
+
+  [10] row 5865:
+  ellendeg ellen do my message not get to you if you didn t notice i m sad i try so hard to communicate wif u
+
+  [11] row 4290:
+  sad that the foot of my macbook just fell off sad that the foot of my macbook just fell off
+
+  [12] row 4687:
+  a king sized bed is nice but sad and lonely with no hubby puppy or kitty i am over this whole conferenceing thing
+
+  [13] row 7164:
+  still up sad i lost follower
+
+  [14] row 7654:
+  I felt sad today thinking about a friend moving away, but sitting with that feeling for a bit helped, and I'm doing alright overall.
+
+  [15] row 7701:
+  I felt a little sad remembering the end of a favorite show, but I also felt grateful for the good memories, and I'm looking forward to what's next.
+
+======================================================================
+  END OF DIAGNOSTIC
+======================================================================

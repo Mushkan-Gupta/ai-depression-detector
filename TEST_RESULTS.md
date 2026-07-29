@@ -80,8 +80,6 @@
 - ✅ Confidence score display
 - ✅ Loading states
 - ✅ Error handling
-- ✅ Voice input support
-- ✅ Chat interface
 - ✅ Logout functionality
 
 ## 🔧 Improvements Made
@@ -181,7 +179,6 @@ All critical functionality is working as expected.
    - Severe symptoms (expect High risk)
 4. Test theme switching
 5. Test on mobile devices
-6. Test voice input (if browser supports it)
 
 ## 🎯 Test Summary
 

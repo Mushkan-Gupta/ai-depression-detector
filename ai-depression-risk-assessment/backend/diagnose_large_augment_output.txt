@@ -1,0 +1,105 @@
+======================================================================
+  LARGE AUGMENTATION FULL RUN — RAW OUTPUT RECORD
+  Saved: diagnose_large_augment_output.txt
+======================================================================
+
+--- STEP 1: BACKUPS ---
+BACKUP MODEL : depression_model_backup_pre_large_augment.pkl  size=802454 bytes
+BACKUP CSV   : synthetic_journal_entries_backup_pre_large_augment.csv  size=20044 bytes
+
+--- STEP 2: generate_augmentation.py ---
+Generated 210 rows -> generated_augmentation.csv
+Class 0: 100, Class 1: 110
+File: generated_augmentation.csv  size=26018 bytes
+Data rows (excluding header): 210
+
+--- STEP 3: APPEND TO synthetic_journal_entries.csv ---
+Rows before append: 55
+Rows after append : 265
+New rows added    : 210
+
+--- STEP 4: merge_datasets.py ---
+[INFO] Starting data merge process...
+[INFO] Initial rows: 9193 (Main: 7729, Synthetic: 265, Blog: 1199)
+[INFO] Removed 0 empty/invalid samples.
+[INFO] Removed 78 short samples (< 3 words).
+[INFO] Removed 140 duplicate samples.
+
+Total samples: 8975
+Class 0: 5185 (57.8%)
+Class 1: 3790 (42.2%)
+Average text length: 77.3 words
+
+Net new rows vs previous (8830): +145
+  -- 210 new rows added to synthetic
+  -- 140 removed as duplicates (generated rows repeated template text)
+  -- 78 already removed before this run (short-text filter, unchanged)
+
+--- STEP 5: train_model.py ---
+[INFO] Dataset size: 8975 rows
+[RESULT] Test Accuracy: 0.9471  (94.71%)
+[RESULT] 5-Fold CV Accuracy: 0.9229 (+/- 0.0448)
+[RESULT] ROC-AUC Score: 0.9870
+[OK] Saved model -> depression_model.pkl
+[OK] Saved vectorizer -> vectorizer.pkl
+
+--- STEP 6: diagnose_single_split.py (unmodified) ---
+[1] Rows: 8975  |  Class 0: 5185, Class 1: 3790
+[2] Vocabulary size: 20000  |  Feature matrix: (8975, 20000)
+[3] train_test_split(X_vec, y, test_size=0.2, random_state=42, stratify=y)
+    Train rows: 7180   |   Test rows: 1795
+[4] Plain LR fitted. Single coefficient vector produced.
+
+[5] Coefficient values:
+  Word: 'sad'       index 14407   Coefficient: -1.24844714
+  Word: 'happy'     index  7183   Coefficient:  0.91397134
+  Word: 'grateful'  index  6809   Coefficient:  0.86905379
+  Word: 'good'      index  6578   Coefficient: -0.35157562
+
+[6] Performance:
+  Accuracy : 0.947632
+  ROC-AUC  : 0.987586
+
+  Classification Report:
+                          precision  recall  f1-score  support
+Class 0 (Non-Depression)    0.94     0.97     0.96     1037
+    Class 1 (Depression)    0.96     0.91     0.94      758
+                accuracy                      0.95     1795
+
+  Confusion Matrix:
+[[1009   28]
+ [  66  692]]
+
+[SAVED] diagnose_single_split_output.txt  |  Read-back: True
+
+--- STEP 7: diagnose_word_context.py sections 2-3 (unmodified) ---
+
+Word 'happy' — per-source, per-class:
+  Reddit (depression_dataset.csv):
+    Class 0:  30 /  3901 rows (0.77%)
+    Class 1: 285 /  3828 rows (7.45%)
+  Synthetic (synthetic_journal_entries.csv):
+    Class 0:  20 /   149 rows (13.42%)
+    Class 1:   6 /   116 rows  (5.17%)
+  Blog (filtered_blog_sample.csv):
+    Class 0:  65 /  1199 rows  (5.42%)
+    Class 1:   0 /     0 rows  (0.00%)
+  TOTAL merged_depression_dataset.csv:
+    Class 0: 115 /  5185 rows  (2.22%)
+    Class 1: 284 /  3790 rows  (7.49%)
+
+Word 'sad' — per-source, per-class:
+  Reddit (depression_dataset.csv):
+    Class 0: 133 /  3901 rows (3.41%)
+    Class 1: 184 /  3828 rows (4.81%)
+  Synthetic (synthetic_journal_entries.csv):
+    Class 0:  29 /   149 rows (19.46%)
+    Class 1:  21 /   116 rows (18.10%)
+  Blog (filtered_blog_sample.csv):
+    Class 0:   0 /  1199 rows  (0.00%)
+    Class 1:   0 /     0 rows  (0.00%)
+  TOTAL merged_depression_dataset.csv:
+    Class 0: 162 /  5185 rows  (3.12%)
+    Class 1: 189 /  3790 rows  (4.99%)
+
+[SAVED] diagnose_word_context_output.txt  |  Read-back: True

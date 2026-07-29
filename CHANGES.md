@@ -55,11 +55,9 @@
 
 ### 📱 Additional Features
 
-#### Authentication (chat.js)
+#### Authentication (auth.js)
 - Added checkAuth() function to protect home page
 - Automatic redirect to login if not authenticated
-- Voice input functionality with speech recognition
-- Better error messages for unsupported browsers
 
 #### Theme System (theme.js)
 - Already working well, no changes needed
@@ -160,7 +158,6 @@ python test_api.py
 ✅ Responsive mobile design
 ✅ Dark/Light theme support
 ✅ Secure authentication
-✅ Voice input support
 ✅ Comprehensive documentation
 ✅ Easy setup scripts
 ✅ Testing utilities

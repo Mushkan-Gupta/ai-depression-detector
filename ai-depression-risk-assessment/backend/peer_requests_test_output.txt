@@ -1,0 +1,306 @@
+﻿[DB] Connected to MongoDB Atlas successfully.
+[DB] Indexes verified.
+======================================================================
+SETUP
+======================================================================
+  User A: id=6a698e043a2206ffc4e426c3  themes=[anxiety,grief]  risk=Low  opted_in=True
+  User B: id=6a698e043a2206ffc4e426c4  themes=[anxiety,sleep]  risk=Low  opted_in=True
+  User C: id=6a698e053a2206ffc4e426c5  themes=[anxiety,grief]  risk=Low  opted_in=True  (third party)
+
+======================================================================
+TEST (a): A sends request to B -> 201, pending, risk snapshots captured
+======================================================================
+
+  [A->B request] POST /peer/requests
+  HTTP 201
+  {
+    "request": {
+        "created_at": "2026-07-29T05:25:17.699946+00:00",
+        "expires_at": "2026-08-01T05:25:17.699946+00:00",
+        "id": "6a698ebdaf61764880f3f467",
+        "receiver_id": "6a698e043a2206ffc4e426c4",
+        "responded_at": null,
+        "sender_id": "6a698e043a2206ffc4e426c3",
+        "status": "pending"
+    }
+}
+  [PASS] 201 pending. DB risk snapshots: sender=Low receiver=Low
+  [PASS] Risk fields not in response body. Keys present: ['created_at', 'expires_at', 'id', 'receiver_id', 'responded_at', 'sender_id', 'status']
+
+======================================================================
+TEST (b): A sends second request to B while first is pending -> 400
+======================================================================
+
+  [A->B duplicate] POST /peer/requests
+  HTTP 400
+  {
+    "error": "request already pending"
+}
+  [PASS] 400 'request already pending'
+
+  [B->A (reverse, A->B pending)] POST /peer/requests
+  HTTP 400
+  {
+    "error": "request already pending"
+}
+  [PASS] 400 'request already pending' for reverse direction too
+
+======================================================================
+TEST (c): A sends request to themselves -> 400
+======================================================================
+
+  [A->A self] POST /peer/requests
+  HTTP 400
+  {
+    "error": "cannot send a request to yourself"
+}
+  [PASS] 400 'cannot send a request to yourself'
+
+======================================================================
+TEST (d): A's risk set to High, A tries to send NEW request to B -> 400 with specific reason
+======================================================================
+
+  [A(High)->B] POST /peer/requests
+  HTTP 400
+  {
+    "error": "not_eligible",
+    "reason": "one or both users currently have a high risk level"
+}
+  [PASS] 400 not_eligible. Reason: 'one or both users currently have a high risk level'
+  Fresh A->B request created: id=6a698ebfaf61764880f3f468
+
+======================================================================
+TEST (e): B accepts the valid pending A->B request -> accepted
+======================================================================
+
+  [B accepts A->B] POST /peer/requests/6a698ebfaf61764880f3f468/accept
+  HTTP 200
+  {
+    "message": "Connection request accepted.",
+    "request_id": "6a698ebfaf61764880f3f468",
+    "responded_at": "2026-07-29T05:25:20.001518+00:00",
+    "status": "accepted"
+}
+  [PASS] 200 accepted. DB responded_at=2026-07-29T05:25:20.001000
+
+======================================================================
+TEST (f): Fresh A->B request, B declines -> declined
+======================================================================
+  Fresh A->B request: id=6a698ec0af61764880f3f469
+
+  [B declines A->B] POST /peer/requests/6a698ec0af61764880f3f469/decline
+  HTTP 200
+  {
+    "message": "Connection request declined.",
+    "request_id": "6a698ec0af61764880f3f469",
+    "responded_at": "2026-07-29T05:25:20.778841+00:00",
+    "status": "declined"
+}
+  [PASS] 200 declined. DB status=declined decline_reason=None
+
+======================================================================
+TEST (g): Fresh request, expires_at set to past, accept -> 410 lazy expiry
+======================================================================
+  Fresh A->B request: id=6a698ec1af61764880f3f46a
+  expires_at set to 1 hour ago
+
+  [B accepts expired request] POST /peer/requests/6a698ec1af61764880f3f46a/accept
+  HTTP 410
+  {
+    "error": "request_expired",
+    "message": "This connection request expired before it could be accepted."
+}
+  [PASS] 410 request_expired. DB status=expired, decline_reason=expired_on_access
+
+======================================================================
+TEST (h): Fresh request, receiver (B) set to High, accept -> 409 risk escalation
+======================================================================
+  Fresh A->B request: id=6a698ec2af61764880f3f46b
+  B's current_risk_level set to High in DB
+
+  [B (High-risk) accepts request] POST /peer/requests/6a698ec2af61764880f3f46b/accept
+  HTTP 409
+  {
+    "error": "request_declined_risk_escalation",
+    "message": "This connection request could not be accepted because one or both users' risk level has changed since the request was sent. Crisis support resources are available."
+}
+  [PASS] 409 risk_escalation. DB status=declined, decline_reason=risk_escalation
+
+======================================================================
+TEST (i): Third party C tries to accept/decline A->B request -> 403
+======================================================================
+  Fresh A->B request: id=6a698ec3af61764880f3f46c
+
+  [C tries to accept A->B] POST /peer/requests/6a698ec3af61764880f3f46c/accept
+  HTTP 403
+  {
+    "error": "forbidden"
+}
+  [PASS] 403 forbidden when C tries to accept
+
+  [C tries to decline A->B] POST /peer/requests/6a698ec3af61764880f3f46c/decline
+  HTTP 403
+  {
+    "error": "forbidden"
+}
+  [PASS] 403 forbidden when C tries to decline
+
+  [A (sender) tries to accept their own request] POST /peer/requests/6a698ec3af61764880f3f46c/accept
+  HTTP 403
+  {
+    "error": "forbidden"
+}
+  [PASS] 403 forbidden when sender (A) tries to accept their own request
+
+======================================================================
+TEST (j): GET /peer/requests?type=incoming and ?type=sent
+======================================================================
+
+  [B incoming requests] GET /peer/requests?type=incoming
+  HTTP 200
+  {
+    "requests": [
+        {
+            "created_at": "2026-07-29T05:25:23.064000",
+            "expires_at": "2026-08-01T05:25:23.064000",
+            "id": "6a698ec3af61764880f3f46c",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": null,
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "pending"
+        },
+        {
+            "created_at": "2026-07-29T05:25:22.081000",
+            "decline_reason": "risk_escalation",
+            "expires_at": "2026-08-01T05:25:22.081000",
+            "id": "6a698ec2af61764880f3f46b",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": "2026-07-29T05:25:22.457000",
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "declined"
+        },
+        {
+            "created_at": "2026-07-29T05:25:21.321000",
+            "decline_reason": "expired_on_access",
+            "expires_at": "2026-07-29T04:25:21.380000",
+            "id": "6a698ec1af61764880f3f46a",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": "2026-07-29T05:25:21.571000",
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "expired"
+        },
+        {
+            "created_at": "2026-07-29T05:25:20.593000",
+            "expires_at": "2026-08-01T05:25:20.593000",
+            "id": "6a698ec0af61764880f3f469",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": "2026-07-29T05:25:20.778000",
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "declined"
+        },
+        {
+            "created_at": "2026-07-29T05:25:19.697000",
+            "expires_at": "2026-08-01T05:25:19.697000",
+            "id": "6a698ebfaf61764880f3f468",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": "2026-07-29T05:25:20.001000",
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "accepted"
+        },
+        {
+            "created_at": "2026-07-29T05:25:17.699000",
+            "expires_at": "2026-08-01T05:25:17.699000",
+            "id": "6a698ebdaf61764880f3f467",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": "2026-07-29T05:25:18.769000",
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "expired"
+        }
+    ],
+    "type": "incoming"
+}
+  [PASS] B incoming: 6 requests. req_i_id present. No risk fields leaked.
+
+  [A sent requests] GET /peer/requests?type=sent
+  HTTP 200
+  {
+    "requests": [
+        {
+            "created_at": "2026-07-29T05:25:23.064000",
+            "expires_at": "2026-08-01T05:25:23.064000",
+            "id": "6a698ec3af61764880f3f46c",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": null,
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "pending"
+        },
+        {
+            "created_at": "2026-07-29T05:25:22.081000",
+            "decline_reason": "risk_escalation",
+            "expires_at": "2026-08-01T05:25:22.081000",
+            "id": "6a698ec2af61764880f3f46b",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": "2026-07-29T05:25:22.457000",
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "declined"
+        },
+        {
+            "created_at": "2026-07-29T05:25:21.321000",
+            "decline_reason": "expired_on_access",
+            "expires_at": "2026-07-29T04:25:21.380000",
+            "id": "6a698ec1af61764880f3f46a",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": "2026-07-29T05:25:21.571000",
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "expired"
+        },
+        {
+            "created_at": "2026-07-29T05:25:20.593000",
+            "expires_at": "2026-08-01T05:25:20.593000",
+            "id": "6a698ec0af61764880f3f469",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": "2026-07-29T05:25:20.778000",
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "declined"
+        },
+        {
+            "created_at": "2026-07-29T05:25:19.697000",
+            "expires_at": "2026-08-01T05:25:19.697000",
+            "id": "6a698ebfaf61764880f3f468",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": "2026-07-29T05:25:20.001000",
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "accepted"
+        },
+        {
+            "created_at": "2026-07-29T05:25:17.699000",
+            "expires_at": "2026-08-01T05:25:17.699000",
+            "id": "6a698ebdaf61764880f3f467",
+            "receiver_id": "6a698e043a2206ffc4e426c4",
+            "responded_at": "2026-07-29T05:25:18.769000",
+            "sender_id": "6a698e043a2206ffc4e426c3",
+            "status": "expired"
+        }
+    ],
+    "type": "sent"
+}
+  [PASS] A sent: 6 requests. All sender_id=A. No risk fields leaked.
+
+  [C sent requests (should be empty)] GET /peer/requests?type=sent
+  HTTP 200
+  {
+    "requests": [],
+    "type": "sent"
+}
+  [PASS] C has no sent requests (correct isolation)
+
+  [bad type=all param] GET /peer/requests?type=all
+  HTTP 400
+  {
+    "error": "type must be 'incoming' or 'sent'"
+}
+  [PASS] 400 for invalid type param
+
+======================================================================
+ALL TESTS PASSED
+======================================================================

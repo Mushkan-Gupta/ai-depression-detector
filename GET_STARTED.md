@@ -127,7 +127,6 @@ We've created comprehensive documentation for you:
 
 ### User Experience
 - Secure authentication
-- Voice input support
 - Clear feedback
 - Intuitive interface
 - Fast performance

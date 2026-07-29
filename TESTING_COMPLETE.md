@@ -110,7 +110,6 @@ Please test these features manually:
 - [ ] Test theme switching (light/dark)
 - [ ] Test logout functionality
 - [ ] Test on mobile device (responsive design)
-- [ ] Test voice input button (if browser supports)
 
 ## 🎨 Features Verified
 
@@ -131,8 +130,6 @@ Please test these features manually:
 - ✅ AI risk assessment
 - ✅ Confidence scores
 - ✅ Theme switching
-- ✅ Voice input support
-- ✅ Chat interface
 - ✅ Logout
 
 ### Integration

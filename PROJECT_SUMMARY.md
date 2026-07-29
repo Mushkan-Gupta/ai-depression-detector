@@ -20,7 +20,7 @@ MindEase/
 ├── ⚡ JavaScript
 │   ├── js/analyze.js                 # AI backend integration ⭐
 │   ├── js/auth.js                    # Authentication logic
-│   ├── js/chat.js                    # Chat & voice features
+│   ├── js/chat.js                    # Legacy music toggle script
 │   └── js/theme.js                   # Theme switching
 │
 ├── 🤖 AI Backend
@@ -96,7 +96,6 @@ python test_api.py
 ### 📱 User Experience
 - Intuitive interface
 - Clear visual feedback
-- Voice input support
 - Smooth page transitions
 - Professional appearance
 - Accessible design
@@ -192,10 +191,9 @@ Border Radius:  12px - 50px
 - ✅ Password strength checks
 - ✅ CORS enabled
 - ✅ Input sanitization
-- ⚠️ localStorage auth (demo only)
+- ✅ Backend auth (JWT tokens, bcrypt hashing, Google OAuth)
 
 ### Production Requirements
-- 🔲 Backend authentication (JWT/OAuth)
 - 🔲 HTTPS/SSL
 - 🔲 Rate limiting
 - 🔲 Database encryption
@@ -268,8 +266,6 @@ Border Radius:  12px - 50px
 5. Displays result with confidence
 
 ### Additional Features
-- Chat interface for support
-- Voice input for accessibility
 - Theme switching for comfort
 - Secure authentication
 
@@ -325,7 +321,7 @@ User Sees Result
 - [ ] Email notifications
 
 ### Medium Term
-- [ ] Real-time chat with AI therapist
+- [ ] Real-time chat with AI therapist *(Note: An early UI mockup with static, hardcoded responses existed during initial development. It was removed when the project shifted focus to the ML-based journal analysis pipeline.)*
 - [ ] Mood tracking calendar
 - [ ] Resource recommendations
 - [ ] Community support features

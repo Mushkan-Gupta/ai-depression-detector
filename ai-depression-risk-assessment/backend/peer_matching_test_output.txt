@@ -1,0 +1,224 @@
+﻿[DB] Connected to MongoDB Atlas successfully.
+[DB] Indexes verified.
+======================================================================
+SETUP: Registering test users and giving peer consent
+======================================================================
+  User A: id=6a68e7ed92c091d07114cafb  themes=[anxiety,loneliness,grief]  risk=Low
+  User B: id=6a68e7ed92c091d07114cafc  themes=[anxiety,grief,sleep]        risk=Moderate
+  User C: id=6a68e7ee92c091d07114cafd  themes=[anxiety,loneliness]         risk=High
+  User D: id=6a68e7ee92c091d07114cafe  themes=[work_stress]                risk=Low
+
+======================================================================
+TEST (a): User A opts in. B/C/D not opted in -> empty candidate list
+======================================================================
+
+  [A opt-in] POST /peer/opt-in
+  HTTP 200
+  {
+    "candidates": [],
+    "message": "Opted in to peer matching."
+}
+  [PASS] User A opt-in 200, candidates = []
+
+======================================================================
+TEST (b): User B opts in -> B's response includes User A in candidates
+======================================================================
+
+  [B opt-in] POST /peer/opt-in
+  HTTP 200
+  {
+    "candidates": [
+        {
+            "candidate_id": "6a68e7ed92c091d07114cafb",
+            "overlapping_themes": [
+                "anxiety",
+                "grief"
+            ],
+            "peer_display_name": "UserA-Anon"
+        }
+    ],
+    "message": "Opted in to peer matching."
+}
+  [PASS] B opt-in 200, User A appears with overlapping_themes=['anxiety', 'grief']
+  [PASS] High-risk User C absent from B's candidate list
+
+======================================================================
+TEST (c): GET /peer/candidates as User A -> User B appears
+======================================================================
+
+  [A get-candidates] GET /peer/candidates
+  HTTP 200
+  {
+    "candidates": [
+        {
+            "candidate_id": "6a68e7ed92c091d07114cafc",
+            "overlapping_themes": [
+                "anxiety",
+                "grief"
+            ],
+            "peer_display_name": "UserB-Anon"
+        }
+    ]
+}
+  [PASS] User B appears: {'candidate_id': '6a68e7ed92c091d07114cafc', 'overlapping_themes': ['anxiety', 'grief'], 'peer_display_name': 'UserB-Anon'}
+  [PASS] No PII leaked ΓÇö only keys: ['candidate_id', 'overlapping_themes', 'peer_display_name']
+  [PASS] High-risk User C absent from A's candidate list
+
+======================================================================
+TEST (d): User C (High-risk) manually opted-in via DB -> still excluded from A and B candidates
+======================================================================
+
+  [A get-candidates after C opted-in] GET /peer/candidates
+  HTTP 200
+  {
+    "candidates": [
+        {
+            "candidate_id": "6a68e7ed92c091d07114cafc",
+            "overlapping_themes": [
+                "anxiety",
+                "grief"
+            ],
+            "peer_display_name": "UserB-Anon"
+        }
+    ]
+}
+  [PASS] User C (High-risk) excluded from A's candidate list even when opted-in
+
+  [B get-candidates after C opted-in] GET /peer/candidates
+  HTTP 200
+  {
+    "candidates": [
+        {
+            "candidate_id": "6a68e7ed92c091d07114cafb",
+            "overlapping_themes": [
+                "anxiety",
+                "grief"
+            ],
+            "peer_display_name": "UserA-Anon"
+        }
+    ]
+}
+  [PASS] User C (High-risk) excluded from B's candidate list even when opted-in
+
+======================================================================
+TEST (e): User C (High-risk) tries POST /peer/opt-in -> 403 + crisis guidance
+======================================================================
+
+  [C opt-in (should 403)] POST /peer/opt-in
+  HTTP 403
+  {
+    "crisis_guidance": {
+        "guidance": "If you are having thoughts of ending your life or harming yourself, please reach out to a crisis line immediately \u2014 trained counselors are there 24/7 and want to help. You do not have to carry this alone. Talking to someone \u2014 a friend, family member, or professional \u2014 is a courageous and important step. Your feelings are real and valid, and with the right support, things can get better.",
+        "resources": [
+            "\ud83c\udd98 iCall (India): 9152987821 (Mon\u2013Sat, 8am\u201310pm)",
+            "\ud83c\udd98 Vandrevala Foundation (India, 24/7): 1860-2662-345",
+            "\ud83c\udd98 National Suicide Prevention Lifeline (US, 24/7): 988",
+            "\ud83c\udd98 Samaritans (UK, 24/7): 116 123",
+            "\ud83c\udd98 Crisis Text Line (Global): text HOME to 741741",
+            "International Association for Suicide Prevention: iasp.info/resources/Crisis_Centres"
+        ],
+        "summary": "Your entry contains signals that suggest you may be experiencing a significant mental health crisis. Please know that you are not alone, and immediate support is available. Your life has immense value."
+    },
+    "error": "opt_in_unavailable_high_risk"
+}
+  [PASS] 403 received with crisis_guidance block
+  [PASS] User C's available_for_matching was NOT set to True in DB
+
+======================================================================
+TEST (f): Bidirectional exclusion ΓÇö add A to B's excluded_users -> neither sees the other
+======================================================================
+
+  [A get-candidates after B excludes A] GET /peer/candidates
+  HTTP 200
+  {
+    "candidates": []
+}
+  [PASS] A's candidate list no longer contains B (B excluded A)
+
+  [B get-candidates (A in B's excluded list)] GET /peer/candidates
+  HTTP 200
+  {
+    "candidates": []
+}
+  [PASS] B's candidate list no longer contains A
+
+======================================================================
+TEST (g): User D (zero theme overlap with A/B) opts in -> not shown to A or B
+======================================================================
+
+  [A get-candidates (D has zero overlap)] GET /peer/candidates
+  HTTP 200
+  {
+    "candidates": [
+        {
+            "candidate_id": "6a68e7ed92c091d07114cafc",
+            "overlapping_themes": [
+                "anxiety",
+                "grief"
+            ],
+            "peer_display_name": "UserB-Anon"
+        }
+    ]
+}
+  [PASS] User D (zero overlap) does not appear in A's candidates
+
+  [B get-candidates (D has zero overlap)] GET /peer/candidates
+  HTTP 200
+  {
+    "candidates": [
+        {
+            "candidate_id": "6a68e7ed92c091d07114cafb",
+            "overlapping_themes": [
+                "anxiety",
+                "grief"
+            ],
+            "peer_display_name": "UserA-Anon"
+        }
+    ]
+}
+  [PASS] User D (zero overlap) does not appear in B's candidates
+
+======================================================================
+TEST (bonus): GET /peer/candidates without being opted in -> 400
+======================================================================
+
+  [A get-candidates (not opted in)] GET /peer/candidates
+  HTTP 400
+  {
+    "error": "not_opted_in"
+}
+  [PASS] 400 returned when not opted in
+
+======================================================================
+TEST (bonus): User B opts out -> B no longer appears in A's candidates
+======================================================================
+
+  [B opt-out] POST /peer/opt-out
+  HTTP 200
+  {
+    "message": "Opted out of peer matching."
+}
+  [PASS] Opt-out 200; available_for_matching=False, matching_started_at=None in DB
+
+  [A get-candidates after B opted out] GET /peer/candidates
+  HTTP 200
+  {
+    "candidates": []
+}
+  [PASS] B no longer in A's candidate list after opt-out
+
+======================================================================
+TEST (bonus): Idempotency ΓÇö opt A in twice, matching_started_at unchanged
+======================================================================
+
+  [A opt-in again (idempotent)] POST /peer/opt-in
+  HTTP 200
+  {
+    "candidates": [],
+    "message": "Opted in to peer matching."
+}
+  [PASS] matching_started_at unchanged: 2026-07-29 05:11:51.041000
+
+======================================================================
+ALL TESTS PASSED
+======================================================================

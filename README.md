@@ -8,7 +8,6 @@ A professional mental health support application with AI-powered depression risk
 - 🤖 AI-powered depression risk assessment
 - 🔐 Secure authentication system
 - 🌓 Dark/Light theme support
-- 💬 Interactive chat interface
 - 📝 Journal analysis with confidence scores
 
 ## Tech Stack
@@ -95,14 +94,13 @@ Analyzes journal text and returns depression risk assessment
 ```
 .
 ├── index.html              # Login/Signup page
-├── home.html              # Main application page
 ├── css/
 │   ├── auth.css          # Authentication page styles
 │   └── home.css          # Home page styles
 ├── js/
 │   ├── auth.js           # Authentication logic
 │   ├── analyze.js        # AI analysis integration
-│   ├── chat.js           # Chat functionality
+│   ├── chat.js           # Legacy file (chat feature removed, see Future Enhancements)
 │   └── theme.js          # Theme switching
 └── ai-depression-risk-assessment/
     └── backend/
@@ -135,7 +133,7 @@ Analyzes journal text and returns depression risk assessment
 ## Future Enhancements
 
 - Database integration for user data persistence
-- Real-time chat with AI therapist
+- Real-time chat with AI therapist *(Note: An early UI mockup with static, hardcoded responses existed during initial development. It was removed when the project shifted focus to the ML-based journal analysis pipeline.)*
 - Progress tracking and analytics
 - Mobile app version
 - Multi-language support

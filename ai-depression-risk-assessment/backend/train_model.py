@@ -13,12 +13,12 @@ from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.calibration import CalibratedClassifierCV
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
 import pickle
 import os
 
 base_dir     = os.path.dirname(os.path.abspath(__file__))
-csv_path     = os.path.join(base_dir, "depression_dataset.csv")
+csv_path     = os.path.join(base_dir, "merged_depression_dataset.csv")
 
 print("[INFO] Loading dataset...")
 data = pd.read_csv(csv_path)
@@ -64,21 +64,24 @@ y_pred = model.predict(X_test)
 acc    = model.score(X_test, y_test)
 
 print(f"[RESULT] Test Accuracy: {acc:.4f}  ({round(acc*100,2)}%)")
-print("\n[RESULT] Classification Report:")
+print("\n[RESULT] Classification Report (Precision, Recall, F1-score):")
 print(classification_report(y_test, y_pred, target_names=["No Depression", "Depression"]))
 print("[RESULT] Confusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
 
 cv_scores = cross_val_score(model, X_vec, y, cv=5, scoring="accuracy")
-print(f"\n[RESULT] 5-Fold CV: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
+print(f"\n[RESULT] 5-Fold CV Accuracy: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})")
 
 # ─── Probability analysis ─────────────────────────────────────────────────
-proba_sample = model.predict_proba(X_test[:300])
+proba_sample = model.predict_proba(X_test)
 dep_probs    = proba_sample[:, 1]
-actual       = np.array(y_test)[:300]
+actual       = np.array(y_test)
 
 non_dep_probs = dep_probs[actual == 0]
 dep_only      = dep_probs[actual == 1]
+
+roc_auc = roc_auc_score(y_test, dep_probs)
+print(f"[RESULT] ROC-AUC Score: {roc_auc:.4f}")
 
 print(f"\n[INFO] Probability distribution on test set:")
 print(f"  Non-depression (label=0): mean={non_dep_probs.mean():.3f}  median={np.median(non_dep_probs):.3f}  p75={np.percentile(non_dep_probs,75):.3f}")

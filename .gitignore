@@ -1,10 +1,35 @@
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Virtual environments
 .env
-.venv
+.venv/
 venv/
 ENV/
 env/
-.tempmediaStorage/
+
+# IDE / AI
 .gemini/
+.tempmediaStorage/
+
+# ML models
+*.pkl
+*.joblib
+*.npz
+
+# Large datasets
+*.csv
+!requirements.csv
+!sample*.csv
+
+# Test outputs
+*_output.txt
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
