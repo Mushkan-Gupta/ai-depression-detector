@@ -35,4 +35,7 @@ google-auth>=2.28.0
 # ── Testing & Additional Tools ───────────────────────────────────────────────
 requests>=2.31.0
 pandas>=2.0.0
-
+pytest>=8.0.0
+pytest-cov>=5.0.0
+gunicorn>=21.2.0
+gunicorn>=21.2.0

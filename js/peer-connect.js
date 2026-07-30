@@ -1,5 +1,3 @@
-const PEER_API_BASE = 'http://127.0.0.1:5000/peer';
-
 // DOM Elements
 const consentSection = document.getElementById('consentSection');
 const mainPeerDashboard = document.getElementById('mainPeerDashboard');
@@ -13,37 +11,6 @@ const sentRequestsList = document.getElementById('sentRequestsList');
 const conversationsList = document.getElementById('conversationsList');
 
 let isOptedIn = false;
-
-// ── Auth Guard ──────────────────────────────────────────────────────────────
-function getAuthToken() {
-  const token = localStorage.getItem('mindease_token');
-  if (!token) {
-    window.location.href = 'auth.html';
-  }
-  return token;
-}
-
-// Global fetch wrapper for peer routes to handle 401s
-async function peerFetch(endpoint, options = {}) {
-  const token = getAuthToken();
-  const headers = {
-    'Authorization': `Bearer ${token}`,
-    'Content-Type': 'application/json',
-    ...(options.headers || {})
-  };
-
-  const response = await fetch(`${PEER_API_BASE}${endpoint}`, { ...options, headers });
-  
-  if (response.status === 401) {
-    if (typeof logout === 'function') logout();
-    else {
-      localStorage.removeItem('mindease_token');
-      localStorage.removeItem('mindease_user');
-      window.location.href = 'auth.html';
-    }
-  }
-  return response;
-}
 
 // ── Initialization ──────────────────────────────────────────────────────────
 async function initPeerConnect() {
@@ -171,27 +138,71 @@ async function toggleMatching() {
   }
 }
 
+// ── FIX 3: sendRequest — no alert(), patch card in-place ───────────────────
 async function sendRequest(candidateId) {
+  // Find this candidate's card and button by data attribute set at render time
+  const card = document.querySelector(`.candidate-card[data-candidate-id="${candidateId}"]`);
+  const btn = card ? card.querySelector('.accept-btn') : null;
+
+  // Clear any previous inline error on this card
+  if (card) {
+    const prev = card.querySelector('.inline-error');
+    if (prev) prev.remove();
+  }
+
   const res = await peerFetch('/requests', {
     method: 'POST',
     body: JSON.stringify({ receiver_id: candidateId })
   });
+
   if (res.ok) {
-    alert("Request sent!");
-    loadDashboardData();
+    // Patch the button in-place — no full page reload
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Request Sent';
+      btn.style.opacity = '0.6';
+      btn.style.cursor = 'default';
+    }
   } else {
     const data = await res.json();
-    alert(data.error || data.message || "Error sending request");
+    const msg = data.reason || data.error || data.message || 'Error sending request';
+    // Render error inline below the button
+    if (card) {
+      const errEl = document.createElement('p');
+      errEl.className = 'inline-error';
+      errEl.style.cssText = 'color:#ef4444;font-size:0.8rem;margin:0.4rem 0 0 0;';
+      errEl.textContent = msg;
+      card.appendChild(errEl);
+    }
   }
 }
 
+// ── FIX 1 + 4: handleRequest — corrected error codes, inline errors ─────────
 async function handleRequest(requestId, action) {
   const res = await peerFetch(`/requests/${requestId}/${action}`, { method: 'POST' });
   const data = await res.json();
-  
-  if (res.status === 409 && data.error === 'not_eligible_high_risk' && data.crisis_guidance) {
-    renderCrisisGuidance(data.crisis_guidance);
-    mainPeerDashboard.classList.add('hidden');
+
+  // ── FIX 1a: correct error code for risk escalation (was 'not_eligible_high_risk')
+  if (res.status === 409 && data.error === 'request_declined_risk_escalation') {
+    if (data.crisis_guidance) {
+      renderCrisisGuidance(data.crisis_guidance);
+      mainPeerDashboard.classList.add('hidden');
+    } else {
+      // Sender escalated (not the receiver) — show inline on the card
+      _showInlineRequestError(requestId, data.message || 'Request declined due to risk escalation.');
+    }
+    return;
+  }
+
+  // ── FIX 1b: explicit 410 expired handling
+  if (res.status === 410 && data.error === 'request_expired') {
+    _showInlineRequestError(requestId, 'This request has expired and can no longer be accepted.');
+    // Also remove the action buttons so the user isn't confused
+    const card = document.querySelector(`.request-card[data-request-id="${requestId}"]`);
+    if (card) {
+      const btnGroup = card.querySelector('.btn-group');
+      if (btnGroup) btnGroup.remove();
+    }
     return;
   }
 
@@ -201,8 +212,24 @@ async function handleRequest(requestId, action) {
       window.location.href = `peer-chat.html?conv=${data.conversation_id}`;
     }
   } else {
-    alert(data.error || "Action failed");
+    // ── FIX 4: no fallback alert() — show inline near the request card
+    const msg = data.error || data.message || 'Action failed';
+    _showInlineRequestError(requestId, msg);
   }
+}
+
+// Helper: show inline error text under a specific request card
+function _showInlineRequestError(requestId, msg) {
+  const card = document.querySelector(`.request-card[data-request-id="${requestId}"]`);
+  if (!card) return;
+  // Remove any existing inline error first
+  const prev = card.querySelector('.inline-error');
+  if (prev) prev.remove();
+  const errEl = document.createElement('p');
+  errEl.className = 'inline-error';
+  errEl.style.cssText = 'color:#ef4444;font-size:0.8rem;margin:0.4rem 0 0 0;width:100%;';
+  errEl.textContent = msg;
+  card.appendChild(errEl);
 }
 
 // ── Render Helpers ──────────────────────────────────────────────────────────
@@ -225,11 +252,11 @@ function renderCandidates(candidates) {
   }
 
   candidatesList.innerHTML = candidates.map(c => `
-    <div class="candidate-card">
+    <div class="candidate-card" data-candidate-id="${c.candidate_id}">
       <div class="candidate-info">
-        <h4>${c.peer_display_name}</h4>
+        <h4>${_safeName(c.peer_display_name)}</h4>
         <div class="theme-tags">
-          ${c.overlapping_themes.map(t => `<span class="theme-tag">${t}</span>`).join('')}
+          ${(c.overlapping_themes || []).map(t => `<span class="theme-tag">${t}</span>`).join('')}
         </div>
       </div>
       <button class="accept-btn" onclick="sendRequest('${c.candidate_id}')">Send Request</button>
@@ -245,9 +272,9 @@ function renderIncomingRequests(requests) {
   }
   
   incomingRequestsList.innerHTML = pending.map(r => `
-    <div class="request-card">
+    <div class="request-card" data-request-id="${r.id}">
       <div class="candidate-info">
-        <h4>${r.other_participant_name}</h4>
+        <h4>${_safeName(r.other_participant_name)}</h4>
         <span style="font-size:0.8rem; color:var(--text-secondary);">Sent ${new Date(r.created_at).toLocaleDateString()}</span>
       </div>
       <div class="btn-group">
@@ -266,9 +293,9 @@ function renderSentRequests(requests) {
   }
 
   sentRequestsList.innerHTML = pending.map(r => `
-    <div class="request-card">
+    <div class="request-card" data-request-id="${r.id}">
       <div class="candidate-info">
-        <h4>${r.other_participant_name}</h4>
+        <h4>${_safeName(r.other_participant_name)}</h4>
         <span style="font-size:0.8rem; color:var(--text-secondary);">Sent ${new Date(r.created_at).toLocaleDateString()}</span>
       </div>
       <span style="color:var(--text-secondary); font-size:0.9rem;">Pending</span>
@@ -285,7 +312,7 @@ function renderConversations(conversations) {
   conversationsList.innerHTML = conversations.map(c => `
     <div class="conversation-card" style="cursor:pointer;" onclick="window.location.href='peer-chat.html?conv=${c.id}'">
       <div class="candidate-info">
-        <h4>${c.other_participant_name}</h4>
+        <h4>${_safeName(c.other_participant_name)}</h4>
         <span style="font-size:0.8rem; color:var(--text-secondary);">Status: ${c.status}</span>
       </div>
       <span style="color:var(--text-secondary);">Chat &rarr;</span>

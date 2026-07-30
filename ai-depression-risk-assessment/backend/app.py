@@ -175,8 +175,24 @@ def keyword_classify(text: str):
 
 
 # ── Routes ─────────────────────────────────────────────────────────────────
+from flask import send_from_directory
+
+FRONTEND_DIR = os.path.abspath(os.path.join(base_dir, "..", ".."))
+
 @app.route("/")
-def home():
+def serve_index():
+    return send_from_directory(FRONTEND_DIR, "index.html")
+
+@app.route("/<path:filename>")
+def serve_frontend(filename):
+    if filename in ["index.html", "peer-connect.html", "peer-chat.html", "auth.html"]:
+        return send_from_directory(FRONTEND_DIR, filename)
+    if filename.startswith("css/") or filename.startswith("js/"):
+        return send_from_directory(FRONTEND_DIR, filename)
+    return {"error": "Not found"}, 404
+
+@app.route("/health")
+def health():
     return {
         "status":       "running",
         "message":      "MindEase AI Depression Detection API",

@@ -27,6 +27,7 @@ Design notes
   sort logic is defined exactly once.
 """
 
+import random
 from datetime import datetime, timedelta, timezone
 from functools import wraps
 
@@ -37,6 +38,27 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 import db as _db
 from utils.crisis_check import check_crisis_keywords
+
+# ── Display-name generation ────────────────────────────────────────────────
+# 50 calm/nature words — enough randomness to keep collision rate low
+# (~1/50 for any two fresh users, negligible in small deployments).
+_DISPLAY_NAME_WORDS = [
+    "Aspen", "Birch", "Cedar", "Clover", "Coral",
+    "Creek", "Dew", "Drift", "Dusk", "Fern",
+    "Field", "Fjord", "Flint", "Fog", "Forest",
+    "Glade", "Glen", "Grotto", "Grove", "Harbor",
+    "Hazel", "Heather", "Inlet", "Iris", "Jasper",
+    "Lake", "Lark", "Laurel", "Linden", "Lotus",
+    "Maple", "Marsh", "Meadow", "Mesa", "Mist",
+    "Moon", "Moss", "Opal", "Pebble", "Pine",
+    "Pond", "Reef", "Ridge", "River", "Robin",
+    "Sage", "Shore", "Stone", "Stream", "Vale",
+]
+
+
+def _generate_display_name() -> str:
+    """Return 'Anonymous <Word>' using a randomly chosen word from the pool."""
+    return f"Anonymous {random.choice(_DISPLAY_NAME_WORDS)}"
 
 # ── Blueprint ──────────────────────────────────────────────────────────────
 peer_bp = Blueprint("peer", __name__, url_prefix="/peer")
@@ -110,6 +132,7 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
       • _id not in requester's excluded_users list
       • requester's _id not in candidate's excluded_users list  (bidirectional)
       • theme overlap with requester >= 1
+      • no pending request between requester and candidate
 
     Sort: overlap descending, matching_started_at ascending (oldest waiter wins).
     Limit: 5.
@@ -130,6 +153,33 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
     requester_themes   = set(requester.get("themes", []))
     excluded_by_me     = [ObjectId(x) for x in requester.get("excluded_users", [])
                           if ObjectId.is_valid(x)]
+
+    # ── Exclude users the requester already has a pending request with ──────
+    # Covers both directions: requester sent, or requester received.
+    try:
+        pending_req_docs = list(_db.connection_requests_collection.find(
+            {
+                "status": "pending",
+                "$or": [
+                    {"sender_id":   requester_id_str},
+                    {"receiver_id": requester_id_str},
+                ],
+            },
+            {"sender_id": 1, "receiver_id": 1}
+        ))
+    except Exception as e:
+        current_app.logger.error(f"[PEER_MATCH] DB error fetching pending requests: {e}")
+        pending_req_docs = []
+
+    already_requested_ids: set[str] = set()
+    for pr in pending_req_docs:
+        sid = pr.get("sender_id", "")
+        rid = pr.get("receiver_id", "")
+        # The other party (not the requester themselves)
+        if sid == requester_id_str:
+            already_requested_ids.add(rid)
+        else:
+            already_requested_ids.add(sid)
 
     # Base filter: opted-in, non-High, not self, not excluded by requester
     base_filter = {
@@ -154,10 +204,17 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
         return []
 
     # Post-filter: bidirectional exclusion + theme overlap >= 1
+    # + skip anyone the requester already has a pending request with
     scored = []
     requester_id_str_norm = str(requester_oid)
 
     for c in raw_candidates:
+        cand_id_str = str(c["_id"])
+
+        # Skip if there is already a pending request with this candidate
+        if cand_id_str in already_requested_ids:
+            continue
+
         # Bidirectional: skip if requester is in candidate's excluded list
         cand_excluded = [str(x) for x in c.get("excluded_users", [])]
         if requester_id_str_norm in cand_excluded:
@@ -171,7 +228,7 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
 
         scored.append({
             "_id":                 c["_id"],
-            "peer_display_name":   c.get("peer_display_name", "Anonymous"),
+            "peer_display_name":   c.get("peer_display_name") or "Anonymous",
             "overlapping_themes":  sorted(overlap),
             "matching_started_at": c.get("matching_started_at"),
             "_overlap_count":      len(overlap),
@@ -205,6 +262,8 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
 def consent_to_peer_connect():
     """
     Sets or updates the user's peer_consent object.
+    Also auto-generates a peer_display_name the first time a user consents,
+    if they do not already have one set.
     Returns the resulting peer_consent object.
     """
     user_id = get_jwt_identity()
@@ -216,10 +275,29 @@ def consent_to_peer_connect():
         "version":     CONSENT_VERSION,
     }
 
+    # ── Auto-generate peer_display_name if not already set ─────────────────
+    try:
+        existing_user = _db.users_collection.find_one(
+            {"_id": ObjectId(user_id)},
+            {"peer_display_name": 1}
+        )
+    except Exception as e:
+        current_app.logger.error(f"[PEER_CONSENT] DB fetch error: {e}")
+        return jsonify({"error": "Database error"}), 500
+
+    update_fields = {"peer_consent": new_consent}
+    generated_name = None
+    if not (existing_user or {}).get("peer_display_name"):
+        generated_name = _generate_display_name()
+        update_fields["peer_display_name"] = generated_name
+        current_app.logger.info(
+            f"[PEER_CONSENT] Auto-generated display name '{generated_name}' for user {user_id}"
+        )
+
     try:
         _db.users_collection.update_one(
             {"_id": ObjectId(user_id)},
-            {"$set": {"peer_consent": new_consent}}
+            {"$set": update_fields}
         )
     except Exception as e:
         current_app.logger.error(f"[PEER_CONSENT] DB update error: {e}")
@@ -230,6 +308,8 @@ def consent_to_peer_connect():
         "accepted_at": new_consent["accepted_at"].isoformat(),
         "version":     new_consent["version"],
     }
+    if generated_name:
+        response_consent["peer_display_name"] = generated_name
     return jsonify(response_consent), 200
 
 
