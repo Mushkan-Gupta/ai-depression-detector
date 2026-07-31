@@ -154,3 +154,20 @@ CONTEXT_GATED_PHRASES = {
     "whats the point",
     "want it to stop",
 }
+
+# ── Theme Mapping ──────────────────────────────────────────────────────────
+# Used to extract themes from journal entries to populate user profiles for Peer Matching.
+# Mirrored from frontend js/analyze.js.
+THEME_MAP = [
+    {"keywords": ["work", "job", "boss", "colleague", "office", "career"],   "theme": "Work & Career Stress"},
+    {"keywords": ["family", "parent", "mother", "father", "sibling", "home"], "theme": "Family Relationships"},
+    {"keywords": ["friend", "social", "alone", "lonely", "isolated"],         "theme": "Social & Loneliness"},
+    {"keywords": ["school", "study", "exam", "university", "college"],        "theme": "Academic Pressure"},
+    {"keywords": ["health", "sick", "pain", "doctor", "illness"],             "theme": "Health Concerns"},
+    {"keywords": ["money", "financial", "debt", "bills", "broke"],            "theme": "Financial Stress"},
+    {"keywords": ["relationship", "partner", "boyfriend", "girlfriend", "breakup", "divorce"], "theme": "Relationship Issues"},
+    {"keywords": ["sleep", "tired", "insomnia", "rest", "exhausted"],         "theme": "Sleep & Energy"},
+    {"keywords": ["future", "hope", "goal", "dream", "plan"],                 "theme": "Future Outlook"},
+    {"keywords": ["anxiety", "panic", "worry", "fear", "nervous"],            "theme": "Anxiety & Fear"},
+    {"keywords": ["happy", "grateful", "joy", "love", "excited"],             "theme": "Positive Emotions"},
+]

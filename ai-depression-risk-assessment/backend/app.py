@@ -59,7 +59,8 @@ from constants.keywords import (
     MILD_NEGATIVE_KEYWORDS, 
     POSITIVE_KEYWORDS, 
     INDIRECT_IDEATION_PHRASES, 
-    CONTEXT_GATED_PHRASES
+    CONTEXT_GATED_PHRASES,
+    THEME_MAP
 )
 
 
@@ -215,6 +216,15 @@ def predict():
         # ── Primary: keyword-based classification ──────────────────
         kw_risk, kw_confidence, evidence, neg_score = keyword_classify(journal)
 
+        # ── Extract Themes ─────────────────────────────────────────
+        lower_journal = journal.lower()
+        detected_themes = []
+        for t_obj in THEME_MAP:
+            if any(kw in lower_journal for kw in t_obj["keywords"]):
+                detected_themes.append(t_obj["theme"])
+        
+        print(f"[DEBUG] detected_themes = {detected_themes}")
+
         # ── Secondary: ML model ─────────────────────────────────────
         ml_dep_prob   = None
 
@@ -346,20 +356,29 @@ def predict():
             except Exception as db_err:
                 print(f"[WARN] Failed to save prediction history: {db_err}")
 
-            # ── Keep current_risk_level fresh on the user document ──────
-            # Peer matching reads this field directly; it must reflect the
+            # ── Keep current_risk_level and themes fresh on the user document ──────
+            # Peer matching reads these fields directly; they must reflect the
             # most recent /predict result, not a cached or missing value.
             # High-risk users are excluded from matching (see peer_routes.py).
             try:
-                _db.users_collection.update_one(
-                    {"_id": __import__("bson").ObjectId(identity)},
-                    {"$set": {
+                update_doc = {
+                    "$set": {
                         "current_risk_level":   risk,
                         "risk_level_updated_at": datetime.now(timezone.utc),
-                    }},
+                    }
+                }
+                if detected_themes:
+                    update_doc["$addToSet"] = {
+                        "themes": {"$each": detected_themes}
+                    }
+                
+                _db.users_collection.update_one(
+                    {"_id": __import__("bson").ObjectId(identity)},
+                    update_doc,
                 )
             except Exception as risk_err:
-                print(f"[WARN] Failed to update current_risk_level for user {identity}: {risk_err}")
+                print(f"[WARN] Failed to update profile for user {identity}: {risk_err}")
+                print(f"[DEBUG] Exception repr: {repr(risk_err)}")
 
         return jsonify({"risk": risk, "confidence": confidence})
 
