@@ -11,6 +11,7 @@ const errorView = document.getElementById('errorView');
 const chatPeerName = document.getElementById('chatPeerName');
 const chatStatusBadge = document.getElementById('chatStatusBadge');
 const crisisGuidanceContainer = document.getElementById('crisisGuidanceContainer');
+const peerNoticeContainer = document.getElementById('peerNoticeContainer');
 const chatMessages = document.getElementById('chatMessages');
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
@@ -91,15 +92,16 @@ function updateStatusUI(status) {
   chatStatusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
   chatStatusBadge.className = 'status-badge';
   
-  if (status === 'active') {
-    chatStatusBadge.classList.add('status-active');
+  if (status === 'active' || status === 'suspended') {
+    if (status === 'active') chatStatusBadge.classList.add('status-active');
+    if (status === 'suspended') chatStatusBadge.classList.add('status-suspended');
+    
     isConversationActive = true;
     messageInput.disabled = false;
     sendButton.disabled = false;
     chatDisabledBanner.style.display = 'none';
   } else {
-    if (status === 'suspended') chatStatusBadge.classList.add('status-suspended');
-    else chatStatusBadge.classList.add('status-closed');
+    chatStatusBadge.classList.add('status-closed');
     
     isConversationActive = false;
     messageInput.disabled = true;
@@ -129,6 +131,21 @@ function renderCrisisGuidance(cg) {
       </ul>
     </div>
   `;
+}
+
+function renderPeerNotice(noticeMsg) {
+  if (!noticeMsg) {
+    if (peerNoticeContainer) peerNoticeContainer.innerHTML = '';
+    return;
+  }
+  if (peerNoticeContainer) {
+    peerNoticeContainer.innerHTML = `
+      <div class="peer-notice-banner" style="background: #e0f2fe; border-left: 4px solid #0284c7; padding: 0.75rem 1.5rem; margin: 1rem 1.5rem; border-radius: 0 var(--radius-md) var(--radius-md) 0; color: #0369a1; font-size: 0.9rem;">
+        <i class="fa-solid fa-circle-info" style="margin-right: 0.5rem;"></i>
+        ${noticeMsg}
+      </div>
+    `;
+  }
 }
 
 function appendMessage(msgData, isOptimistic = false) {
@@ -200,6 +217,12 @@ async function fetchMessages(isPoll = false) {
     } else {
       renderCrisisGuidance(null); // Clear if no longer high risk
     }
+    
+    if (data.peer_notice) {
+      renderPeerNotice(data.peer_notice);
+    } else {
+      renderPeerNotice(null);
+    }
 
     if (data.conversation_status) {
       updateStatusUI(data.conversation_status);
@@ -256,37 +279,29 @@ async function sendMessage() {
         highestMessageId = data.msg._id;
       }
       
-      // Inline nudge for sender if flagged but successful
+      // Persistent banner for sender if escalated
       if (data.crisis_guidance) {
+        renderCrisisGuidance(data.crisis_guidance);
+        
+        // Also keep the inline nudge
         const nudge = document.createElement('div');
         nudge.className = 'inline-crisis-nudge';
         nudge.textContent = data.crisis_guidance.summary || 'Please consider reaching out for support.';
         wrapper.appendChild(nudge);
         scrollToBottom();
+      } else {
+        renderCrisisGuidance(null);
+      }
+      
+      if (data.peer_notice) {
+        renderPeerNotice(data.peer_notice);
+      } else {
+        renderPeerNotice(null);
       }
       
       // Update status if it changed
       if (data.conversation_status) updateStatusUI(data.conversation_status);
 
-    } else if (res.status === 409 && data.error === 'conversation_suspended_risk_escalation') {
-      // Risk escalation!
-      wrapper.remove(); // Remove optimistic message, it wasn't saved
-      
-      if (data.crisis_guidance) {
-        // Sender escalated
-        renderCrisisGuidance(data.crisis_guidance);
-      } else {
-        // Other party escalated (rare during send, but possible if state changed right before)
-        chatDisabledBanner.textContent = data.message || 'Conversation ended due to risk escalation.';
-        chatDisabledBanner.style.display = 'block';
-      }
-      
-      if (data.conversation_status) {
-        updateStatusUI(data.conversation_status);
-      } else {
-        updateStatusUI('suspended');
-      }
-      
     } else {
       // Generic failure
       bubble.classList.remove('sending');

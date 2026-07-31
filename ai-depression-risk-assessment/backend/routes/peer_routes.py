@@ -1013,24 +1013,6 @@ def send_message(conv_id):
     caller_risk = (caller_doc or {}).get("current_risk_level", "")
     other_risk = (other_doc or {}).get("current_risk_level", "")
     
-    if caller_risk == "High" or other_risk == "High":
-        now = datetime.now(timezone.utc)
-        try:
-            _db.conversations_collection.update_one(
-                {"_id": ObjectId(conv_id)},
-                {"$set": {"status": "suspended", "closed_reason": "risk_escalation", "last_risk_check": now}}
-            )
-        except Exception as e:
-            current_app.logger.error(f"[PEER_MSG] DB suspend error: {e}")
-            
-        resp_data = {
-            "error": "conversation_suspended_risk_escalation",
-            "message": "This conversation has been suspended because one or both users' risk level has changed. Crisis support resources are available."
-        }
-        if caller_risk == "High":
-            resp_data["crisis_guidance"] = HIGH_RISK_CRISIS_GUIDANCE
-        return jsonify(resp_data), 409
-
     # Keyword check
     is_flagged, kw_hits = check_crisis_keywords(content)
     now = datetime.now(timezone.utc)
@@ -1056,8 +1038,11 @@ def send_message(conv_id):
         "message": "Message sent.",
         "msg": {k: v for k, v in msg_doc.items() if k not in ["crisis_flagged", "crisis_keywords_hit"]}
     }
-    if is_flagged:
+    
+    if caller_risk == "High" or is_flagged:
         resp_data["crisis_guidance"] = HIGH_RISK_CRISIS_GUIDANCE
+    elif other_risk == "High":
+        resp_data["peer_notice"] = "Your peer may be going through something difficult right now. Please be patient and kind."
         
     return jsonify(resp_data), 201
 
@@ -1093,8 +1078,11 @@ def list_messages(conv_id):
         except InvalidId:
             pass # ignore invalid since_id, just fetch all
             
+    other_id = conv["participants"][0] if conv["participants"][1] == caller_id else conv["participants"][1]
+
     try:
         caller_doc = _db.users_collection.find_one({"_id": ObjectId(caller_id)}, {"current_risk_level": 1})
+        other_doc = _db.users_collection.find_one({"_id": ObjectId(other_id)}, {"current_risk_level": 1})
         cursor = _db.messages_collection.find(query).sort("_id", 1)
         if not used_since_id:
             cursor = cursor.limit(200)
@@ -1104,6 +1092,7 @@ def list_messages(conv_id):
         return jsonify({"error": "Database error"}), 500
 
     caller_risk = (caller_doc or {}).get("current_risk_level", "")
+    other_risk = (other_doc or {}).get("current_risk_level", "")
 
     result = []
     for d in docs:
@@ -1122,6 +1111,8 @@ def list_messages(conv_id):
     }
     if caller_risk == "High":
         resp_data["crisis_guidance"] = HIGH_RISK_CRISIS_GUIDANCE
+    elif other_risk == "High":
+        resp_data["peer_notice"] = "Your peer may be going through something difficult right now. Please be patient and kind."
 
     return jsonify(resp_data), 200
 
