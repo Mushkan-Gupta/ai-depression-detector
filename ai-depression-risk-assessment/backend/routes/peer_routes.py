@@ -226,19 +226,25 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
         if len(overlap) < 1:
             continue
 
+        overlap_count = len(overlap)
+        match_total = min(len(requester_themes), len(cand_themes))
+        match_fraction = overlap_count / max(1, match_total)
+
         scored.append({
             "_id":                 c["_id"],
             "peer_display_name":   c.get("peer_display_name") or "Anonymous",
             "overlapping_themes":  sorted(overlap),
             "matching_started_at": c.get("matching_started_at"),
-            "_overlap_count":      len(overlap),
+            "overlap_count":       overlap_count,
+            "match_total":         match_total,
+            "match_fraction":      match_fraction,
         })
 
-    # Sort: overlap desc, then matching_started_at asc (oldest waiter wins ties)
+    # Sort: match_fraction desc, then matching_started_at asc (oldest waiter wins ties)
     # None timestamps go last
     scored.sort(
         key=lambda x: (
-            -x["_overlap_count"],
+            -x["match_fraction"],
             x["matching_started_at"] or datetime.max.replace(tzinfo=timezone.utc),
         )
     )
@@ -250,6 +256,9 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
             "candidate_id":       str(c["_id"]),
             "peer_display_name":  c["peer_display_name"],
             "overlapping_themes": c["overlapping_themes"],
+            "overlap_count":      c["overlap_count"],
+            "match_total":        c["match_total"],
+            "match_fraction":     c["match_fraction"],
         }
         for c in top5
     ]

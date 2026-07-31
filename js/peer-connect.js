@@ -255,6 +255,9 @@ function renderCandidates(candidates) {
     <div class="candidate-card" data-candidate-id="${c.candidate_id}">
       <div class="candidate-info">
         <h4>${_safeName(c.peer_display_name)}</h4>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0.2rem 0 0.5rem 0;">
+          ${c.overlap_count}/${c.match_total} themes matched
+        </p>
         <div class="theme-tags">
           ${(c.overlapping_themes || []).map(t => `<span class="theme-tag">${t}</span>`).join('')}
         </div>
