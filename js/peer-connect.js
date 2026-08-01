@@ -52,16 +52,42 @@ async function initPeerConnect() {
 
 // ── Dashboard Data Loaders ──────────────────────────────────────────────────
 async function loadDashboardData() {
-  await loadCandidates(); // Also infers opt-in status & checks high-risk
-  if (mainPeerDashboard.classList.contains('hidden')) return; // Abort if risk block applied
-  
-  await loadRequests();
-  await loadConversations();
+  // Each section is wrapped independently so a failure in one
+  // does NOT prevent the others (or the opt-in button) from working.
+
+  try {
+    await loadCandidates(); // Also infers opt-in status & checks high-risk
+    if (mainPeerDashboard.classList.contains('hidden')) return; // crisis block applied
+  } catch (e) {
+    console.error('[peer-connect] loadCandidates failed:', e);
+    if (candidatesList) {
+      candidatesList.innerHTML = '<p style="color:var(--text-secondary)">Could not load candidates. Try refreshing.</p>';
+    }
+  }
+
+  try {
+    await loadRequests();
+  } catch (e) {
+    console.error('[peer-connect] loadRequests failed:', e);
+  }
+
+  try {
+    await loadConversations();
+  } catch (e) {
+    console.error('[peer-connect] loadConversations failed:', e);
+  }
 }
 
 async function loadCandidates() {
   const res = await peerFetch('/candidates');
-  const data = await res.json();
+  // Guard: non-JSON body (e.g. 500 HTML) would throw — surface it cleanly
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    console.error('[peer-connect] /candidates returned non-JSON (status', res.status, ')');
+    throw new Error(`/peer/candidates HTTP ${res.status}`);
+  }
 
   if (res.status === 403 && data.error === 'not_eligible_high_risk') {
     renderCrisisGuidance(data.crisis_guidance);

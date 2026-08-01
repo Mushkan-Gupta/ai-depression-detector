@@ -257,7 +257,7 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
             "peer_display_name":  c["peer_display_name"],
             "overlapping_themes": c["overlapping_themes"],
             "overlap_count":      c["overlap_count"],
-            "match_total":        c["match_total"],
+            "union_size":         c["union_size"],
             "match_fraction":     c["match_fraction"],
         }
         for c in top5
