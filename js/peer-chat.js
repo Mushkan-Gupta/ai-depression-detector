@@ -5,6 +5,11 @@ let pollInterval = null;
 let isConversationActive = true;
 let otherParticipantName = "Peer"; // Default fallback
 
+// Track message grouping & date separators
+let lastMessageSenderId = null;
+let lastMessageDateStr = null;
+let lastMessageWrapper = null;
+
 // DOM Elements
 const chatView = document.getElementById('chatView');
 const errorView = document.getElementById('errorView');
@@ -55,6 +60,12 @@ async function initChat() {
       if (match) {
         otherParticipantName = _safeName(match.other_participant_name);
         chatPeerName.textContent = otherParticipantName;
+        const avatarEl = document.getElementById('chatPeerAvatar');
+        const initial = (otherParticipantName && otherParticipantName !== "Peer") 
+          ? otherParticipantName.replace("Anonymous ", "").substring(0, 1).toUpperCase() 
+          : "P";
+        if (avatarEl) avatarEl.textContent = initial;
+        document.querySelectorAll('.peer-avatar').forEach(el => el.textContent = initial);
       }
     }
   } catch (e) {
@@ -90,8 +101,15 @@ function showError(title, msg) {
 }
 
 function updateStatusUI(status) {
-  chatStatusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  const statusFormatted = status.charAt(0).toUpperCase() + status.slice(1);
+  chatStatusBadge.textContent = statusFormatted;
   chatStatusBadge.className = 'status-badge';
+  
+  const statusTextEl = document.getElementById('chatStatusText');
+  if (statusTextEl) {
+    statusTextEl.textContent = statusFormatted;
+    statusTextEl.className = `chat-status-text status-${status}`;
+  }
   
   if (status === 'active' || status === 'suspended') {
     if (status === 'active') chatStatusBadge.classList.add('status-active');
@@ -154,8 +172,30 @@ function appendMessage(msgData, isOptimistic = false) {
   if (!isOptimistic && document.getElementById(`msg-${msgData.id}`)) return;
 
   const isSentByMe = msgData.sender_id === currentUserId;
+  const msgDateObj = msgData.created_at ? new Date(msgData.created_at) : new Date();
+  const dateStr = msgData.created_at ? msgDateObj.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }) : null;
+
+  // Date Separator (shown centered, small muted text, whenever day changes)
+  if (dateStr && dateStr !== lastMessageDateStr) {
+    const dateDiv = document.createElement('div');
+    dateDiv.className = 'chat-date-separator';
+    dateDiv.innerHTML = `<span>${dateStr}</span>`;
+    chatMessages.appendChild(dateDiv);
+    lastMessageDateStr = dateStr;
+    lastMessageSenderId = null;
+    lastMessageWrapper = null;
+  }
+
+  const isSameSenderAsLast = (msgData.sender_id === lastMessageSenderId);
+
+  // Update previous message in group (it's no longer the last in group)
+  if (isSameSenderAsLast && lastMessageWrapper) {
+    lastMessageWrapper.classList.remove('last-in-group');
+    lastMessageWrapper.classList.add('middle-in-group');
+  }
+
   const wrapper = document.createElement('div');
-  wrapper.className = `message-wrapper ${isSentByMe ? 'sent' : 'received'}`;
+  wrapper.className = `message-wrapper ${isSentByMe ? 'sent' : 'received'} last-in-group ${isSameSenderAsLast ? 'consecutive' : 'group-start'}`;
   
   if (msgData.id) {
     wrapper.id = `msg-${msgData.id}`;
@@ -163,11 +203,8 @@ function appendMessage(msgData, isOptimistic = false) {
     wrapper.id = `msg-${msgData.tempId}`;
   }
 
-  const timeStr = msgData.created_at ? new Date(msgData.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now';
-  
+  const timeStr = msgData.created_at ? msgDateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now';
   const bubbleClass = `message-bubble ${isOptimistic ? 'sending' : ''}`;
-  
-  // Basic escaping
   const escapedContent = msgData.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   
   if (isSentByMe) {
@@ -201,6 +238,8 @@ function appendMessage(msgData, isOptimistic = false) {
   }
   
   chatMessages.appendChild(wrapper);
+  lastMessageSenderId = msgData.sender_id;
+  lastMessageWrapper = wrapper;
   scrollToBottom();
 }
 

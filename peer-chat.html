@@ -12,32 +12,27 @@
     .chat-container {
       display: flex;
       flex-direction: column;
-      height: calc(100vh - 80px); /* Adjust based on nav height */
-      max-width: 800px;
+      height: calc(100vh - 100px);
+      max-width: 850px;
       margin: 0 auto;
       background: var(--surface-color);
       border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
       box-shadow: var(--shadow-sm);
       overflow: hidden;
     }
     
+    /* Header Bar (Instagram DM Style) */
     .chat-header {
       display: flex;
       align-items: center;
-      padding: 1.25rem 1.5rem;
+      padding: 0.85rem 1.25rem;
       border-bottom: 1px solid var(--border-color);
       background: var(--surface-color);
-      border-top-left-radius: var(--radius-lg);
-      border-top-right-radius: var(--radius-lg);
-    }
-    
-    .chat-header h2 {
-      margin: 0;
-      font-size: 1.25rem;
-      color: var(--text-primary);
-      margin-left: 1rem;
-      flex-grow: 1;
-      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      gap: 0.75rem;
     }
     
     .back-link {
@@ -45,75 +40,144 @@
       text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-weight: 500;
-      padding: 0.5rem 0.75rem;
-      border-radius: 8px;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
       transition: background 0.2s, color 0.2s;
-      margin-left: -0.5rem;
+      font-size: 1.1rem;
+      flex-shrink: 0;
     }
     
     .back-link:hover {
       color: var(--text-primary);
-      background: var(--surface-hover);
+      background: var(--background-color);
     }
+
+    .chat-header-user {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-grow: 1;
+    }
+    
+    .chat-peer-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .chat-header-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .chat-peer-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    
+    .chat-status-text {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.2;
+      margin-top: 2px;
+    }
+    .chat-status-text.status-active { color: #16a34a; }
+    .chat-status-text.status-suspended { color: #d97706; }
+    .chat-status-text.status-closed { color: var(--text-secondary); }
     
     .status-badge {
       padding: 0.25rem 0.75rem;
       border-radius: 999px;
       font-size: 0.875rem;
       font-weight: 500;
+      display: none; /* hidden, superseded by status-text in header info */
     }
-    .status-active { background: #dcfce7; color: #166534; }
-    .status-suspended { background: #fef08a; color: #854d0e; }
-    .status-closed { background: #f3f4f6; color: #374151; }
     
-    /* Crisis banner reused from peer-connect.html */
+    /* Banners (Crisis & Peer Notice) - Pinned near top, distinct & non-dismissible */
     .crisis-banner {
       background: #fef2f2;
       border-left: 4px solid #ef4444;
-      padding: 1rem 1.5rem;
-      margin: 1rem 1.5rem;
-      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: 1rem 1.25rem;
+      margin: 0.75rem 1.25rem 0.25rem 1.25rem;
+      border-radius: 8px;
+      color: #991b1b;
+      font-size: 0.9rem;
     }
-    .crisis-banner h3 { color: #991b1b; margin-top: 0; }
-    .crisis-banner ul { margin: 0.5rem 0 0 1.5rem; color: #b91c1c; }
+    .crisis-banner h3 { color: #991b1b; margin: 0 0 0.4rem 0; font-size: 1rem; }
+    .crisis-banner p { margin: 0 0 0.5rem 0; line-height: 1.4; }
+    .crisis-banner ul { margin: 0.4rem 0 0 1.25rem; padding: 0; color: #b91c1c; }
     
+    /* Message Thread Area */
     .chat-messages {
       flex-grow: 1;
-      padding: 1.5rem;
+      padding: 1.25rem 1.5rem;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
       background: var(--background-color);
       scroll-behavior: smooth;
     }
+
+    /* Date Separators */
+    .chat-date-separator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1.25rem 0 0.5rem 0;
+    }
     
+    .chat-date-separator span {
+      font-size: 0.725rem;
+      color: var(--text-secondary);
+      background: var(--surface-color);
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+    }
+    
+    /* Message Wrappers & Grouping */
     .message-wrapper {
       display: flex;
-      flex-direction: column;
       max-width: 75%;
-      margin-bottom: 0.5rem;
+      margin-top: 12px; /* Generous spacing between message groups */
+      position: relative;
+    }
+    
+    .message-wrapper.consecutive {
+      margin-top: 3px; /* Close gap for same-sender messages */
     }
     
     .message-wrapper.sent {
       align-self: flex-end;
-      align-items: flex-end;
+      justify-content: flex-end;
     }
     
     .message-wrapper.received {
       align-self: flex-start;
-      align-items: flex-end; /* Align avatar to bottom of bubble */
-      flex-direction: row;
-      max-width: 85%;
+      justify-content: flex-start;
+      max-width: 80%;
     }
     
+    /* Peer Avatar - shown ONLY on the last message in a consecutive group */
     .peer-avatar {
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: var(--text-secondary);
+      background: var(--primary-color);
       color: white;
       display: flex;
       align-items: center;
@@ -122,56 +186,86 @@
       font-weight: 600;
       flex-shrink: 0;
       margin-right: 8px;
-      margin-bottom: 2px; /* Slight lift to match bubble visual */
+      align-self: flex-end;
+      visibility: hidden; /* Hidden by default for consecutive group messages */
+      margin-bottom: 2px;
+    }
+    
+    .message-wrapper.received.last-in-group .peer-avatar {
+      visibility: visible; /* Revealed on last message in group */
     }
 
     .message-content-col {
       display: flex;
       flex-direction: column;
-      align-items: flex-start;
     }
 
     .message-wrapper.sent .message-content-col {
       align-items: flex-end;
     }
     
-    .message-bubble {
-      padding: 0.75rem 1rem;
-      border-radius: 20px;
-      font-size: 0.95rem;
-      line-height: 1.4;
-      word-wrap: break-word;
+    .message-wrapper.received .message-content-col {
+      align-items: flex-start;
     }
     
+    .message-bubble {
+      padding: 0.65rem 1rem;
+      font-size: 0.925rem;
+      line-height: 1.45;
+      word-wrap: break-word;
+      max-width: 100%;
+    }
+    
+    /* Sent Bubbles - Instagram / Modern style rounded corners */
     .message-wrapper.sent .message-bubble {
       background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
       color: white;
-      border-bottom-right-radius: 4px;
+      border-radius: 18px 18px 4px 18px;
     }
     
+    /* Corner rounding for sent message groups */
+    .message-wrapper.sent.group-start:not(.last-in-group) .message-bubble {
+      border-radius: 18px 18px 4px 18px;
+    }
+    .message-wrapper.sent.middle-in-group .message-bubble {
+      border-radius: 18px 4px 4px 18px;
+    }
+    .message-wrapper.sent.last-in-group.consecutive .message-bubble {
+      border-radius: 18px 4px 18px 18px;
+    }
+    
+    /* Received Bubbles */
     .message-wrapper.received .message-bubble {
       background: var(--surface-color);
       color: var(--text-primary);
       border: 1px solid var(--border-color);
-      border-bottom-left-radius: 4px;
+      border-radius: 18px 18px 18px 4px;
     }
     
+    /* Corner rounding for received message groups */
+    .message-wrapper.received.group-start:not(.last-in-group) .message-bubble {
+      border-radius: 18px 18px 18px 4px;
+    }
+    .message-wrapper.received.middle-in-group .message-bubble {
+      border-radius: 4px 18px 18px 4px;
+    }
+    .message-wrapper.received.last-in-group.consecutive .message-bubble {
+      border-radius: 4px 18px 18px 18px;
+    }
+    
+    /* Timestamps - shown subtly below the last message in a group */
     .message-meta {
       font-size: 0.7rem;
       color: var(--text-secondary);
-      display: flex;
+      display: none;
       align-items: center;
-      gap: 0.5rem;
-      opacity: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: opacity 0.2s ease, max-height 0.2s ease, margin-top 0.2s ease;
+      gap: 0.35rem;
+      margin-top: 3px;
+      padding: 0 4px;
     }
     
-    .message-wrapper:hover .message-meta {
-      opacity: 1;
-      max-height: 20px;
-      margin-top: 0.25rem;
+    .message-wrapper.last-in-group .message-meta {
+      display: flex;
     }
     
     .message-wrapper.sent .message-bubble.sending {
@@ -180,25 +274,27 @@
     
     .message-wrapper.sent .message-bubble.failed {
       background: #ef4444;
+      color: white;
     }
     
     .inline-crisis-nudge {
       font-size: 0.8rem;
       color: #ef4444;
       background: #fef2f2;
-      padding: 0.5rem;
+      padding: 0.5rem 0.75rem;
       border-radius: var(--radius-sm);
-      margin-top: 0.25rem;
+      margin-top: 0.35rem;
       border: 1px solid #fca5a5;
     }
     
+    /* Input Bar (Sticky Bottom) */
     .chat-input-area {
-      padding: 1rem 1.5rem;
+      padding: 0.85rem 1.25rem;
       border-top: 1px solid var(--border-color);
       background: var(--surface-color);
       display: flex;
-      gap: 1rem;
-      align-items: flex-end;
+      gap: 0.75rem;
+      align-items: center;
     }
     
     .chat-input-area textarea {
@@ -210,8 +306,11 @@
       font-family: inherit;
       font-size: 0.95rem;
       max-height: 120px;
+      line-height: 1.45;
       overflow-y: auto;
       background: var(--background-color);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
     }
     
     .chat-input-area textarea:focus {
@@ -224,18 +323,26 @@
       color: white;
       border: none;
       border-radius: 50%;
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       flex-shrink: 0;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.1s;
     }
     
-    .send-btn:hover { background: var(--primary-hover); }
-    .send-btn:disabled { background: var(--text-secondary); cursor: not-allowed; }
+    .send-btn:hover {
+      background: var(--primary-hover);
+      transform: scale(1.05);
+    }
+    .send-btn:disabled {
+      background: var(--text-secondary);
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
     
     .chat-disabled-banner {
       background: #f3f4f6;
@@ -254,6 +361,24 @@
       justify-content: center;
       height: 60vh;
       text-align: center;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) {
+      .chat-container {
+        height: calc(100vh - 70px);
+        border-radius: 0;
+        border: none;
+      }
+      .message-wrapper {
+        max-width: 85%;
+      }
+      .chat-messages {
+        padding: 1rem;
+      }
+      .chat-input-area {
+        padding: 0.75rem 1rem;
+      }
     }
   </style>
 </head>
@@ -297,13 +422,19 @@
   </main>
 
   <!-- Main Chat Container -->
-  <main class="container" id="chatView" style="display: none; padding-top: 1rem;">
+  <main class="container" id="chatView" style="display: none; padding-top: 1rem; padding-bottom: 1rem;">
     <div class="chat-container">
       
       <div class="chat-header">
-        <a href="peer-connect.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back</a>
-        <h2 id="chatPeerName">Loading...</h2>
-        <span id="chatStatusBadge" class="status-badge status-active">Active</span>
+        <a href="peer-connect.html" class="back-link" aria-label="Back to Peer Connect"><i class="fa-solid fa-arrow-left"></i></a>
+        <div class="chat-header-user">
+          <div class="chat-peer-avatar" id="chatPeerAvatar">P</div>
+          <div class="chat-header-info">
+            <div class="chat-peer-name" id="chatPeerName">Loading...</div>
+            <div class="chat-status-text" id="chatStatusText">Active</div>
+          </div>
+        </div>
+        <span id="chatStatusBadge" class="status-badge status-active" style="display: none;">Active</span>
       </div>
       
       <div id="crisisGuidanceContainer"></div>
