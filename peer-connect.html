@@ -43,32 +43,39 @@
     .candidate-list {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.25rem;
     }
     .candidate-card, .request-card, .conversation-card {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem;
-      background: var(--bg-elevated);
-      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      background: var(--surface-color);
+      border-radius: 16px;
       border: 1px solid var(--border-color);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .candidate-info h4 { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
-    .theme-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .candidate-card:hover, .request-card:hover, .conversation-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+    .candidate-info h4 { margin: 0 0 0.5rem 0; font-size: 1.15rem; color: var(--text-primary); }
+    .theme-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
     .theme-tag {
       font-size: 0.75rem;
-      background: var(--primary-color-alpha);
+      background: rgba(var(--primary-rgb), 0.1);
       color: var(--primary-color);
-      padding: 0.25rem 0.5rem;
-      border-radius: 8px;
+      padding: 0.25rem 0.6rem;
+      border-radius: 12px;
+      font-weight: 500;
     }
 
-    .btn-group { display: flex; gap: 0.5rem; }
+    .btn-group { display: flex; gap: 0.75rem; }
     
-    .accept-btn { background: var(--primary-color); color: #fff; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 500; cursor: pointer; border: none; }
-    .decline-btn { background: transparent; color: var(--text-secondary); padding: 0.5rem 1rem; border-radius: 8px; font-weight: 500; cursor: pointer; border: 1px solid var(--border-color); }
-    .decline-btn:hover { background: var(--border-color); }
+    .accept-btn { background: var(--primary-color); color: #fff; padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 500; cursor: pointer; border: none; transition: background 0.2s, transform 0.1s; }
+    .accept-btn:hover { background: var(--primary-hover); transform: scale(1.02); }
+    .decline-btn { background: transparent; color: var(--text-secondary); padding: 0.5rem 1.25rem; border-radius: 8px; font-weight: 500; cursor: pointer; border: 1px solid var(--border-color); transition: all 0.2s; }
+    .decline-btn:hover { background: var(--surface-hover); color: var(--text-primary); border-color: var(--text-secondary); }
     
     /* Crisis Guidance Banner */
     #crisisGuidanceContainer { margin-bottom: 2rem; }
@@ -99,11 +106,13 @@
       font-weight: 500;
       transition: all 0.2s ease;
     }
+    .opt-in-btn:hover { background: var(--primary-hover); transform: scale(1.02); }
     .opt-out-btn {
       background: transparent;
       color: var(--text-secondary);
       border: 1px solid var(--border-color);
     }
+    .opt-out-btn:hover { background: var(--surface-hover); color: var(--text-primary); border-color: var(--text-secondary); }
   </style>
 </head>
 <body class="dashboard-body">
@@ -129,8 +138,7 @@
           </button>
           <div class="user-dropdown hidden" id="userDropdown">
             <div class="dropdown-header">
-              <div class="dropdown-name" id="dropdownName">User</div>
-              <div class="dropdown-email" id="dropdownEmail">user@example.com</div>
+              <div class="dropdown-name" id="dropdownName">Anonymous User</div>
             </div>
             <div class="dropdown-divider"></div>
             <button class="dropdown-item text-danger" onclick="logout()">

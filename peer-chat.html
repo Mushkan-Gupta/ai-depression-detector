@@ -24,9 +24,11 @@
     .chat-header {
       display: flex;
       align-items: center;
-      padding: 1rem 1.5rem;
+      padding: 1.25rem 1.5rem;
       border-bottom: 1px solid var(--border-color);
       background: var(--surface-color);
+      border-top-left-radius: var(--radius-lg);
+      border-top-right-radius: var(--radius-lg);
     }
     
     .chat-header h2 {
@@ -35,6 +37,7 @@
       color: var(--text-primary);
       margin-left: 1rem;
       flex-grow: 1;
+      font-weight: 600;
     }
     
     .back-link {
@@ -44,10 +47,15 @@
       align-items: center;
       gap: 0.5rem;
       font-weight: 500;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s;
+      margin-left: -0.5rem;
     }
     
     .back-link:hover {
-      color: var(--primary-color);
+      color: var(--text-primary);
+      background: var(--surface-hover);
     }
     
     .status-badge {

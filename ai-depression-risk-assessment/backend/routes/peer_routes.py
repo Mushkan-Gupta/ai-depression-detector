@@ -227,8 +227,8 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
             continue
 
         overlap_count = len(overlap)
-        match_total = min(len(requester_themes), len(cand_themes))
-        match_fraction = overlap_count / max(1, match_total)
+        union_size = len(requester_themes | cand_themes)
+        match_fraction = overlap_count / max(1, union_size)
 
         scored.append({
             "_id":                 c["_id"],
@@ -236,7 +236,7 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
             "overlapping_themes":  sorted(overlap),
             "matching_started_at": c.get("matching_started_at"),
             "overlap_count":       overlap_count,
-            "match_total":         match_total,
+            "union_size":          union_size,
             "match_fraction":      match_fraction,
         })
 

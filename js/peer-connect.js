@@ -22,11 +22,12 @@ async function initPeerConnect() {
   if (userStr) {
     try {
       const user = JSON.parse(userStr);
-      const name = user.name || 'User';
-      const initials = name.substring(0, 2).toUpperCase();
+      const name = user.peer_display_name || 'Anonymous User';
+      const initials = name.replace("Anonymous ", "").substring(0, 1).toUpperCase();
       document.getElementById('userInitials').textContent = initials;
       document.getElementById('dropdownName').textContent = name;
-      document.getElementById('dropdownEmail').textContent = user.email || '';
+      const emailEl = document.getElementById('dropdownEmail');
+      if (emailEl) emailEl.remove();
     } catch (e) {
       console.error("Error parsing user:", e);
     }
@@ -256,7 +257,7 @@ function renderCandidates(candidates) {
       <div class="candidate-info">
         <h4>${_safeName(c.peer_display_name)}</h4>
         <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0.2rem 0 0.5rem 0;">
-          ${c.overlap_count}/${c.match_total} themes matched
+          ${Math.round(c.match_fraction * 100)}% match
         </p>
         <div class="theme-tags">
           ${(c.overlapping_themes || []).map(t => `<span class="theme-tag">${t}</span>`).join('')}
