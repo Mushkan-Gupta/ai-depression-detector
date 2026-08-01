@@ -35,11 +35,12 @@ async function initChat() {
     try {
       const user = JSON.parse(userStr);
       currentUserId = user.id;
-      const name = user.name || 'User';
-      const initials = name.substring(0, 2).toUpperCase();
+      const name = user.peer_display_name || 'Anonymous User';
+      const initials = name.replace("Anonymous ", "").substring(0, 1).toUpperCase();
       document.getElementById('userInitials').textContent = initials;
       document.getElementById('dropdownName').textContent = name;
-      document.getElementById('dropdownEmail').textContent = user.email || '';
+      const emailEl = document.getElementById('dropdownEmail');
+      if (emailEl) emailEl.remove();
     } catch (e) {
       console.error("Error parsing user:", e);
     }
@@ -169,15 +170,35 @@ function appendMessage(msgData, isOptimistic = false) {
   // Basic escaping
   const escapedContent = msgData.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   
-  wrapper.innerHTML = `
-    <div class="${bubbleClass}">
-      ${escapedContent.replace(/\n/g, '<br/>')}
-    </div>
-    <div class="message-meta">
-      <span>${timeStr}</span>
-      ${isOptimistic ? '<span class="status-indicator"><i class="fa-solid fa-clock"></i></span>' : ''}
-    </div>
-  `;
+  if (isSentByMe) {
+    wrapper.innerHTML = `
+      <div class="message-content-col">
+        <div class="${bubbleClass}">
+          ${escapedContent.replace(/\n/g, '<br/>')}
+        </div>
+        <div class="message-meta">
+          <span>${timeStr}</span>
+          ${isOptimistic ? '<span class="status-indicator"><i class="fa-solid fa-clock"></i></span>' : ''}
+        </div>
+      </div>
+    `;
+  } else {
+    const avatarInitials = (otherParticipantName && otherParticipantName !== "Peer") 
+      ? otherParticipantName.replace("Anonymous ", "").substring(0, 1).toUpperCase() 
+      : "P";
+      
+    wrapper.innerHTML = `
+      <div class="peer-avatar">${avatarInitials}</div>
+      <div class="message-content-col">
+        <div class="${bubbleClass}">
+          ${escapedContent.replace(/\n/g, '<br/>')}
+        </div>
+        <div class="message-meta">
+          <span>${timeStr}</span>
+        </div>
+      </div>
+    `;
+  }
   
   chatMessages.appendChild(wrapper);
   scrollToBottom();
