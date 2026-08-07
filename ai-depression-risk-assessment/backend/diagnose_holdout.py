@@ -48,7 +48,7 @@ def main():
     # ------------------------------------------------------------------
     # 2. Dataset Split & Index Saving
     # ------------------------------------------------------------------
-    data_path = os.path.join(base_dir, "merged_depression_dataset.csv")
+    data_path = os.path.join(base_dir, "depression_dataset.csv")
     data = pd.read_csv(data_path)
 
     X_text = data["clean_text"].fillna("").astype(str)

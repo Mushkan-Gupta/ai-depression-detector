@@ -18,7 +18,7 @@ import pickle
 import os
 
 base_dir     = os.path.dirname(os.path.abspath(__file__))
-csv_path     = os.path.join(base_dir, "merged_depression_dataset.csv")
+csv_path     = os.path.join(base_dir, "depression_dataset.csv")
 
 print("[INFO] Loading dataset...")
 data = pd.read_csv(csv_path)
