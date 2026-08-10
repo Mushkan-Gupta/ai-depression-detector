@@ -255,9 +255,14 @@ def predict():
                 # Center it around 0.5 so a neg_score of 0.5 evaluates to ~0.5
                 norm_neg = 1 / (1 + math.exp(-4 * (neg_score - 0.5)))
                 
-                # 3. Blend the signals using tuned weights (60% KW / 40% ML)
-                W_KW = 0.6
-                W_ML = 0.4
+                # 3. Blend the signals using tuned weights
+                token_count = len(journal.split())
+                if token_count < 15:
+                    W_KW = 0.8
+                    W_ML = 0.2
+                else:
+                    W_KW = 0.6
+                    W_ML = 0.4
                 blended_score = (W_KW * norm_neg) + (W_ML * ml_dep_prob)
                 
                 # 4. Map blended score to risk thresholds
