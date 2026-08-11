@@ -29,12 +29,13 @@ MILD_NEGATIVE_KEYWORDS = [
     'worried', 'fear', 'insomnia', 'can\'t sleep', 'low energy', 'withdrawn',
     'down', 'crying', 'cried', 'numb', 'flat', 'irritable', 'frustrated',
     'burned out', 'burnt out', 'lost', 'confused', 'empty', 'grief', 'grieving',
-    'loss', 'heartbroken', 'hopeless', 'worthless', 'give up', 'no point',
+    'loss', 'heartbroken', 'hopeless', 'give up', 'no point',
     'no energy', 'not okay', 'falling apart', 'running on empty', 'no motivation',
     'isolating', 'withdrawing', 'can\'t function', 'panic', 'dark days',
     'really dark', 'very dark', 'bad days', 'dark place', 'heavy mood',
     'miserable', 'dread', 'dreading', 'dreaded', 'guilt', 'guilty',
     'shame', 'ashamed', 'disconnected', 'detached', 'isolated', 'avoid',
+    'feeling low', 'hard to function',
 ]
 
 # POSITIVE signals: actively reduce depression probability
@@ -126,6 +127,12 @@ INDIRECT_IDEATION_PHRASES = [
     "can't see a future",
     "cant see a future",
     "no future for myself",
+    # Self-referential worthlessness / pointlessness — context-gated because
+    # the bare words have common mundane uses ("this meeting was worthless",
+    # "this rule is pointless") but are clinically significant when
+    # self-referential and corroborated by other depression signals.
+    "worthless",
+    "pointless",
 ]
 
 # ── Context-Gated Phrases ──────────────────────────────────────────────────
@@ -153,6 +160,10 @@ CONTEXT_GATED_PHRASES = {
     "what's the point",
     "whats the point",
     "want it to stop",
+    # Self-referential worthlessness/pointlessness — gated so that
+    # "this meeting was worthless" / "this rule is pointless" stay Low.
+    "worthless",
+    "pointless",
 }
 
 # ── Theme Mapping ──────────────────────────────────────────────────────────
