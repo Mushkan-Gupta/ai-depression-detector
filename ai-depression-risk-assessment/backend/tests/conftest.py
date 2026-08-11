@@ -24,6 +24,7 @@ db.journal_entries_collection = db._db["journal_entries"]
 db.connection_requests_collection = db._db["connection_requests"]
 db.conversations_collection = db._db["conversations"]
 db.messages_collection = db._db["messages"]
+db.peer_reports_collection = db._db["peer_reports"]
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -52,6 +53,7 @@ def db_cleanup():
     db.connection_requests_collection.delete_many({})
     db.conversations_collection.delete_many({})
     db.messages_collection.delete_many({})
+    db.peer_reports_collection.delete_many({})
     
     yield
     
@@ -61,6 +63,7 @@ def db_cleanup():
     db.connection_requests_collection.delete_many({})
     db.conversations_collection.delete_many({})
     db.messages_collection.delete_many({})
+    db.peer_reports_collection.delete_many({})
 
 
 @pytest.fixture

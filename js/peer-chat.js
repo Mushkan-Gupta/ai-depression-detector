@@ -10,6 +10,8 @@ let lastMessageSenderId = null;
 let lastMessageDateStr = null;
 let lastMessageWrapper = null;
 
+let hasBeenReported = false;
+
 // DOM Elements
 const chatView = document.getElementById('chatView');
 const errorView = document.getElementById('errorView');
@@ -21,6 +23,19 @@ const chatMessages = document.getElementById('chatMessages');
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const chatDisabledBanner = document.getElementById('chatDisabledBanner');
+
+// Report DOM Elements
+const reportPeerBtn = document.getElementById('reportPeerBtn');
+const reportModal = document.getElementById('reportModal');
+const closeReportModalBtn = document.getElementById('closeReportModalBtn');
+const cancelReportBtn = document.getElementById('cancelReportBtn');
+const closeReportSuccessBtn = document.getElementById('closeReportSuccessBtn');
+const reportForm = document.getElementById('reportForm');
+const reportReason = document.getElementById('reportReason');
+const reportDetails = document.getElementById('reportDetails');
+const reportErrorMsg = document.getElementById('reportErrorMsg');
+const reportFormContainer = document.getElementById('reportFormContainer');
+const reportSuccessState = document.getElementById('reportSuccessState');
 
 // ── Initialization ──────────────────────────────────────────────────────────
 async function initChat() {
@@ -72,6 +87,19 @@ async function initChat() {
     console.warn("Could not fetch conversation list for name", e);
   }
 
+  // Check report status
+  try {
+    const reportStRes = await peerFetch(`/conversations/${currentConversationId}/report-status`);
+    if (reportStRes.ok) {
+      const reportStData = await reportStRes.json();
+      if (reportStData.reported) {
+        updateReportBtnState(true);
+      }
+    }
+  } catch (e) {
+    console.warn("Could not fetch report status", e);
+  }
+
   // Initial load
   await fetchMessages();
 
@@ -90,6 +118,17 @@ async function initChat() {
       sendMessage();
     }
   });
+
+  if (reportPeerBtn) reportPeerBtn.addEventListener('click', openReportModal);
+  if (closeReportModalBtn) closeReportModalBtn.addEventListener('click', closeReportModal);
+  if (cancelReportBtn) cancelReportBtn.addEventListener('click', closeReportModal);
+  if (closeReportSuccessBtn) closeReportSuccessBtn.addEventListener('click', closeReportModal);
+  if (reportForm) reportForm.addEventListener('submit', handleReportSubmit);
+  if (reportModal) {
+    reportModal.addEventListener('click', (e) => {
+      if (e.target === reportModal) closeReportModal();
+    });
+  }
 }
 
 // ── UI Helpers ──────────────────────────────────────────────────────────────
@@ -381,6 +420,92 @@ async function sendMessage() {
     bubble.classList.remove('sending');
     bubble.classList.add('failed');
     if (indicator) indicator.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="color:#ef4444"></i>';
+  }
+}
+
+// ── Reporting Functions ─────────────────────────────────────────────────────
+function updateReportBtnState(reported) {
+  if (reported) {
+    hasBeenReported = true;
+    if (reportPeerBtn) {
+      reportPeerBtn.classList.add('reported');
+      reportPeerBtn.title = "Already Reported";
+    }
+  }
+}
+
+function openReportModal() {
+  if (!reportModal) return;
+  if (reportErrorMsg) {
+    reportErrorMsg.style.display = 'none';
+    reportErrorMsg.textContent = '';
+  }
+  
+  if (hasBeenReported) {
+    if (reportFormContainer) reportFormContainer.style.display = 'none';
+    if (reportSuccessState) reportSuccessState.style.display = 'block';
+  } else {
+    if (reportFormContainer) reportFormContainer.style.display = 'block';
+    if (reportSuccessState) reportSuccessState.style.display = 'none';
+  }
+  
+  reportModal.style.display = 'flex';
+}
+
+function closeReportModal() {
+  if (!reportModal) return;
+  reportModal.style.display = 'none';
+}
+
+async function handleReportSubmit(e) {
+  e.preventDefault();
+  const reason = reportReason.value.trim();
+  const details = reportDetails.value.trim();
+  
+  if (!reason) {
+    if (reportErrorMsg) {
+      reportErrorMsg.textContent = "Please select a reason for reporting.";
+      reportErrorMsg.style.display = 'block';
+    }
+    return;
+  }
+  
+  const submitBtn = document.getElementById('submitReportBtn');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Submitting...";
+  }
+  if (reportErrorMsg) reportErrorMsg.style.display = 'none';
+  
+  try {
+    const res = await peerFetch(`/conversations/${currentConversationId}/report`, {
+      method: 'POST',
+      body: JSON.stringify({ reason, details })
+    });
+    const data = await res.json();
+    
+    if (res.ok) {
+      hasBeenReported = true;
+      updateReportBtnState(true);
+      if (reportFormContainer) reportFormContainer.style.display = 'none';
+      if (reportSuccessState) reportSuccessState.style.display = 'block';
+    } else {
+      if (reportErrorMsg) {
+        reportErrorMsg.textContent = data.error || data.message || "Failed to submit report.";
+        reportErrorMsg.style.display = 'block';
+      }
+    }
+  } catch (err) {
+    console.error("Report submit error:", err);
+    if (reportErrorMsg) {
+      reportErrorMsg.textContent = "Network error submitting report.";
+      reportErrorMsg.style.display = 'block';
+    }
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit Report";
+    }
   }
 }
 

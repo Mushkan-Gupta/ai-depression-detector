@@ -35,6 +35,7 @@ from bson import ObjectId
 from bson.errors import InvalidId
 from flask import Blueprint, jsonify, current_app, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from pymongo.errors import DuplicateKeyError
 
 import db as _db
 from utils.crisis_check import check_crisis_keywords
@@ -1115,4 +1116,122 @@ def list_messages(conv_id):
         resp_data["peer_notice"] = "Your peer may be going through something difficult right now. Please be patient and kind."
 
     return jsonify(resp_data), 200
+
+
+# ── Reporting Endpoints ───────────────────────────────────────────────────
+
+VALID_REPORT_REASONS = {
+    "harassment",
+    "inappropriate_content",
+    "spam",
+    "safety_concern",
+    "other",
+}
+
+
+@peer_bp.route("/conversations/<conv_id>/report", methods=["POST"])
+@jwt_required()
+@require_peer_consent
+def report_peer(conv_id):
+    caller_id = get_jwt_identity()
+
+    try:
+        conv = _db.conversations_collection.find_one({"_id": ObjectId(conv_id)})
+    except InvalidId:
+        return jsonify({"error": "Invalid conversation ID"}), 400
+    except Exception as e:
+        current_app.logger.error(f"[PEER_REPORT] DB fetch error: {e}")
+        return jsonify({"error": "Database error"}), 500
+
+    if not conv:
+        return jsonify({"error": "Conversation not found"}), 404
+
+    participants = conv.get("participants", [])
+    if caller_id not in participants:
+        return jsonify({"error": "forbidden"}), 403
+
+    if len(participants) < 2:
+        return jsonify({"error": "Invalid conversation participants"}), 400
+
+    reported_user_id = participants[0] if participants[1] == caller_id else participants[1]
+
+    data = request.get_json(silent=True) or {}
+    reason = data.get("reason", "").strip() if isinstance(data.get("reason"), str) else ""
+
+    if not reason or reason not in VALID_REPORT_REASONS:
+        return jsonify({"error": "reason must be one of: harassment, inappropriate_content, spam, safety_concern, other"}), 400
+
+    details = data.get("details")
+    if isinstance(details, str):
+        details = details.strip() or None
+    else:
+        details = None
+
+    report_doc = {
+        "reporter_id": caller_id,
+        "reported_user_id": reported_user_id,
+        "conversation_id": str(conv_id),
+        "reason": reason,
+        "details": details,
+        "created_at": datetime.now(timezone.utc),
+    }
+
+    try:
+        _db.peer_reports_collection.insert_one(report_doc)
+    except DuplicateKeyError:
+        return jsonify({
+            "message": "You have already reported this user in this conversation.",
+            "already_reported": True,
+        }), 200
+    except Exception as e:
+        current_app.logger.error(f"[PEER_REPORT] DB insert report error: {e}")
+        return jsonify({"error": "Database error"}), 500
+
+    # Calculate distinct reporters across all conversations for reported_user_id
+    try:
+        distinct_reporters = _db.peer_reports_collection.distinct("reporter_id", {"reported_user_id": reported_user_id})
+        if len(distinct_reporters) >= 3:
+            _db.users_collection.update_one(
+                {"_id": ObjectId(reported_user_id)},
+                {"$set": {"available_for_matching": False, "matching_started_at": None}},
+            )
+            current_app.logger.info(f"[PEER_REPORT] User {reported_user_id} auto-excluded from matching ({len(distinct_reporters)} distinct reports).")
+    except Exception as e:
+        current_app.logger.error(f"[PEER_REPORT] Error updating reported user matching status: {e}")
+
+    return jsonify({
+        "message": "Thank you — we've received your report.",
+        "already_reported": False,
+    }), 201
+
+
+@peer_bp.route("/conversations/<conv_id>/report-status", methods=["GET"])
+@jwt_required()
+@require_peer_consent
+def report_status(conv_id):
+    caller_id = get_jwt_identity()
+
+    try:
+        conv = _db.conversations_collection.find_one({"_id": ObjectId(conv_id)})
+    except InvalidId:
+        return jsonify({"error": "Invalid conversation ID"}), 400
+    except Exception as e:
+        current_app.logger.error(f"[PEER_REPORT_STATUS] DB fetch conv error: {e}")
+        return jsonify({"error": "Database error"}), 500
+
+    if not conv:
+        return jsonify({"error": "Conversation not found"}), 404
+
+    if caller_id not in conv.get("participants", []):
+        return jsonify({"error": "forbidden"}), 403
+
+    try:
+        existing = _db.peer_reports_collection.find_one({
+            "reporter_id": caller_id,
+            "conversation_id": str(conv_id),
+        })
+        return jsonify({"reported": bool(existing)}), 200
+    except Exception as e:
+        current_app.logger.error(f"[PEER_REPORT_STATUS] DB fetch report error: {e}")
+        return jsonify({"error": "Database error"}), 500
 

@@ -29,6 +29,7 @@ journal_entries_collection:     Collection | None = None
 connection_requests_collection: Collection | None = None
 conversations_collection:       Collection | None = None
 messages_collection:            Collection | None = None
+peer_reports_collection:        Collection | None = None
 
 
 # ── Initialiser ────────────────────────────────────────────────────────────
@@ -45,7 +46,7 @@ def init_db(app) -> None:
     On failure, logs the error and exits — the server should not
     start without a valid database connection.
     """
-    global _client, _db, users_collection, journal_entries_collection, connection_requests_collection, conversations_collection, messages_collection
+    global _client, _db, users_collection, journal_entries_collection, connection_requests_collection, conversations_collection, messages_collection, peer_reports_collection
 
     mongo_uri = app.config.get("MONGO_URI")
     if not mongo_uri:
@@ -103,6 +104,7 @@ def init_db(app) -> None:
     connection_requests_collection  = _db["connection_requests"]
     conversations_collection        = _db["conversations"]
     messages_collection             = _db["messages"]
+    peer_reports_collection         = _db["peer_reports"]
 
     # Ensure indexes exist (idempotent — safe to call on every startup)
     _ensure_indexes()
@@ -145,6 +147,13 @@ def _ensure_indexes() -> None:
         # and its partialFilterExpression { available_for_matching: true }
         # always applies because the candidate query always filters on
         # available_for_matching: True. No additional index is needed here.
+
+        # peer_reports: enforce unique report per (reporter_id, reported_user_id, conversation_id)
+        peer_reports_collection.create_index(
+            [("reporter_id", ASCENDING), ("reported_user_id", ASCENDING), ("conversation_id", ASCENDING)],
+            unique=True,
+            name="idx_reports_reporter_reported_conv_unique",
+        )
 
         print("[DB] Indexes verified.")
 

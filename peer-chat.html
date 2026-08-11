@@ -98,270 +98,150 @@
     .chat-status-text.status-suspended { color: #d97706; }
     .chat-status-text.status-closed { color: var(--text-2); }
     
-    .status-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 999px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      display: none; /* hidden, superseded by status-text in header info */
-    }
-    
-    /* Banners (Crisis & Peer Notice) - Pinned near top, distinct & non-dismissible */
-    .crisis-banner {
-      background: #fef2f2;
-      border-left: 4px solid #ef4444;
-      padding: 1rem 1.25rem;
-      margin: 0.75rem 1.25rem 0.25rem 1.25rem;
-      border-radius: 8px;
-      color: #991b1b;
-      font-size: 0.9rem;
-    }
-    .crisis-banner h3 { color: #991b1b; margin: 0 0 0.4rem 0; font-size: 1rem; }
-    .crisis-banner p { margin: 0 0 0.5rem 0; line-height: 1.4; }
-    .crisis-banner ul { margin: 0.4rem 0 0 1.25rem; padding: 0; color: #b91c1c; }
-    
-    /* Message Thread Area */
-    .chat-messages {
-      flex-grow: 1;
-      padding: 1.25rem 1.5rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      background: var(--bg);
-      scroll-behavior: smooth;
-    }
-
-    /* Date Separators */
-    .chat-date-separator {
+    .report-btn {
+      color: var(--text-2);
+      background: transparent;
+      border: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 1.25rem 0 0.5rem 0;
-    }
-    
-    .chat-date-separator span {
-      font-size: 0.725rem;
-      color: var(--text-2);
-      background: var(--surface-1);
-      padding: 0.25rem 0.75rem;
-      border-radius: 12px;
-      font-weight: 500;
-      border: 1px solid var(--border);
-    }
-    
-    /* Message Wrappers & Grouping */
-    .message-wrapper {
-      display: flex;
-      max-width: 75%;
-      margin-top: 12px; /* Generous spacing between message groups */
-      position: relative;
-    }
-    
-    .message-wrapper.consecutive {
-      margin-top: 3px; /* Close gap for same-sender messages */
-    }
-    
-    .message-wrapper.sent {
-      align-self: flex-end;
-      justify-content: flex-end;
-    }
-    
-    .message-wrapper.received {
-      align-self: flex-start;
-      justify-content: flex-start;
-      max-width: 80%;
-    }
-    
-    /* Peer Avatar - shown ONLY on the last message in a consecutive group */
-    .peer-avatar {
-      width: 28px;
-      height: 28px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: var(--indigo);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+      font-size: 1.05rem;
+      cursor: pointer;
       flex-shrink: 0;
-      margin-right: 8px;
-      align-self: flex-end;
-      visibility: hidden; /* Hidden by default for consecutive group messages */
-      margin-bottom: 2px;
     }
-    
-    .message-wrapper.received.last-in-group .peer-avatar {
-      visibility: visible; /* Revealed on last message in group */
-    }
-
-    .message-content-col {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .message-wrapper.sent .message-content-col {
-      align-items: flex-end;
-    }
-    
-    .message-wrapper.received .message-content-col {
-      align-items: flex-start;
-    }
-    
-    .message-bubble {
-      padding: 0.65rem 1rem;
-      font-size: 0.925rem;
-      line-height: 1.45;
-      word-wrap: break-word;
-      max-width: 100%;
-    }
-    
-    /* Sent Bubbles - Instagram / Modern style rounded corners */
-    .message-wrapper.sent .message-bubble {
-      background: linear-gradient(135deg, var(--indigo), var(--violet));
-      color: white;
-      border-radius: 18px 18px 4px 18px;
-    }
-    
-    /* Corner rounding for sent message groups */
-    .message-wrapper.sent.group-start:not(.last-in-group) .message-bubble {
-      border-radius: 18px 18px 4px 18px;
-    }
-    .message-wrapper.sent.middle-in-group .message-bubble {
-      border-radius: 18px 4px 4px 18px;
-    }
-    .message-wrapper.sent.last-in-group.consecutive .message-bubble {
-      border-radius: 18px 4px 18px 18px;
-    }
-    
-    /* Received Bubbles */
-    .message-wrapper.received .message-bubble {
-      background: var(--surface-1);
-      color: var(--text-1);
-      border: 1px solid var(--border);
-      border-radius: 18px 18px 18px 4px;
-    }
-    
-    /* Corner rounding for received message groups */
-    .message-wrapper.received.group-start:not(.last-in-group) .message-bubble {
-      border-radius: 18px 18px 18px 4px;
-    }
-    .message-wrapper.received.middle-in-group .message-bubble {
-      border-radius: 4px 18px 18px 4px;
-    }
-    .message-wrapper.received.last-in-group.consecutive .message-bubble {
-      border-radius: 4px 18px 18px 18px;
-    }
-    
-    /* Timestamps - shown subtly below the last message in a group */
-    .message-meta {
-      font-size: 0.7rem;
-      color: var(--text-2);
-      display: none;
-      align-items: center;
-      gap: 0.35rem;
-      margin-top: 3px;
-      padding: 0 4px;
-    }
-    
-    .message-wrapper.last-in-group .message-meta {
-      display: flex;
-    }
-    
-    .message-wrapper.sent .message-bubble.sending {
-      opacity: 0.7;
-    }
-    
-    .message-wrapper.sent .message-bubble.failed {
-      background: #ef4444;
-      color: white;
-    }
-    
-    .inline-crisis-nudge {
-      font-size: 0.8rem;
+    .report-btn:hover {
       color: #ef4444;
       background: #fef2f2;
-      padding: 0.5rem 0.75rem;
-      border-radius: var(--radius-sm);
-      margin-top: 0.35rem;
-      border: 1px solid #fca5a5;
     }
-    
-    /* Input Bar (Sticky Bottom) */
-    .chat-input-area {
-      padding: 0.85rem 1.25rem;
-      border-top: 1px solid var(--border);
-      background: var(--surface-1);
+    .report-btn.reported {
+      color: var(--text-2);
+      opacity: 0.6;
+    }
+
+    /* Modal Overlay & Dialog */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
       display: flex;
-      gap: 0.75rem;
       align-items: center;
+      justify-content: center;
+      padding: 1rem;
     }
-    
-    .chat-input-area textarea {
-      flex-grow: 1;
-      resize: none;
+    .modal-card {
+      background: var(--surface-1);
+      border-radius: var(--radius-lg);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 0.75rem 1.25rem;
-      font-family: inherit;
-      font-size: 0.95rem;
-      max-height: 120px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 480px;
+      overflow: hidden;
+      animation: modalSlideIn 0.2s ease-out;
+    }
+    @keyframes modalSlideIn {
+      from { transform: translateY(12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-2);
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+    }
+    .modal-close-btn:hover { color: var(--text-1); }
+    .modal-body {
+      padding: 1.5rem;
+    }
+    .modal-subtext {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      margin-bottom: 1.25rem;
       line-height: 1.45;
-      overflow-y: auto;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .form-group label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-1);
+    }
+    .required { color: #ef4444; }
+    .optional { font-weight: 400; color: var(--text-2); }
+    .form-select, .form-textarea {
+      width: 100%;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
       background: var(--bg);
       color: var(--text-1);
-      transition: border-color 0.2s;
+      font-family: inherit;
+      font-size: 0.9rem;
     }
-    
-    .chat-input-area textarea:focus {
+    .form-select:focus, .form-textarea:focus {
       outline: none;
       border-color: var(--indigo);
     }
-    
-    .send-btn {
-      background: var(--indigo);
+    .form-error {
+      color: #ef4444;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--text-1);
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.25rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .btn-danger {
+      background: #ef4444;
       color: white;
       border: none;
-      border-radius: 50%;
-      width: 42px;
-      height: 42px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 0.6rem 1.25rem;
+      border-radius: 20px;
       cursor: pointer;
-      flex-shrink: 0;
-      transition: background 0.2s, transform 0.1s;
-    }
-    
-    .send-btn:hover {
-      background: var(--violet);
-      transform: scale(1.05);
-    }
-    .send-btn:disabled {
-      background: var(--text-2);
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-    
-    .chat-disabled-banner {
-      background: #f3f4f6;
-      color: #4b5563;
-      padding: 0.75rem;
-      text-align: center;
+      font-weight: 600;
       font-size: 0.9rem;
-      border-top: 1px solid var(--border);
     }
-    
-    /* Full-page error states */
-    .error-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 60vh;
-      text-align: center;
-    }
+    .btn-danger:hover { background: #dc2626; }
 
     /* Responsive adjustments */
     @media (max-width: 640px) {
@@ -440,6 +320,9 @@
               <div class="chat-status-text" id="chatStatusText">Active</div>
             </div>
           </div>
+          <button id="reportPeerBtn" class="report-btn" title="Report Peer" aria-label="Report Peer">
+            <i class="fa-solid fa-flag"></i>
+          </button>
           <span id="chatStatusBadge" class="status-badge status-active" style="display: none;">Active</span>
         </div>
         
@@ -463,6 +346,47 @@
         
       </div>
     </main>
+  <!-- Report Modal Container -->
+  <div id="reportModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Report Peer</h3>
+        <button class="modal-close-btn" id="closeReportModalBtn" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="reportFormContainer">
+          <p class="modal-subtext">If this peer has engaged in harassment, inappropriate behavior, or safety violations, please submit a report. All reports are strictly confidential.</p>
+          <form id="reportForm">
+            <div class="form-group">
+              <label for="reportReason">Reason <span class="required">*</span></label>
+              <select id="reportReason" class="form-select" required>
+                <option value="">Select a reason...</option>
+                <option value="harassment">Harassment or Bullying</option>
+                <option value="inappropriate_content">Inappropriate Content</option>
+                <option value="spam">Spam or Scam</option>
+                <option value="safety_concern">Safety Concern</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="reportDetails">Additional Details <span class="optional">(Optional)</span></label>
+              <textarea id="reportDetails" class="form-textarea" placeholder="Provide any context that will help us review this report..." rows="3"></textarea>
+            </div>
+            <div id="reportErrorMsg" class="form-error" style="display: none;"></div>
+            <div class="modal-actions">
+              <button type="button" class="btn-secondary" id="cancelReportBtn">Cancel</button>
+              <button type="submit" class="btn-danger" id="submitReportBtn">Submit Report</button>
+            </div>
+          </form>
+        </div>
+        <div id="reportSuccessState" style="display: none; text-align: center; padding: 1rem 0;">
+          <i class="fa-solid fa-circle-check" style="font-size: 2.5rem; color: #16a34a; margin-bottom: 0.75rem;"></i>
+          <h4 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: var(--text-1);">Report Received</h4>
+          <p style="color: var(--text-2); margin-bottom: 1.5rem; font-size: 0.9rem;">Thank you — we've received your report.</p>
+          <button type="button" class="btn-secondary" id="closeReportSuccessBtn">Close</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="js/theme.js"></script>
