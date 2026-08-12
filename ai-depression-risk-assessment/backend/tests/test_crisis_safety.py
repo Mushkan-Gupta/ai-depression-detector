@@ -170,3 +170,52 @@ def test_high_risk_keyword_hard_override(logged_in_client, keyword, phrase):
     guidance = opt_in_data["crisis_guidance"]
     assert "resources" in guidance, "resources missing from crisis_guidance"
     assert isinstance(guidance["resources"], list) and len(guidance["resources"]) > 0, "crisis resources list is empty"
+
+
+# ── 7. GIBBERISH / UNANALYZABLE DETECTION ─────────────────────────────────────
+
+# True gibberish: must return risk == "Unanalyzable"
+GIBBERISH_CASES = [
+    "asdkj qpwoe xnmzb",
+    "kjhgfds lkjhg",
+    "zxcvbnm asdfgh qwerty",
+    "xkqz vpwm bnrt",
+]
+
+@pytest.mark.parametrize("phrase", GIBBERISH_CASES)
+def test_gibberish_flagged(client, phrase):
+    res = client.post('/predict', json={'journal': phrase})
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data.get('risk') == "Unanalyzable", (
+        f"Expected Unanalyzable for gibberish input, got {data.get('risk')!r}: {phrase!r}"
+    )
+    assert "message" in data, f"Expected 'message' key in Unanalyzable response: {data}"
+
+
+# Legitimate short entries (incl. Hinglish): must NOT return "Unanalyzable"
+LEGIT_SHORT_CASES = [
+    "im sad",
+    "cant sleep",
+    "ok",
+    "fine i guess",
+    "I am okay",
+    "theek hoon yaar",           # Hinglish: "I'm fine, friend"
+    "nahi pata kya karoon",      # Hinglish: "don't know what to do"
+    "acha hai sab",              # Hinglish: "everything is okay"
+    "not feeling great today",
+    "thoda stress hai",          # Hinglish: "a little stress"
+]
+
+@pytest.mark.parametrize("phrase", LEGIT_SHORT_CASES)
+def test_legitimate_short_not_flagged(client, phrase):
+    res = client.post('/predict', json={'journal': phrase})
+    assert res.status_code == 200
+    data = res.get_json()
+    assert data.get('risk') != "Unanalyzable", (
+        f"FALSE POSITIVE: legitimate entry was flagged as Unanalyzable: {phrase!r}"
+    )
+    # Must also have the standard risk field (Low/Moderate/High)
+    assert data.get('risk') in ("Low", "Moderate", "High"), (
+        f"Unexpected risk value for legitimate entry: {data.get('risk')!r}"
+    )

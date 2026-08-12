@@ -62,6 +62,7 @@ from constants.keywords import (
     CONTEXT_GATED_PHRASES,
     THEME_MAP
 )
+from utils.gibberish_check import is_unanalyzable
 
 
 def keyword_classify(text: str):
@@ -212,6 +213,18 @@ def predict():
         journal = data["journal"]
         if not journal.strip():
             return {"error": "Journal text is empty"}, 400
+
+        # ── Gibberish / non-language guard ──────────────────────────────
+        # Must run BEFORE keyword_classify and BEFORE any DB write.
+        # Returns a distinct response and exits early — does NOT save to
+        # MongoDB, does NOT run ML, does NOT touch crisis/keyword logic.
+        if is_unanalyzable(journal):
+            print(f"[PREDICT] UNANALYZABLE INPUT detected: {repr(journal[:80])}")
+            return jsonify({
+                "risk":    "Unanalyzable",
+                "message": "We couldn't understand this entry. "
+                           "Could you describe how you're feeling in a sentence or two?"
+            })
 
         # ── Primary: keyword-based classification ──────────────────
         kw_risk, kw_confidence, evidence, neg_score = keyword_classify(journal)
