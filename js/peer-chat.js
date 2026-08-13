@@ -36,6 +36,7 @@ const reportDetails = document.getElementById('reportDetails');
 const reportErrorMsg = document.getElementById('reportErrorMsg');
 const reportFormContainer = document.getElementById('reportFormContainer');
 const reportSuccessState = document.getElementById('reportSuccessState');
+const blockUserCheckbox = document.getElementById('blockUserCheckbox');
 
 // ── Initialization ──────────────────────────────────────────────────────────
 async function initChat() {
@@ -440,6 +441,8 @@ function openReportModal() {
     reportErrorMsg.style.display = 'none';
     reportErrorMsg.textContent = '';
   }
+  // Always reset block checkbox to unchecked when reopening the modal
+  if (blockUserCheckbox) blockUserCheckbox.checked = false;
   
   if (hasBeenReported) {
     if (reportFormContainer) reportFormContainer.style.display = 'none';
@@ -461,6 +464,7 @@ async function handleReportSubmit(e) {
   e.preventDefault();
   const reason = reportReason.value.trim();
   const details = reportDetails.value.trim();
+  const block = blockUserCheckbox ? blockUserCheckbox.checked : false;
   
   if (!reason) {
     if (reportErrorMsg) {
@@ -480,13 +484,19 @@ async function handleReportSubmit(e) {
   try {
     const res = await peerFetch(`/conversations/${currentConversationId}/report`, {
       method: 'POST',
-      body: JSON.stringify({ reason, details })
+      body: JSON.stringify({ reason, details, block })
     });
     const data = await res.json();
     
     if (res.ok) {
       hasBeenReported = true;
       updateReportBtnState(true);
+      // If the reporter chose to block, immediately reflect the closed state.
+      // Reuses the exact same updateStatusUI("closed") path that polling uses
+      // for any closed conversation: disables input, shows banner, stops poll.
+      if (data.blocked) {
+        updateStatusUI('closed');
+      }
       if (reportFormContainer) reportFormContainer.style.display = 'none';
       if (reportSuccessState) reportSuccessState.style.display = 'block';
     } else {

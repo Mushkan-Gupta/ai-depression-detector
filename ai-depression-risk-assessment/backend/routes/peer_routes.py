@@ -1167,6 +1167,9 @@ def report_peer(conv_id):
     else:
         details = None
 
+    # Optional block flag — default False; caller opts in explicitly
+    block = bool(data.get("block", False))
+
     report_doc = {
         "reporter_id": caller_id,
         "reported_user_id": reported_user_id,
@@ -1199,9 +1202,39 @@ def report_peer(conv_id):
     except Exception as e:
         current_app.logger.error(f"[PEER_REPORT] Error updating reported user matching status: {e}")
 
+    # ── Block path: add reported user to reporter's excluded_users + close conv ──
+    if block:
+        try:
+            # (a) One-directional exclusion: reuses the same excluded_users field
+            #     that _build_candidate_list() already reads for bidirectional filtering.
+            _db.users_collection.update_one(
+                {"_id": ObjectId(caller_id)},
+                {"$addToSet": {"excluded_users": reported_user_id}},
+            )
+            current_app.logger.info(
+                f"[PEER_REPORT] Caller {caller_id} blocked {reported_user_id} "
+                f"(added to excluded_users)."
+            )
+        except Exception as e:
+            current_app.logger.error(f"[PEER_REPORT] Error adding to excluded_users: {e}")
+
+        try:
+            # (b) Close the conversation — reported user sees the generic
+            #     "conversation no longer active" state the UI already handles.
+            _db.conversations_collection.update_one(
+                {"_id": ObjectId(conv_id)},
+                {"$set": {"status": "closed", "closed_reason": "user_blocked"}},
+            )
+            current_app.logger.info(
+                f"[PEER_REPORT] Conversation {conv_id} closed (user_blocked)."
+            )
+        except Exception as e:
+            current_app.logger.error(f"[PEER_REPORT] Error closing conversation: {e}")
+
     return jsonify({
         "message": "Thank you — we've received your report.",
         "already_reported": False,
+        "blocked": block,
     }), 201
 
 

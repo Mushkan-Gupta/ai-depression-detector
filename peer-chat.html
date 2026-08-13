@@ -98,6 +98,15 @@
     .chat-status-text.status-suspended { color: #d97706; }
     .chat-status-text.status-closed { color: var(--text-2); }
     
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: none; /* hidden, superseded by status-text in header info */
+    }
+    
+    /* ── Report button (4c6c14a) ───────────────────────────────────────────── */
     .report-btn {
       color: var(--text-2);
       background: transparent;
@@ -122,7 +131,264 @@
       opacity: 0.6;
     }
 
-    /* Modal Overlay & Dialog */
+    /* Banners (Crisis & Peer Notice) - Pinned near top, distinct & non-dismissible */
+    .crisis-banner {
+      background: #fef2f2;
+      border-left: 4px solid #ef4444;
+      padding: 1rem 1.25rem;
+      margin: 0.75rem 1.25rem 0.25rem 1.25rem;
+      border-radius: 8px;
+      color: #991b1b;
+      font-size: 0.9rem;
+    }
+    .crisis-banner h3 { color: #991b1b; margin: 0 0 0.4rem 0; font-size: 1rem; }
+    .crisis-banner p { margin: 0 0 0.5rem 0; line-height: 1.4; }
+    .crisis-banner ul { margin: 0.4rem 0 0 1.25rem; padding: 0; color: #b91c1c; }
+    
+    /* Message Thread Area */
+    .chat-messages {
+      flex-grow: 1;
+      padding: 1.25rem 1.5rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      scroll-behavior: smooth;
+    }
+
+    /* Date Separators */
+    .chat-date-separator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1.25rem 0 0.5rem 0;
+    }
+    
+    .chat-date-separator span {
+      font-size: 0.725rem;
+      color: var(--text-2);
+      background: var(--surface-1);
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+    }
+    
+    /* Message Wrappers & Grouping */
+    .message-wrapper {
+      display: flex;
+      max-width: 75%;
+      margin-top: 12px; /* Generous spacing between message groups */
+      position: relative;
+    }
+    
+    .message-wrapper.consecutive {
+      margin-top: 3px; /* Close gap for same-sender messages */
+    }
+    
+    .message-wrapper.sent {
+      align-self: flex-end;
+      justify-content: flex-end;
+    }
+    
+    .message-wrapper.received {
+      align-self: flex-start;
+      justify-content: flex-start;
+      max-width: 80%;
+    }
+    
+    /* Peer Avatar - shown ONLY on the last message in a consecutive group */
+    .peer-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--indigo);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-right: 8px;
+      align-self: flex-end;
+      visibility: hidden; /* Hidden by default for consecutive group messages */
+      margin-bottom: 2px;
+    }
+    
+    .message-wrapper.received.last-in-group .peer-avatar {
+      visibility: visible; /* Revealed on last message in group */
+    }
+
+    .message-content-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message-wrapper.sent .message-content-col {
+      align-items: flex-end;
+    }
+    
+    .message-wrapper.received .message-content-col {
+      align-items: flex-start;
+    }
+    
+    .message-bubble {
+      padding: 0.65rem 1rem;
+      font-size: 0.925rem;
+      line-height: 1.45;
+      word-wrap: break-word;
+      max-width: 100%;
+    }
+    
+    /* Sent Bubbles - Instagram / Modern style rounded corners */
+    .message-wrapper.sent .message-bubble {
+      background: linear-gradient(135deg, var(--indigo), var(--violet));
+      color: white;
+      border-radius: 18px 18px 4px 18px;
+    }
+    
+    /* Corner rounding for sent message groups */
+    .message-wrapper.sent.group-start:not(.last-in-group) .message-bubble {
+      border-radius: 18px 18px 4px 18px;
+    }
+    .message-wrapper.sent.middle-in-group .message-bubble {
+      border-radius: 18px 4px 4px 18px;
+    }
+    .message-wrapper.sent.last-in-group.consecutive .message-bubble {
+      border-radius: 18px 4px 18px 18px;
+    }
+    
+    /* Received Bubbles */
+    .message-wrapper.received .message-bubble {
+      background: var(--surface-1);
+      color: var(--text-1);
+      border: 1px solid var(--border);
+      border-radius: 18px 18px 18px 4px;
+    }
+    
+    /* Corner rounding for received message groups */
+    .message-wrapper.received.group-start:not(.last-in-group) .message-bubble {
+      border-radius: 18px 18px 18px 4px;
+    }
+    .message-wrapper.received.middle-in-group .message-bubble {
+      border-radius: 4px 18px 18px 4px;
+    }
+    .message-wrapper.received.last-in-group.consecutive .message-bubble {
+      border-radius: 4px 18px 18px 18px;
+    }
+    
+    /* Timestamps - shown subtly below the last message in a group */
+    .message-meta {
+      font-size: 0.7rem;
+      color: var(--text-2);
+      display: none;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 3px;
+      padding: 0 4px;
+    }
+    
+    .message-wrapper.last-in-group .message-meta {
+      display: flex;
+    }
+    
+    .message-wrapper.sent .message-bubble.sending {
+      opacity: 0.7;
+    }
+    
+    .message-wrapper.sent .message-bubble.failed {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .inline-crisis-nudge {
+      font-size: 0.8rem;
+      color: #ef4444;
+      background: #fef2f2;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+      margin-top: 0.35rem;
+      border: 1px solid #fca5a5;
+    }
+    
+    /* Input Bar (Sticky Bottom) */
+    .chat-input-area {
+      padding: 0.85rem 1.25rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface-1);
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    
+    .chat-input-area textarea {
+      flex-grow: 1;
+      resize: none;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 0.75rem 1.25rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      max-height: 120px;
+      line-height: 1.45;
+      overflow-y: auto;
+      background: var(--bg);
+      color: var(--text-1);
+      transition: border-color 0.2s;
+    }
+    
+    .chat-input-area textarea:focus {
+      outline: none;
+      border-color: var(--indigo);
+    }
+    
+    .send-btn {
+      background: var(--indigo);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.1s;
+    }
+    
+    .send-btn:hover {
+      background: var(--violet);
+      transform: scale(1.05);
+    }
+    .send-btn:disabled {
+      background: var(--text-2);
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .chat-disabled-banner {
+      background: #f3f4f6;
+      color: #4b5563;
+      padding: 0.75rem;
+      text-align: center;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+    
+    /* Full-page error states */
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 60vh;
+      text-align: center;
+    }
+
+    /* ── Report Modal Overlay & Dialog (4c6c14a) ──────────────────────────── */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -371,6 +637,12 @@
             <div class="form-group">
               <label for="reportDetails">Additional Details <span class="optional">(Optional)</span></label>
               <textarea id="reportDetails" class="form-textarea" placeholder="Provide any context that will help us review this report..." rows="3"></textarea>
+            </div>
+            <div class="form-group" style="flex-direction: row; align-items: flex-start; gap: 0.6rem; margin-bottom: 0.5rem;">
+              <input type="checkbox" id="blockUserCheckbox" style="width:auto; margin-top: 2px; accent-color: var(--indigo); cursor:pointer; flex-shrink:0;" />
+              <label for="blockUserCheckbox" style="font-weight:400; color:var(--text-2); font-size:0.875rem; cursor:pointer; margin:0; line-height:1.4;">
+                Block this person too (you won't be matched with them again)
+              </label>
             </div>
             <div id="reportErrorMsg" class="form-error" style="display: none;"></div>
             <div class="modal-actions">

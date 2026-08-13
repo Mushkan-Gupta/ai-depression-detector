@@ -204,5 +204,167 @@ def run_tests():
     print("=" * 70)
 
 
+def run_block_tests():
+    """
+    TEST 5 — report-only path (block=False): conversation stays open, no exclusion.
+    TEST 6 — report+block path (block=True): conversation closes, reported user
+              added to reporter's excluded_users, but a 3rd user is unaffected
+              (confirming one-directional exclusion).
+    """
+    print("\n" + "=" * 70)
+    print("BLOCK-ON-REPORT TEST SUITE (TESTS 5 & 6)")
+    print("=" * 70)
+
+    # Ensure we are on the test DB (run_tests() already switched, but be safe)
+    flask_app.config["TESTING"] = True
+    _db._db = _db._client["mindease_test"]
+    _db.users_collection = _db._db["users"]
+    _db.conversations_collection = _db._db["conversations"]
+    _db.peer_reports_collection = _db._db["peer_reports"]
+    _db.connection_requests_collection = _db._db["connection_requests"]
+
+    if _db._db.name != "mindease_test":
+        print(f"[FATAL] Safety check failed! Connected to {_db._db.name}", file=sys.stderr)
+        sys.exit(1)
+
+    client = flask_app.test_client()
+    now = datetime.now(timezone.utc)
+    SHARED_THEME = ["Grief & Loss"]
+
+    # ── Create 4 fresh users for isolation ──────────────────────────────────
+    block_users = {
+        "F": "user_f_block@example.com",
+        "G": "user_g_block@example.com",
+        "H": "user_h_blocker@example.com",
+        "I": "user_i_blocked@example.com",
+        "J": "user_j_observer@example.com",   # 3rd party — should still see I
+    }
+    b_ids = {}
+    b_tokens = {}
+    for key, email in block_users.items():
+        # Remove any leftover doc from a previous run
+        _db.users_collection.delete_one({"email": email})
+        doc = {
+            "email": email,
+            "password_hash": "testpass",
+            "peer_display_name": f"Block-{key}",
+            "peer_consent": {"accepted": True, "accepted_at": now, "version": "1.0"},
+            "themes": SHARED_THEME,
+            "current_risk_level": "Low",
+            "available_for_matching": True,
+            "matching_started_at": now,
+            "excluded_users": [],
+        }
+        res = _db.users_collection.insert_one(doc)
+        uid = str(res.inserted_id)
+        b_ids[key] = uid
+        with flask_app.app_context():
+            b_tokens[key] = create_access_token(identity=uid)
+
+    print(f"Created 5 block-test users: {list(b_ids.keys())}")
+
+    # ── TEST 5: report-only (block=False) ────────────────────────────────────
+    print("\n--- TEST 5: report-only path (block=False) — conv stays open ---")
+
+    conv_fg = str(_db.conversations_collection.insert_one({
+        "participants": [b_ids["F"], b_ids["G"]],
+        "status": "active",
+        "closed_reason": None,
+        "created_at": now,
+    }).inserted_id)
+
+    res5 = client.post(
+        f"/peer/conversations/{conv_fg}/report",
+        headers={"Authorization": f"Bearer {b_tokens['F']}"},
+        json={"reason": "spam", "block": False},
+    )
+    assert res5.status_code == 201, f"TEST 5 expected 201, got {res5.status_code}: {res5.get_data(as_text=True)}"
+    data5 = res5.get_json()
+    assert data5.get("blocked") is False, f"TEST 5: expected blocked=False in response, got {data5}"
+    print(f"  [PASS] Response: blocked=False")
+
+    # Conversation must still be active
+    conv_fg_doc = _db.conversations_collection.find_one({"_id": ObjectId(conv_fg)})
+    assert conv_fg_doc["status"] == "active", f"TEST 5: conversation should remain 'active', got {conv_fg_doc['status']}"
+    print(f"  [PASS] DB: conversation status still 'active'")
+
+    # F's excluded_users must NOT contain G
+    f_doc = _db.users_collection.find_one({"_id": ObjectId(b_ids["F"])})
+    assert b_ids["G"] not in [str(x) for x in f_doc.get("excluded_users", [])], \
+        f"TEST 5: G must not be in F's excluded_users, got {f_doc.get('excluded_users')}"
+    print(f"  [PASS] DB: G not in F's excluded_users")
+
+    # G should still appear in F's candidate list
+    cands5 = client.get("/peer/candidates", headers={"Authorization": f"Bearer {b_tokens['F']}"})
+    assert cands5.status_code == 200, f"TEST 5: candidates query failed: {cands5.status_code}"
+    cand_ids5 = [c["candidate_id"] for c in cands5.get_json().get("candidates", [])]
+    assert b_ids["G"] in cand_ids5, \
+        f"TEST 5: G should STILL appear in F's candidate list after report-only, got {cand_ids5}"
+    print(f"  [PASS] GET /peer/candidates: G still appears for F")
+
+    # ── TEST 6: report+block (block=True) ────────────────────────────────────
+    print("\n--- TEST 6: report+block path (block=True) ---")
+
+    conv_hi = str(_db.conversations_collection.insert_one({
+        "participants": [b_ids["H"], b_ids["I"]],
+        "status": "active",
+        "closed_reason": None,
+        "created_at": now,
+    }).inserted_id)
+
+    res6 = client.post(
+        f"/peer/conversations/{conv_hi}/report",
+        headers={"Authorization": f"Bearer {b_tokens['H']}"},
+        json={"reason": "harassment", "block": True},
+    )
+    assert res6.status_code == 201, f"TEST 6 expected 201, got {res6.status_code}: {res6.get_data(as_text=True)}"
+    data6 = res6.get_json()
+    assert data6.get("blocked") is True, f"TEST 6: expected blocked=True in response, got {data6}"
+    print(f"  [PASS] Response: blocked=True")
+
+    # Conversation must be closed
+    conv_hi_doc = _db.conversations_collection.find_one({"_id": ObjectId(conv_hi)})
+    assert conv_hi_doc["status"] == "closed", \
+        f"TEST 6: conversation should be 'closed', got {conv_hi_doc['status']}"
+    assert conv_hi_doc.get("closed_reason") == "user_blocked", \
+        f"TEST 6: closed_reason should be 'user_blocked', got {conv_hi_doc.get('closed_reason')}"
+    print(f"  [PASS] DB: conversation status='closed', closed_reason='user_blocked'")
+
+    # H's excluded_users must contain I
+    h_doc = _db.users_collection.find_one({"_id": ObjectId(b_ids["H"])})
+    h_excluded = [str(x) for x in h_doc.get("excluded_users", [])]
+    assert b_ids["I"] in h_excluded, \
+        f"TEST 6: I must be in H's excluded_users, got {h_excluded}"
+    print(f"  [PASS] DB: I is in H's excluded_users")
+
+    # I must NOT appear in H's candidate list (one-directional block)
+    cands6_h = client.get("/peer/candidates", headers={"Authorization": f"Bearer {b_tokens['H']}"})
+    assert cands6_h.status_code == 200, f"TEST 6: H's candidates query failed: {cands6_h.status_code}"
+    cand_ids6_h = [c["candidate_id"] for c in cands6_h.get_json().get("candidates", [])]
+    assert b_ids["I"] not in cand_ids6_h, \
+        f"TEST 6: I must NOT appear in H's candidate list after block, got {cand_ids6_h}"
+    print(f"  [PASS] GET /peer/candidates (H): I no longer appears for H")
+
+    # I's own excluded_users must NOT contain H (block is one-directional)
+    i_doc = _db.users_collection.find_one({"_id": ObjectId(b_ids["I"])})
+    i_excluded = [str(x) for x in i_doc.get("excluded_users", [])]
+    assert b_ids["H"] not in i_excluded, \
+        f"TEST 6: H must NOT be in I's excluded_users (one-directional), got {i_excluded}"
+    print(f"  [PASS] DB: H not in I's excluded_users (block is one-directional)")
+
+    # J (third user, same theme, no history with I) must still see I as a candidate
+    cands6_j = client.get("/peer/candidates", headers={"Authorization": f"Bearer {b_tokens['J']}"})
+    assert cands6_j.status_code == 200, f"TEST 6: J's candidates query failed: {cands6_j.status_code}"
+    cand_ids6_j = [c["candidate_id"] for c in cands6_j.get_json().get("candidates", [])]
+    assert b_ids["I"] in cand_ids6_j, \
+        f"TEST 6: I MUST still appear in J's candidate list (exclusion is one-directional), got {cand_ids6_j}"
+    print(f"  [PASS] GET /peer/candidates (J): I still appears for unrelated user J")
+
+    print("\n" + "=" * 70)
+    print("ALL BLOCK-ON-REPORT TESTS PASSED SUCCESSFULLY!")
+    print("=" * 70)
+
+
 if __name__ == "__main__":
     run_tests()
+    run_block_tests()
