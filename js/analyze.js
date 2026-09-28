@@ -214,17 +214,6 @@ function renderResults(risk, confidence, detectedSignals, detectedThemes) {
 
   document.getElementById("riskSummary").textContent = guidanceData.summary;
 
-  // Confidence bar
-  if (confidence !== null && confidence !== undefined) {
-    const pct = Math.round(confidence * 100);
-    document.getElementById("confidenceValue").textContent = `${pct}%`;
-    const bar = document.getElementById("confidenceBar");
-    bar.className = `confidence-bar-inner ${riskClass}`;
-    // Defer to allow browser to paint first (for animation)
-    setTimeout(() => { bar.style.width = `${pct}%`; }, 80);
-  } else {
-    document.getElementById("confidenceCard").classList.add("hidden");
-  }
 
   // Emotional signals
   const signalsList = document.getElementById("signalsList");
