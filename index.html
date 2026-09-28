@@ -91,6 +91,11 @@
           <span class="music-icon">🎧</span>
           <span class="music-label">Calm Music</span>
         </button>
+        <!-- Breathing Exercise -->
+        <button class="music-btn" id="breatheToggleBtn" onclick="openBreatheModal()" title="Breathing Exercise">
+          <span>🧘</span>
+          <span class="music-label">Breathe</span>
+        </button>
         <!-- Peer Connect Toggle -->
         <button class="history-toggle-btn" id="peerToggleBtn" onclick="window.location.href='peer-connect.html'"
           title="Peer Connect">
@@ -262,9 +267,89 @@
     <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
   </audio>
 
+  <!-- BREATHING EXERCISE MODAL -->
+  <div class="breathe-overlay hidden" id="breatheOverlay" onclick="closeBreatheModal(event)">
+    <div class="breathe-modal" role="dialog" aria-labelledby="breatheTitle">
+      <div class="breathe-modal-header">
+        <span id="breatheTitle">🧘 Breathing Exercise</span>
+        <button class="breathe-close-btn" onclick="closeBreatheModal()" aria-label="Close">✕</button>
+      </div>
+      <div class="breathe-circle-wrap">
+        <div class="breathe-circle" id="breatheCircle">
+          <span class="breathe-phase-label" id="breathePhaseLabel">Press Start</span>
+        </div>
+      </div>
+      <button class="breathe-start-btn" id="breatheStartBtn" onclick="toggleBreathing()">▶ Start</button>
+    </div>
+  </div>
+
   <script src="js/theme.js"></script>
   <script src="js/dashboard.js"></script>
   <script src="js/analyze.js"></script>
+  <script>
+  // ── Breathing Exercise ─────────────────────────────────
+  (function () {
+    var phases = [
+      { label: 'Breathe In',  cls: 'breathe-in',   dur: 4000 },
+      { label: 'Hold',        cls: 'breathe-hold',  dur: 4000 },
+      { label: 'Breathe Out', cls: 'breathe-out',   dur: 4000 }
+    ];
+    var phaseIdx = 0;
+    var timer = null;
+    var running = false;
+
+    function setPhase(idx) {
+      var circle = document.getElementById('breatheCircle');
+      var label  = document.getElementById('breathePhaseLabel');
+      if (!circle || !label) return;
+      // Remove all phase classes
+      phases.forEach(function(p) { circle.classList.remove(p.cls); });
+      circle.classList.add(phases[idx].cls);
+      label.textContent = phases[idx].label;
+    }
+
+    function nextPhase() {
+      if (!running) return;
+      setPhase(phaseIdx);
+      timer = setTimeout(function () {
+        phaseIdx = (phaseIdx + 1) % phases.length;
+        nextPhase();
+      }, phases[phaseIdx].dur);
+    }
+
+    window.toggleBreathing = function () {
+      var btn = document.getElementById('breatheStartBtn');
+      var circle = document.getElementById('breatheCircle');
+      var label  = document.getElementById('breathePhaseLabel');
+      if (running) {
+        running = false;
+        clearTimeout(timer);
+        phases.forEach(function(p) { circle.classList.remove(p.cls); });
+        label.textContent = 'Press Start';
+        btn.textContent = '▶ Start';
+      } else {
+        running = true;
+        phaseIdx = 0;
+        btn.textContent = '⏹ Stop';
+        nextPhase();
+      }
+    };
+
+    window.openBreatheModal = function () {
+      var overlay = document.getElementById('breatheOverlay');
+      if (overlay) overlay.classList.remove('hidden');
+    };
+
+    window.closeBreatheModal = function (e) {
+      // Close only if clicking backdrop or close button (not modal itself)
+      if (e && e.target && e.target.closest && e.target.closest('.breathe-modal') && !e.target.classList.contains('breathe-close-btn')) return;
+      var overlay = document.getElementById('breatheOverlay');
+      if (overlay) overlay.classList.add('hidden');
+      // Stop breathing on close
+      if (running) window.toggleBreathing();
+    };
+  }());
+  </script>
 </body>
 
 </html>
