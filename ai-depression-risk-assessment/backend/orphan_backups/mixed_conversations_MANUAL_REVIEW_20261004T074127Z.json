@@ -1,0 +1,35 @@
+[
+  {
+    "_id": "6a6da730885a6f2ef984cb4e",
+    "participants": [
+      "6a6da6242582eb7ecd09ef1a",
+      "6a68c7022e7cacb19318fbd0"
+    ],
+    "connection_request_id": "6a6da71f2582eb7ecd09ef1d",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-08-01T07:58:40.463000"
+  },
+  {
+    "_id": "6a6dbf432ffb75b92a715e55",
+    "participants": [
+      "6a6da6242582eb7ecd09ef1a",
+      "6a6b556f1ca47725a6e78909"
+    ],
+    "connection_request_id": "6a6da7fe2582eb7ecd09ef21",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-08-01T09:41:23.596000"
+  },
+  {
+    "_id": "6a6f18895d7af46dfa85092e",
+    "participants": [
+      "6a6da6242582eb7ecd09ef1a",
+      "6a3a9eb5cb6d1769d3e51585"
+    ],
+    "connection_request_id": "6a6da80d2582eb7ecd09ef22",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-08-02T10:14:33.374000"
+  }
+]

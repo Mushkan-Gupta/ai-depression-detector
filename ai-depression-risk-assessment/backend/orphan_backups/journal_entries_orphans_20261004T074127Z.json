@@ -1,0 +1,810 @@
+[
+  {
+    "_id": "6a2ba441ec278b975a31a6d5",
+    "user_id": "6a2ba441ec278b975a31a6d4",
+    "journal": "Today was actually a pretty good day. I went for a morning walk and felt \n        refreshed and energetic by the time I got home. I had a productive work session \n        and managed to finish a project I had been procrastinating on for weeks. \n        In the evening I cooked a proper meal, called my mom, and watched a show I enjoy. \n        I feel grateful for the small moments of calm and connection. Looking forward \n        to tomorrow and feeling hopeful that things are moving in a positive direction.",
+    "risk": "Low",
+    "confidence": 0.534,
+    "created_at": "2026-06-12T06:16:33.378000"
+  },
+  {
+    "_id": "6a2ba441ec278b975a31a6d6",
+    "user_id": "6a2ba441ec278b975a31a6d4",
+    "journal": "I have been feeling really overwhelmed lately and I am not sure how to cope. \n        Work has been extremely stressful and I keep waking up at 3 am unable to go back \n        to sleep. I feel anxious almost every day and there is a constant sense of dread \n        that I cannot shake. I feel lonely even when I am surrounded by people. \n        I have been crying more than usual and I just feel tired and exhausted all the time. \n        I am struggling to find motivation to do even basic tasks. I know I should reach \n        out to someone but I feel like a burden and nobody really cares.",
+    "risk": "Moderate",
+    "confidence": 0.692,
+    "created_at": "2026-06-12T06:16:33.431000"
+  },
+  {
+    "_id": "6a2ba441ec278b975a31a6d7",
+    "user_id": "6a2ba441ec278b975a31a6d4",
+    "journal": "I do not want to be alive anymore. I have been thinking about ending my life \n        and I keep searching online for methods. Everything feels completely pointless \n        and I feel like I am better off dead. I hate myself and I cannot see any reason \n        to keep going. I have lost all hope and I feel like disappearing forever. \n        The pain is unbearable and I feel completely disconnected from everyone around me. \n        I do not want to exist. Please, if anyone is reading this, I need help.",
+    "risk": "High",
+    "confidence": 0.95,
+    "created_at": "2026-06-12T06:16:33.479000"
+  },
+  {
+    "_id": "6a2ba4de56220329d0f0d647",
+    "user_id": "6a2ba4de56220329d0f0d646",
+    "journal": "Today was actually a pretty good day. I went for a morning walk and felt \n        refreshed and energetic by the time I got home. I had a productive work session \n        and managed to finish a project I had been procrastinating on for weeks. \n        In the evening I cooked a proper meal, called my mom, and watched a show I enjoy. \n        I feel grateful for the small moments of calm and connection. Looking forward \n        to tomorrow and feeling hopeful that things are moving in a positive direction.",
+    "risk": "Low",
+    "confidence": 0.534,
+    "created_at": "2026-06-12T06:19:10.079000"
+  },
+  {
+    "_id": "6a2ba4de56220329d0f0d648",
+    "user_id": "6a2ba4de56220329d0f0d646",
+    "journal": "I have been feeling really overwhelmed lately and I am not sure how to cope. \n        Work has been extremely stressful and I keep waking up at 3 am unable to go back \n        to sleep. I feel anxious almost every day and there is a constant sense of dread \n        that I cannot shake. I feel lonely even when I am surrounded by people. \n        I have been crying more than usual and I just feel tired and exhausted all the time. \n        I am struggling to find motivation to do even basic tasks. I know I should reach \n        out to someone but I feel like a burden and nobody really cares.",
+    "risk": "Moderate",
+    "confidence": 0.692,
+    "created_at": "2026-06-12T06:19:10.126000"
+  },
+  {
+    "_id": "6a2ba4de56220329d0f0d649",
+    "user_id": "6a2ba4de56220329d0f0d646",
+    "journal": "I do not want to be alive anymore. I have been thinking about ending my life \n        and I keep searching online for methods. Everything feels completely pointless \n        and I feel like I am better off dead. I hate myself and I cannot see any reason \n        to keep going. I have lost all hope and I feel like disappearing forever. \n        The pain is unbearable and I feel completely disconnected from everyone around me. \n        I do not want to exist. Please, if anyone is reading this, I need help.",
+    "risk": "High",
+    "confidence": 0.95,
+    "created_at": "2026-06-12T06:19:10.174000"
+  },
+  {
+    "_id": "6a2ba6d756220329d0f0d64b",
+    "user_id": "6a2ba6d756220329d0f0d64a",
+    "journal": "Today has been one of those rare days where everything just clicks. I woke up before my alarm, had a long run in the crisp morning air, and finished my coffee while watching the sunrise from the balcony. There is something quietly powerful about starting the day on your own terms.\n\nAt work, I finished a project that I have been building for three months. My manager praised the effort in front of the whole team, and I genuinely felt proud \u2014 not in an arrogant way, just a calm sense of having done something meaningful and done it well.\n\nThis evening I video-called my best friend who moved abroad last year. We laughed for two hours straight. I feel grateful, connected, and hopeful about where my life is heading. I am sleeping well, eating well, and genuinely looking forward to tomorrow. Life feels good right now.",
+    "risk": "Low",
+    "confidence": 0.534,
+    "created_at": "2026-06-12T06:27:35.272000"
+  },
+  {
+    "_id": "6a2ba6d756220329d0f0d64c",
+    "user_id": "6a2ba6d756220329d0f0d64a",
+    "journal": "Six months ago I was in a really dark place \u2014 burnt out, exhausted, and barely keeping up with daily responsibilities. I started therapy in January and it has been transformative. I am writing this entry to document how far I have come.\n\nI now wake up with purpose most mornings. I have built small habits: journaling, a ten-minute meditation, and a short walk before work. These things used to feel impossible. Now they feel natural. My therapist says I have shown remarkable progress and I am starting to believe her.\n\nI still have hard days, but they no longer consume me. I feel energetic, motivated, and genuinely excited about the future. I signed up for a photography class next month \u2014 something I have always wanted to try. Recovery is not a straight line, but I am moving in the right direction and I feel calm and supported in doing so.",
+    "risk": "Low",
+    "confidence": 0.51,
+    "created_at": "2026-06-12T06:27:35.339000"
+  },
+  {
+    "_id": "6a2ba6d756220329d0f0d64d",
+    "user_id": "6a2ba6d756220329d0f0d64a",
+    "journal": "I cannot seem to catch a break lately. Work deadlines keep piling up and I am constantly anxious about falling behind. I stay late almost every night, get home exhausted, and then lie awake for hours worrying about the next day. The insomnia is the worst part \u2014 I can feel my body shutting down but my mind will not stop racing.\n\nI have been stressed and overwhelmed for weeks now. I used to enjoy cooking dinner but lately I just grab whatever requires zero effort because I am too tired to do anything. Social plans keep getting cancelled because I do not have the energy. I feel like I am withdrawing from everything I used to care about.\n\nI know this is not sustainable. I am struggling to find a way out of this cycle. I am not okay right now, but I am trying to take it one day at a time. I booked a GP appointment for next week because I need some help managing this stress before it gets worse.",
+    "risk": "Moderate",
+    "confidence": 0.681,
+    "created_at": "2026-06-12T06:27:35.395000"
+  },
+  {
+    "_id": "6a2ba6d756220329d0f0d64e",
+    "user_id": "6a2ba6d756220329d0f0d64a",
+    "journal": "It has been three months since the breakup and I still cry almost every day. I thought it would get easier by now but some days the grief just crashes back in like a wave. I miss having someone to talk to at the end of the day. The flat feels so empty and I feel deeply lonely in a way that is hard to put into words.\n\nI have been isolating a lot. My friends invite me out but I always cancel at the last minute because I feel too sad and heavy to fake being okay. I know that is not healthy but I do not have the energy to pretend. I feel disconnected from the people around me even when I am physically with them.\n\nI lost all motivation to pursue the hobbies I used to love. The gym membership I was so proud of has gone unused for two months. I feel empty inside most of the time. I know I need to reach out for help and I booked a counselling session for next week. I am hopeful that talking to someone will help me process this grief.",
+    "risk": "Moderate",
+    "confidence": 0.685,
+    "created_at": "2026-06-12T06:27:35.456000"
+  },
+  {
+    "_id": "6a2ba6d756220329d0f0d64f",
+    "user_id": "6a2ba6d756220329d0f0d64a",
+    "journal": "I do not see the point anymore. I wake up every morning and the first thought I have is that I do not want to be alive. It is not a passing feeling \u2014 it has been there every single day for weeks and it is getting louder, not quieter. I am completely numb inside and everything feels meaningless.\n\nI have been thinking about ending my life. I keep searching online for methods and I know that is a bad sign but I cannot stop. I feel like a burden to everyone around me and I genuinely believe they would be better off without me. I hate myself deeply. I feel completely disconnected from reality and from everyone I love.\n\nI have lost all hope that things will ever get better. I do not want to exist anymore. I have not eaten properly in days and I cannot sleep. If anyone reads this, please know I am in a very dark place and I desperately need help.",
+    "risk": "High",
+    "confidence": 0.95,
+    "created_at": "2026-06-12T06:27:35.512000"
+  },
+  {
+    "_id": "6a2ba6d756220329d0f0d650",
+    "user_id": "6a2ba6d756220329d0f0d64a",
+    "journal": "I cannot keep going like this. The pain is unbearable and I do not know how to make it stop. I have been thinking about hurting myself as a way to feel something \u2014 anything \u2014 other than this suffocating emptiness. I know it is wrong but rational thinking has stopped working for me.\n\nI want to die. I have thought about how I would end it all and it scares me that the thought brings me more relief than fear. I no longer want to exist. I am searching for ways to end my life and I feel like I am standing at the very edge. I feel completely alone and worthless. Nobody cares, and even if they do, I am too far gone to believe it.\n\nI am writing this because a tiny part of me is still holding on. I do not want to die \u2014 I want the pain to end. I called a crisis line tonight but hung up before anyone answered. I am terrified. Please, someone, I need help right now.",
+    "risk": "High",
+    "confidence": 0.95,
+    "created_at": "2026-06-12T06:27:35.576000"
+  },
+  {
+    "_id": "6a4a2d123d4c3d936294df42",
+    "user_id": "6a4a2d103d4c3d936294df41",
+    "journal": "I feel anxious and overwhelmed. Depressed.",
+    "risk": "Moderate",
+    "confidence": 0.503,
+    "created_at": "2026-07-05T10:08:18.166000"
+  },
+  {
+    "_id": "6a4a2f6b3d4c3d936294df44",
+    "user_id": "6a4a2ea33d4c3d936294df43",
+    "journal": "I have been feeling very sad and lonely lately. I cannot sleep and I feel hopeless.",
+    "risk": "Low",
+    "confidence": 0.38,
+    "created_at": "2026-07-05T10:18:19.408000"
+  },
+  {
+    "_id": "6a4a38a4fba7ecab4b195f27",
+    "user_id": "6a4a38a3fba7ecab4b195f26",
+    "journal": "I feel anxious and sad today. I cannot stop worrying.",
+    "risk": "Low",
+    "confidence": 0.45,
+    "created_at": "2026-07-05T10:57:40.688000"
+  },
+  {
+    "_id": "6a4a44d6f6c139791c71b00c",
+    "user_id": "6a4a4374f6c139791c71b00b",
+    "journal": "Today I feel very happy and grateful for the support I received.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-05T11:49:42.764000"
+  },
+  {
+    "_id": "6a4a489bf6c139791c71b00e",
+    "user_id": "6a4a468ff6c139791c71b00d",
+    "journal": "Today I feel very happy, relaxed, and motivated to write code.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-05T12:05:47.476000"
+  },
+  {
+    "_id": "6a4a59c7a4c1b1d4cd6c163e",
+    "user_id": "6a4a599da4c1b1d4cd6c163d",
+    "journal": "I am feeling extremely happy and content today. Life is going very well, and I am grateful for everything.",
+    "risk": "Low",
+    "confidence": 0.486,
+    "created_at": "2026-07-05T13:19:03.247000"
+  },
+  {
+    "_id": "6a6b149ac676e3827d4d6a63",
+    "user_id": "6a6b1498c676e3827d4d6a62",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:08:42.853000"
+  },
+  {
+    "_id": "6a6b149fc676e3827d4d6a65",
+    "user_id": "6a6b149dc676e3827d4d6a64",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:08:47.487000"
+  },
+  {
+    "_id": "6a6b14a4c676e3827d4d6a67",
+    "user_id": "6a6b14a1c676e3827d4d6a66",
+    "journal": "Sometimes I just want to sleep in on Saturdays and do nothing.",
+    "risk": "Moderate",
+    "confidence": 0.621,
+    "created_at": "2026-07-30T09:08:52.124000"
+  },
+  {
+    "_id": "6a6b14a8c676e3827d4d6a69",
+    "user_id": "6a6b14a6c676e3827d4d6a68",
+    "journal": "I had a great day, I am so happy and grateful, yet I want to end it all.",
+    "risk": "High",
+    "confidence": 0.8,
+    "created_at": "2026-07-30T09:08:56.640000"
+  },
+  {
+    "_id": "6a6b14adc676e3827d4d6a6b",
+    "user_id": "6a6b14abc676e3827d4d6a6a",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:09:01.215000"
+  },
+  {
+    "_id": "6a6b152bc676e3827d4d6a6d",
+    "user_id": "6a6b1529c676e3827d4d6a6c",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:11:07.989000"
+  },
+  {
+    "_id": "6a6b1530c676e3827d4d6a6f",
+    "user_id": "6a6b152ec676e3827d4d6a6e",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:11:12.891000"
+  },
+  {
+    "_id": "6a6b1535c676e3827d4d6a71",
+    "user_id": "6a6b1533c676e3827d4d6a70",
+    "journal": "Sometimes I just want to sleep in on Saturdays and do nothing.",
+    "risk": "Moderate",
+    "confidence": 0.621,
+    "created_at": "2026-07-30T09:11:17.572000"
+  },
+  {
+    "_id": "6a6b153bc676e3827d4d6a73",
+    "user_id": "6a6b1538c676e3827d4d6a72",
+    "journal": "I had a great day, I am so happy and grateful, yet I want to end it all.",
+    "risk": "High",
+    "confidence": 0.8,
+    "created_at": "2026-07-30T09:11:23.213000"
+  },
+  {
+    "_id": "6a6b153fc676e3827d4d6a75",
+    "user_id": "6a6b153dc676e3827d4d6a74",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:11:27.922000"
+  },
+  {
+    "_id": "6a6b158ec676e3827d4d6a78",
+    "user_id": "6a6b158cc676e3827d4d6a77",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:12:46.831000"
+  },
+  {
+    "_id": "6a6b1593c676e3827d4d6a7a",
+    "user_id": "6a6b1591c676e3827d4d6a79",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:12:51.460000"
+  },
+  {
+    "_id": "6a6b1598c676e3827d4d6a7c",
+    "user_id": "6a6b1595c676e3827d4d6a7b",
+    "journal": "Sometimes I just want to sleep in on Saturdays and do nothing.",
+    "risk": "Moderate",
+    "confidence": 0.621,
+    "created_at": "2026-07-30T09:12:56.043000"
+  },
+  {
+    "_id": "6a6b159cc676e3827d4d6a7e",
+    "user_id": "6a6b159ac676e3827d4d6a7d",
+    "journal": "I had a great day, I am so happy and grateful, yet I want to end it all.",
+    "risk": "High",
+    "confidence": 0.8,
+    "created_at": "2026-07-30T09:13:00.943000"
+  },
+  {
+    "_id": "6a6b15a1c676e3827d4d6a80",
+    "user_id": "6a6b159fc676e3827d4d6a7f",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:13:05.560000"
+  },
+  {
+    "_id": "6a6b15d1c676e3827d4d6a85",
+    "user_id": "6a6b1591c676e3827d4d6a79",
+    "journal": "I am so excited for the future, everything is going great, but I think I will overdose tonight.",
+    "risk": "High",
+    "confidence": 0.8,
+    "created_at": "2026-07-30T09:13:53.907000"
+  },
+  {
+    "_id": "6a6b1897c676e3827d4d6a8a",
+    "user_id": "6a6b1895c676e3827d4d6a89",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:25:43.490000"
+  },
+  {
+    "_id": "6a6b189cc676e3827d4d6a8c",
+    "user_id": "6a6b1899c676e3827d4d6a8b",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:25:48.056000"
+  },
+  {
+    "_id": "6a6b18a0c676e3827d4d6a8e",
+    "user_id": "6a6b189ec676e3827d4d6a8d",
+    "journal": "Sometimes I just want to sleep in on Saturdays and do nothing.",
+    "risk": "Moderate",
+    "confidence": 0.621,
+    "created_at": "2026-07-30T09:25:52.664000"
+  },
+  {
+    "_id": "6a6b18a5c676e3827d4d6a90",
+    "user_id": "6a6b18a3c676e3827d4d6a8f",
+    "journal": "I had a great day, I am so happy and grateful, yet I want to end it all.",
+    "risk": "High",
+    "confidence": 0.8,
+    "created_at": "2026-07-30T09:25:57.206000"
+  },
+  {
+    "_id": "6a6b18a9c676e3827d4d6a92",
+    "user_id": "6a6b18a7c676e3827d4d6a91",
+    "journal": "I feel happy and grateful today.",
+    "risk": "Low",
+    "confidence": 0.474,
+    "created_at": "2026-07-30T09:26:01.856000"
+  },
+  {
+    "_id": "6a6b18d5c676e3827d4d6a97",
+    "user_id": "6a6b1899c676e3827d4d6a8b",
+    "journal": "I am so excited for the future, everything is going great, but I think I will overdose tonight.",
+    "risk": "High",
+    "confidence": 0.8,
+    "created_at": "2026-07-30T09:26:45.700000"
+  },
+  {
+    "_id": "6a6b2672b406cab0354d066b",
+    "user_id": "6a6b266fb406cab0354d066a",
+    "journal": "I am feeling a bit anxious and lonely lately, but I am managing okay.",
+    "risk": "Moderate",
+    "confidence": 0.573,
+    "created_at": "2026-07-30T10:24:50.748000"
+  },
+  {
+    "_id": "6a6b2681b406cab0354d066d",
+    "user_id": "6a6b267bb406cab0354d066c",
+    "journal": "I have some anxiety and feel quite lonely too.",
+    "risk": "Moderate",
+    "confidence": 0.695,
+    "created_at": "2026-07-30T10:25:05.022000"
+  },
+  {
+    "_id": "6a6b26f1b406cab0354d066f",
+    "user_id": "6a6b26edb406cab0354d066e",
+    "journal": "I am feeling a bit anxious and lonely lately, but I am managing okay.",
+    "risk": "Moderate",
+    "confidence": 0.573,
+    "created_at": "2026-07-30T10:26:57.699000"
+  },
+  {
+    "_id": "6a6b26ffb406cab0354d0671",
+    "user_id": "6a6b26fab406cab0354d0670",
+    "journal": "I have some anxiety and feel quite lonely too.",
+    "risk": "Moderate",
+    "confidence": 0.695,
+    "created_at": "2026-07-30T10:27:11.666000"
+  },
+  {
+    "_id": "6a6b283db406cab0354d0673",
+    "user_id": "6a6b2838b406cab0354d0672",
+    "journal": "I am feeling a bit anxious and lonely lately, but I am managing okay.",
+    "risk": "Moderate",
+    "confidence": 0.573,
+    "created_at": "2026-07-30T10:32:29.992000"
+  },
+  {
+    "_id": "6a6b2849b406cab0354d0675",
+    "user_id": "6a6b2846b406cab0354d0674",
+    "journal": "I have some anxiety and feel quite lonely too.",
+    "risk": "Moderate",
+    "confidence": 0.695,
+    "created_at": "2026-07-30T10:32:41.097000"
+  },
+  {
+    "_id": "6a6b28b3b406cab0354d0678",
+    "user_id": "6a6b28aeb406cab0354d0677",
+    "journal": "I am feeling a bit anxious and lonely lately, but I am managing okay.",
+    "risk": "Moderate",
+    "confidence": 0.573,
+    "created_at": "2026-07-30T10:34:27.166000"
+  },
+  {
+    "_id": "6a6b28c1b406cab0354d067a",
+    "user_id": "6a6b28bcb406cab0354d0679",
+    "journal": "I have some anxiety and feel quite lonely too.",
+    "risk": "Moderate",
+    "confidence": 0.695,
+    "created_at": "2026-07-30T10:34:41.167000"
+  },
+  {
+    "_id": "6a6b28dbb406cab0354d067f",
+    "user_id": "6a6b28d9b406cab0354d067e",
+    "journal": "I feel completely hopeless, there is no point in living anymore. I want to die.",
+    "risk": "High",
+    "confidence": 0.8,
+    "created_at": "2026-07-30T10:35:07.738000"
+  },
+  {
+    "_id": "6a6b2bfbb406cab0354d0683",
+    "user_id": "6a6b2bf7b406cab0354d0682",
+    "journal": "I am feeling a bit anxious and lonely lately, but I am managing okay.",
+    "risk": "Moderate",
+    "confidence": 0.573,
+    "created_at": "2026-07-30T10:48:27.026000"
+  },
+  {
+    "_id": "6a6b2c0bb406cab0354d0685",
+    "user_id": "6a6b2c08b406cab0354d0684",
+    "journal": "I am feeling a bit anxious and lonely lately, but I am managing okay.",
+    "risk": "Moderate",
+    "confidence": 0.573,
+    "created_at": "2026-07-30T10:48:43.292000"
+  },
+  {
+    "_id": "6a6b2c5419f0594a917f14db",
+    "user_id": "6a6b2c5019f0594a917f14da",
+    "journal": "I am feeling a bit anxious and lonely lately, but I am managing okay.",
+    "risk": "Moderate",
+    "confidence": 0.573,
+    "created_at": "2026-07-30T10:49:56.644000"
+  },
+  {
+    "_id": "6a6b2c6419f0594a917f14dd",
+    "user_id": "6a6b2c6119f0594a917f14dc",
+    "journal": "I am feeling a bit anxious and lonely lately, but I am managing okay.",
+    "risk": "Moderate",
+    "confidence": 0.573,
+    "created_at": "2026-07-30T10:50:12.833000"
+  },
+  {
+    "_id": "6a6c3f7b38c5f6f7db3ac873",
+    "user_id": "6a6c3f7838c5f6f7db3ac872",
+    "journal": "I am completely exhausted from my job, my boss is demanding, and I have so much work and career stress.",
+    "risk": "Low",
+    "confidence": 0.52,
+    "created_at": "2026-07-31T06:23:55.797000"
+  },
+  {
+    "_id": "6a6c40aa38c5f6f7db3ac875",
+    "user_id": "6a6c40a538c5f6f7db3ac874",
+    "journal": "Just testing if the database writes are working or silently failing.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T06:28:58.773000"
+  },
+  {
+    "_id": "6a6c43b1da70c4f738aa6187",
+    "user_id": "6a6c43a1da70c4f738aa6186",
+    "journal": "I am completely exhausted from my job, my boss is demanding, and I have so much work and career stress.",
+    "risk": "Low",
+    "confidence": 0.52,
+    "created_at": "2026-07-31T06:41:53.500000"
+  },
+  {
+    "_id": "6a6c44a1da70c4f738aa618a",
+    "user_id": "6a6c4491da70c4f738aa6188",
+    "journal": "I am completely exhausted from my job, my boss is demanding, and I have so much work and career stress.",
+    "risk": "Low",
+    "confidence": 0.52,
+    "created_at": "2026-07-31T06:45:53.171000"
+  },
+  {
+    "_id": "6a6c44a3da70c4f738aa618b",
+    "user_id": "6a6c4496da70c4f738aa6189",
+    "journal": "I am completely exhausted from my job, my boss is demanding, and I have so much work and career stress.",
+    "risk": "Low",
+    "confidence": 0.52,
+    "created_at": "2026-07-31T06:45:55.253000"
+  },
+  {
+    "_id": "6a6c47b1da70c4f738aa618e",
+    "user_id": "6a6c47a4da70c4f738aa618c",
+    "journal": "My job is awful and my partner is leaving me.",
+    "risk": "Low",
+    "confidence": 0.47,
+    "created_at": "2026-07-31T06:58:57.309000"
+  },
+  {
+    "_id": "6a6c47b3da70c4f738aa618f",
+    "user_id": "6a6c47aada70c4f738aa618d",
+    "journal": "My job is awful and I can't sleep.",
+    "risk": "Low",
+    "confidence": 0.464,
+    "created_at": "2026-07-31T06:58:59.089000"
+  },
+  {
+    "_id": "6a6c47fca96423fd057ae88f",
+    "user_id": "6a6c47eea96423fd057ae88d",
+    "journal": "My job is awful and my partner is leaving me.",
+    "risk": "Low",
+    "confidence": 0.47,
+    "created_at": "2026-07-31T07:00:12.220000"
+  },
+  {
+    "_id": "6a6c47fea96423fd057ae890",
+    "user_id": "6a6c47f3a96423fd057ae88e",
+    "journal": "My job is awful and I can't sleep.",
+    "risk": "Low",
+    "confidence": 0.464,
+    "created_at": "2026-07-31T07:00:14.442000"
+  },
+  {
+    "_id": "6a6c4aa4a96423fd057ae893",
+    "user_id": "6a6c4a99a96423fd057ae891",
+    "journal": "My job is awful and my partner is leaving me.",
+    "risk": "Low",
+    "confidence": 0.47,
+    "created_at": "2026-07-31T07:11:32.795000"
+  },
+  {
+    "_id": "6a6c4aa6a96423fd057ae894",
+    "user_id": "6a6c4a9da96423fd057ae892",
+    "journal": "My job is awful and my partner is leaving me.",
+    "risk": "Low",
+    "confidence": 0.47,
+    "created_at": "2026-07-31T07:11:34.689000"
+  },
+  {
+    "_id": "6a6c4ae29b30ce440406d696",
+    "user_id": "6a6c4ad59b30ce440406d694",
+    "journal": "My job is awful and my partner is leaving me.",
+    "risk": "Low",
+    "confidence": 0.47,
+    "created_at": "2026-07-31T07:12:34.403000"
+  },
+  {
+    "_id": "6a6c4ae39b30ce440406d697",
+    "user_id": "6a6c4ada9b30ce440406d695",
+    "journal": "My job is awful and my partner is leaving me.",
+    "risk": "Low",
+    "confidence": 0.47,
+    "created_at": "2026-07-31T07:12:35.966000"
+  },
+  {
+    "_id": "6a6c4b2f9b30ce440406d69a",
+    "user_id": "6a6c4b209b30ce440406d698",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:13:51.778000"
+  },
+  {
+    "_id": "6a6c4b319b30ce440406d69b",
+    "user_id": "6a6c4b259b30ce440406d699",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:13:53.569000"
+  },
+  {
+    "_id": "6a6c4b7a9b30ce440406d69e",
+    "user_id": "6a6c4b6d9b30ce440406d69c",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:15:06.760000"
+  },
+  {
+    "_id": "6a6c4b7c9b30ce440406d69f",
+    "user_id": "6a6c4b719b30ce440406d69d",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:15:08.920000"
+  },
+  {
+    "_id": "6a6c4bb69b30ce440406d6a2",
+    "user_id": "6a6c4ba89b30ce440406d6a0",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:16:06.146000"
+  },
+  {
+    "_id": "6a6c4bb89b30ce440406d6a3",
+    "user_id": "6a6c4bac9b30ce440406d6a1",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:16:08.718000"
+  },
+  {
+    "_id": "6a6c4bf89b30ce440406d6a6",
+    "user_id": "6a6c4be19b30ce440406d6a4",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:17:12.526000"
+  },
+  {
+    "_id": "6a6c4bfb9b30ce440406d6a7",
+    "user_id": "6a6c4be79b30ce440406d6a5",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:17:15.252000"
+  },
+  {
+    "_id": "6a6c4c9d9b30ce440406d6ab",
+    "user_id": "6a6c4c879b30ce440406d6a9",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:19:57.156000"
+  },
+  {
+    "_id": "6a6c4c9f9b30ce440406d6ac",
+    "user_id": "6a6c4c8f9b30ce440406d6aa",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:19:59.253000"
+  },
+  {
+    "_id": "6a6c4da29b30ce440406d6b3",
+    "user_id": "6a6c4d949b30ce440406d6b1",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:24:18.569000"
+  },
+  {
+    "_id": "6a6c4da49b30ce440406d6b4",
+    "user_id": "6a6c4d989b30ce440406d6b2",
+    "journal": "My job is awful and my partner is leaving me and I cannot sleep.",
+    "risk": "Low",
+    "confidence": 0.452,
+    "created_at": "2026-07-31T07:24:20.659000"
+  },
+  {
+    "_id": "6a6c612151071b1323d5c5e4",
+    "user_id": "6a6c610c51071b1323d5c5e2",
+    "journal": "I feel utterly hopeless, overwhelmed by despair, and every day is an agonizing struggle. I have no motivation, I sleep all day, and I see absolutely no future for myself.",
+    "risk": "Moderate",
+    "confidence": 0.714,
+    "created_at": "2026-07-31T08:47:29.178000"
+  },
+  {
+    "_id": "6a6c622451071b1323d5c5eb",
+    "user_id": "6a6c620151071b1323d5c5e7",
+    "journal": "I feel utterly hopeless, overwhelmed by despair, and every day is an agonizing struggle. I have no motivation, I sleep all day, and I see absolutely no future for myself.",
+    "risk": "Moderate",
+    "confidence": 0.714,
+    "created_at": "2026-07-31T08:51:48.378000"
+  },
+  {
+    "_id": "6a6da5682582eb7ecd09ef19",
+    "user_id": "6a6da5232582eb7ecd09ef18",
+    "journal": "I am feeling lonely and sad.",
+    "risk": "Low",
+    "confidence": 0.489,
+    "created_at": "2026-08-01T07:51:04.646000"
+  },
+  {
+    "_id": "6a6da64c2582eb7ecd09ef1b",
+    "user_id": "6a6da6242582eb7ecd09ef1a",
+    "journal": "I am feeling lonely and sad.",
+    "risk": "Low",
+    "confidence": 0.489,
+    "created_at": "2026-08-01T07:54:52.111000"
+  },
+  {
+    "_id": "6a6da9792582eb7ecd09ef23",
+    "user_id": "6a6da5232582eb7ecd09ef18",
+    "journal": "I am feeling lonely and sad.",
+    "risk": "Low",
+    "confidence": 0.489,
+    "created_at": "2026-08-01T08:08:25.169000"
+  },
+  {
+    "_id": "6a6da9f52582eb7ecd09ef24",
+    "user_id": "6a6da6242582eb7ecd09ef1a",
+    "journal": "I am feeling lonely and sad.",
+    "risk": "Low",
+    "confidence": 0.489,
+    "created_at": "2026-08-01T08:10:29.207000"
+  },
+  {
+    "_id": "6a6dae7b885a6f2ef984cb51",
+    "user_id": "6a6dae5d885a6f2ef984cb50",
+    "journal": "I am feeling lonely and sad.",
+    "risk": "Low",
+    "confidence": 0.489,
+    "created_at": "2026-08-01T08:29:47.857000"
+  },
+  {
+    "_id": "6a6daf26885a6f2ef984cb53",
+    "user_id": "6a6daf06885a6f2ef984cb52",
+    "journal": "I am feeling lonely and sad.",
+    "risk": "Low",
+    "confidence": 0.489,
+    "created_at": "2026-08-01T08:32:38.918000"
+  },
+  {
+    "_id": "6a6dec69eb1419a6e9d0ffe1",
+    "user_id": "6a6dec3feb1419a6e9d0ffe0",
+    "journal": "write know i am to worried",
+    "risk": "Low",
+    "confidence": 0.487,
+    "created_at": "2026-08-01T12:54:01.239000"
+  },
+  {
+    "_id": "6a6ded92eb1419a6e9d0ffe2",
+    "user_id": "6a6dec3feb1419a6e9d0ffe0",
+    "journal": "I'm feeling very sad today. I don't feel good at all. I don't know what to do or what not to do.",
+    "risk": "Moderate",
+    "confidence": 0.599,
+    "created_at": "2026-08-01T12:58:58.588000"
+  },
+  {
+    "_id": "6a7af5e6f9a5115dabc97ae7",
+    "user_id": "6a7af5e1f9a5115dabc97ae6",
+    "journal": "I am feeling completely overwhelmed with my job and all the deadlines. My workload has been crushing me and I feel burned out from the pressure at work. The constant stress at my workplace is affecting my sleep and daily life.",
+    "risk": "Moderate",
+    "confidence": 0.663,
+    "created_at": "2026-08-11T10:13:58.408000"
+  },
+  {
+    "_id": "6a7af5f1f9a5115dabc97ae9",
+    "user_id": "6a7af5edf9a5115dabc97ae8",
+    "journal": "I am feeling completely overwhelmed with my job and all the deadlines. My workload has been crushing me and I feel burned out from the pressure at work. The constant stress at my workplace is affecting my sleep and daily life.",
+    "risk": "Moderate",
+    "confidence": 0.663,
+    "created_at": "2026-08-11T10:14:09.971000"
+  },
+  {
+    "_id": "6a7af5fcf9a5115dabc97aeb",
+    "user_id": "6a7af5f8f9a5115dabc97aea",
+    "journal": "I am feeling completely overwhelmed with my job and all the deadlines. My workload has been crushing me and I feel burned out from the pressure at work. The constant stress at my workplace is affecting my sleep and daily life.",
+    "risk": "Moderate",
+    "confidence": 0.663,
+    "created_at": "2026-08-11T10:14:20.554000"
+  },
+  {
+    "_id": "6a7af607f9a5115dabc97aed",
+    "user_id": "6a7af603f9a5115dabc97aec",
+    "journal": "I am feeling completely overwhelmed with my job and all the deadlines. My workload has been crushing me and I feel burned out from the pressure at work. The constant stress at my workplace is affecting my sleep and daily life.",
+    "risk": "Moderate",
+    "confidence": 0.663,
+    "created_at": "2026-08-11T10:14:31.439000"
+  },
+  {
+    "_id": "6a7af612f9a5115dabc97aef",
+    "user_id": "6a7af60ef9a5115dabc97aee",
+    "journal": "I am feeling completely overwhelmed with my job and all the deadlines. My workload has been crushing me and I feel burned out from the pressure at work. The constant stress at my workplace is affecting my sleep and daily life.",
+    "risk": "Moderate",
+    "confidence": 0.663,
+    "created_at": "2026-08-11T10:14:42.818000"
+  },
+  {
+    "_id": "6a7af695f9a5115dabc97af1",
+    "user_id": "6a7af691f9a5115dabc97af0",
+    "journal": "I am feeling overwhelmed with my job and all the work deadlines at the office. My boss keeps piling on tasks and my career feels like it is going nowhere. The stress from my colleague conflicts and my job demands is burning me out. I cannot sleep because of work anxiety and I feel trapped in this career path.",
+    "risk": "Moderate",
+    "confidence": 0.679,
+    "created_at": "2026-08-11T10:16:53.850000"
+  },
+  {
+    "_id": "6a7af6a2f9a5115dabc97af3",
+    "user_id": "6a7af69df9a5115dabc97af2",
+    "journal": "I am feeling overwhelmed with my job and all the work deadlines at the office. My boss keeps piling on tasks and my career feels like it is going nowhere. The stress from my colleague conflicts and my job demands is burning me out. I cannot sleep because of work anxiety and I feel trapped in this career path.",
+    "risk": "Moderate",
+    "confidence": 0.679,
+    "created_at": "2026-08-11T10:17:06.254000"
+  },
+  {
+    "_id": "6a7af6aff9a5115dabc97af5",
+    "user_id": "6a7af6aaf9a5115dabc97af4",
+    "journal": "I am feeling overwhelmed with my job and all the work deadlines at the office. My boss keeps piling on tasks and my career feels like it is going nowhere. The stress from my colleague conflicts and my job demands is burning me out. I cannot sleep because of work anxiety and I feel trapped in this career path.",
+    "risk": "Moderate",
+    "confidence": 0.679,
+    "created_at": "2026-08-11T10:17:19.142000"
+  },
+  {
+    "_id": "6a7af6bcf9a5115dabc97af7",
+    "user_id": "6a7af6b6f9a5115dabc97af6",
+    "journal": "I am feeling overwhelmed with my job and all the work deadlines at the office. My boss keeps piling on tasks and my career feels like it is going nowhere. The stress from my colleague conflicts and my job demands is burning me out. I cannot sleep because of work anxiety and I feel trapped in this career path.",
+    "risk": "Moderate",
+    "confidence": 0.679,
+    "created_at": "2026-08-11T10:17:32.008000"
+  },
+  {
+    "_id": "6a7af6c9f9a5115dabc97af9",
+    "user_id": "6a7af6c3f9a5115dabc97af8",
+    "journal": "I am feeling overwhelmed with my job and all the work deadlines at the office. My boss keeps piling on tasks and my career feels like it is going nowhere. The stress from my colleague conflicts and my job demands is burning me out. I cannot sleep because of work anxiety and I feel trapped in this career path.",
+    "risk": "Moderate",
+    "confidence": 0.679,
+    "created_at": "2026-08-11T10:17:45.219000"
+  },
+  {
+    "_id": "6a7e22d6f6c99942f39edb9c",
+    "user_id": "6a7e2299f6c99942f39edb9b",
+    "journal": "I feel very sad and lonely today. I need someone to talk to.",
+    "risk": "Low",
+    "confidence": 0.522,
+    "created_at": "2026-08-13T20:02:30.884000"
+  },
+  {
+    "_id": "6a7e232ef6c99942f39edb9d",
+    "user_id": "6a7e2233f6c99942f39edb9a",
+    "journal": "I feel lonely and isolated from my friends. I wish I could talk to someone who understands.",
+    "risk": "Moderate",
+    "confidence": 0.585,
+    "created_at": "2026-08-13T20:03:58.333000"
+  },
+  {
+    "_id": "6ab211115c786a5af1ed0098",
+    "user_id": "6ab210c55c786a5af1ed0097",
+    "journal": "I have been feeling really exhausted and sad lately. Nothing seems to bring me joy anymore, and I find myself crying alone at night. Everything feels like an uphill struggle, but I want to heal.",
+    "risk": "Moderate",
+    "confidence": 0.667,
+    "created_at": "2026-09-22T05:24:33.765000"
+  }
+]

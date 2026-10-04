@@ -1,0 +1,105 @@
+{
+  "run_at_utc": "20261004T074127Z",
+  "total_valid_users": 12,
+  "mixed_conversations": {
+    "count": 3,
+    "action": "FLAGGED \u2014 NOT deleted",
+    "backup_file": "F:\\project\\ai-depression-risk-assessment\\backend\\orphan_backups\\mixed_conversations_MANUAL_REVIEW_20261004T074127Z.json",
+    "ids": [
+      "6a6da730885a6f2ef984cb4e",
+      "6a6dbf432ffb75b92a715e55",
+      "6a6f18895d7af46dfa85092e"
+    ]
+  },
+  "backup_files": {
+    "journal_entries": "F:\\project\\ai-depression-risk-assessment\\backend\\orphan_backups\\journal_entries_orphans_20261004T074127Z.json",
+    "connection_requests": "F:\\project\\ai-depression-risk-assessment\\backend\\orphan_backups\\connection_requests_orphans_20261004T074127Z.json",
+    "conversations": "F:\\project\\ai-depression-risk-assessment\\backend\\orphan_backups\\conversations_orphans_20261004T074127Z.json",
+    "messages": "F:\\project\\ai-depression-risk-assessment\\backend\\orphan_backups\\messages_orphans_20261004T074127Z.json",
+    "peer_reports": "F:\\project\\ai-depression-risk-assessment\\backend\\orphan_backups\\peer_reports_orphans_20261004T074127Z.json"
+  },
+  "deletion_counts": {
+    "journal_entries": 101,
+    "connection_requests": 95,
+    "conversations": 18,
+    "messages": 26,
+    "peer_reports": 4
+  },
+  "total_deleted": 244,
+  "post_deletion_orphans": {
+    "journal_entries": {
+      "total_remaining": 58,
+      "orphans_remaining": 0
+    },
+    "connection_requests": {
+      "total_remaining": 26,
+      "orphans_remaining": 0
+    },
+    "conversations": {
+      "total_remaining": 10,
+      "orphans_remaining": 0
+    },
+    "messages": {
+      "total_remaining": 38,
+      "orphans_remaining": 0
+    },
+    "peer_reports": {
+      "total_remaining": 1,
+      "orphans_remaining": 0
+    }
+  },
+  "spot_check": {
+    "user_ids_checked": [
+      "6a795f6f765a8e0389c38e7f",
+      "6a3a9eb5cb6d1769d3e51585",
+      "6a6b56231ca47725a6e7890b"
+    ],
+    "all_intact": false,
+    "before": {
+      "6a795f6f765a8e0389c38e7f": {
+        "journal_entries": 3,
+        "messages_sent": 3,
+        "conversations": 1,
+        "connection_requests_sent": 20,
+        "connection_requests_recv": 1
+      },
+      "6a3a9eb5cb6d1769d3e51585": {
+        "journal_entries": 15,
+        "messages_sent": 14,
+        "conversations": 6,
+        "connection_requests_sent": 23,
+        "connection_requests_recv": 5
+      },
+      "6a6b56231ca47725a6e7890b": {
+        "journal_entries": 5,
+        "messages_sent": 0,
+        "conversations": 0,
+        "connection_requests_sent": 0,
+        "connection_requests_recv": 6
+      }
+    },
+    "after": {
+      "6a795f6f765a8e0389c38e7f": {
+        "journal_entries": 3,
+        "messages_sent": 3,
+        "conversations": 1,
+        "connection_requests_sent": 2,
+        "connection_requests_recv": 1
+      },
+      "6a3a9eb5cb6d1769d3e51585": {
+        "journal_entries": 15,
+        "messages_sent": 14,
+        "conversations": 6,
+        "connection_requests_sent": 10,
+        "connection_requests_recv": 4
+      },
+      "6a6b56231ca47725a6e7890b": {
+        "journal_entries": 5,
+        "messages_sent": 0,
+        "conversations": 0,
+        "connection_requests_sent": 0,
+        "connection_requests_recv": 5
+      }
+    }
+  }
+}

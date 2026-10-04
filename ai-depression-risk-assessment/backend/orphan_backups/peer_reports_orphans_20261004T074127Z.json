@@ -1,0 +1,38 @@
+[
+  {
+    "_id": "6a7af6e3f9a5115dabc97b00",
+    "reporter_id": "6a7af691f9a5115dabc97af0",
+    "reported_user_id": "6a7af6b6f9a5115dabc97af6",
+    "conversation_id": "6a7af6d6f9a5115dabc97afb",
+    "reason": "harassment",
+    "details": "Test report - automated suite",
+    "created_at": "2026-08-11T10:18:11.346000"
+  },
+  {
+    "_id": "6a7af6e9f9a5115dabc97b02",
+    "reporter_id": "6a7af69df9a5115dabc97af2",
+    "reported_user_id": "6a7af6b6f9a5115dabc97af6",
+    "conversation_id": "6a7af6dbf9a5115dabc97afd",
+    "reason": "spam",
+    "details": null,
+    "created_at": "2026-08-11T10:18:17.582000"
+  },
+  {
+    "_id": "6a7af6edf9a5115dabc97b03",
+    "reporter_id": "6a7af6aaf9a5115dabc97af4",
+    "reported_user_id": "6a7af6b6f9a5115dabc97af6",
+    "conversation_id": "6a7af6e1f9a5115dabc97aff",
+    "reason": "safety_concern",
+    "details": null,
+    "created_at": "2026-08-11T10:18:21.780000"
+  },
+  {
+    "_id": "6a7e2559f6c99942f39edbaa",
+    "reporter_id": "6a7e2299f6c99942f39edb9b",
+    "reported_user_id": "6a7e2233f6c99942f39edb9a",
+    "conversation_id": "6a7e251bf6c99942f39edba9",
+    "reason": "harassment",
+    "details": "This peer is harassing me.",
+    "created_at": "2026-08-13T20:13:13.674000"
+  }
+]

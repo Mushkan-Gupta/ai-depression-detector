@@ -1,0 +1,200 @@
+[
+  {
+    "_id": "6a699969941a83cd7de156dd",
+    "participants": [
+      "6a699967941a83cd7de156da",
+      "6a699968941a83cd7de156db"
+    ],
+    "connection_request_id": "6a699969941a83cd7de156dc",
+    "status": "suspended",
+    "closed_reason": "risk_escalation",
+    "last_risk_check": "2026-07-29T06:10:49.788000"
+  },
+  {
+    "_id": "6a6b0945c676e3827d4d6a51",
+    "participants": [
+      "6a6b093ec676e3827d4d6a4e",
+      "6a6b093fc676e3827d4d6a4f"
+    ],
+    "connection_request_id": "6a6b0943c676e3827d4d6a50",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-07-30T08:20:21.661000"
+  },
+  {
+    "_id": "6a6b097bc676e3827d4d6a56",
+    "participants": [
+      "6a6b0975c676e3827d4d6a53",
+      "6a6b0976c676e3827d4d6a54"
+    ],
+    "connection_request_id": "6a6b097ac676e3827d4d6a55",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-07-30T08:21:15.713000"
+  },
+  {
+    "_id": "6a6b0c46c676e3827d4d6a5b",
+    "participants": [
+      "6a6b0c40c676e3827d4d6a58",
+      "6a6b0c41c676e3827d4d6a59"
+    ],
+    "connection_request_id": "6a6b0c44c676e3827d4d6a5a",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-07-30T08:33:10.327000"
+  },
+  {
+    "_id": "6a6b0d95c676e3827d4d6a60",
+    "participants": [
+      "6a6b0d8fc676e3827d4d6a5d",
+      "6a6b0d90c676e3827d4d6a5e"
+    ],
+    "connection_request_id": "6a6b0d94c676e3827d4d6a5f",
+    "status": "suspended",
+    "closed_reason": "risk_escalation",
+    "last_risk_check": "2026-07-30T08:38:48.140000"
+  },
+  {
+    "_id": "6a6b15c2c676e3827d4d6a82",
+    "participants": [
+      "6a6b158cc676e3827d4d6a77",
+      "6a6b1591c676e3827d4d6a79"
+    ],
+    "connection_request_id": "6a6b15bdc676e3827d4d6a81",
+    "status": "suspended",
+    "closed_reason": "risk_escalation",
+    "last_risk_check": "2026-07-30T09:13:57.189000"
+  },
+  {
+    "_id": "6a6b18cac676e3827d4d6a94",
+    "participants": [
+      "6a6b1895c676e3827d4d6a89",
+      "6a6b1899c676e3827d4d6a8b"
+    ],
+    "connection_request_id": "6a6b18c5c676e3827d4d6a93",
+    "status": "suspended",
+    "closed_reason": "risk_escalation",
+    "last_risk_check": "2026-07-30T09:26:48.223000"
+  },
+  {
+    "_id": "6a6b28d1b406cab0354d067c",
+    "participants": [
+      "6a6b28bcb406cab0354d0679",
+      "6a6b28aeb406cab0354d0677"
+    ],
+    "connection_request_id": "6a6b28cbb406cab0354d067b",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-07-30T10:34:57.293000"
+  },
+  {
+    "_id": "6a6b2c7a19f0594a917f14df",
+    "participants": [
+      "6a6b2c6119f0594a917f14dc",
+      "6a6b2c5019f0594a917f14da"
+    ],
+    "connection_request_id": "6a6b2c7319f0594a917f14de",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-07-30T10:50:34.095000"
+  },
+  {
+    "_id": "6a6c4cb39b30ce440406d6ae",
+    "participants": [
+      "6a6c4c879b30ce440406d6a9",
+      "6a6c4c8f9b30ce440406d6aa"
+    ],
+    "connection_request_id": "6a6c4cae9b30ce440406d6ad",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-07-31T07:20:19.452000"
+  },
+  {
+    "_id": "6a6c4db69b30ce440406d6b6",
+    "participants": [
+      "6a6c4d949b30ce440406d6b1",
+      "6a6c4d989b30ce440406d6b2"
+    ],
+    "connection_request_id": "6a6c4db09b30ce440406d6b5",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-07-31T07:24:37.965000"
+  },
+  {
+    "_id": "6a6c622251071b1323d5c5ea",
+    "participants": [
+      "6a6c620151071b1323d5c5e7",
+      "6a6c620751071b1323d5c5e8"
+    ],
+    "connection_request_id": "6a6c621c51071b1323d5c5e9",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-07-31T08:51:46.223000"
+  },
+  {
+    "_id": "6a6da4a52582eb7ecd09ef11",
+    "participants": [
+      "6a6997b2941a83cd7de156d2",
+      "6a6997b2941a83cd7de156d3"
+    ],
+    "connection_request_id": "6a6da4a42582eb7ecd09ef10",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-08-01T07:47:49.035000"
+  },
+  {
+    "_id": "6a6daa8c2582eb7ecd09ef26",
+    "participants": [
+      "6a6da6242582eb7ecd09ef1a",
+      "6a6da5232582eb7ecd09ef18"
+    ],
+    "connection_request_id": "6a6daa1b2582eb7ecd09ef25",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-08-01T08:13:00.371000"
+  },
+  {
+    "_id": "6a7af6d6f9a5115dabc97afb",
+    "participants": [
+      "6a7af691f9a5115dabc97af0",
+      "6a7af6b6f9a5115dabc97af6"
+    ],
+    "connection_request_id": "6a7af6d3f9a5115dabc97afa",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-08-11T10:17:57.848000"
+  },
+  {
+    "_id": "6a7af6dbf9a5115dabc97afd",
+    "participants": [
+      "6a7af69df9a5115dabc97af2",
+      "6a7af6b6f9a5115dabc97af6"
+    ],
+    "connection_request_id": "6a7af6d9f9a5115dabc97afc",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-08-11T10:18:03.655000"
+  },
+  {
+    "_id": "6a7af6e1f9a5115dabc97aff",
+    "participants": [
+      "6a7af6aaf9a5115dabc97af4",
+      "6a7af6b6f9a5115dabc97af6"
+    ],
+    "connection_request_id": "6a7af6dff9a5115dabc97afe",
+    "status": "active",
+    "closed_reason": null,
+    "last_risk_check": "2026-08-11T10:18:09.342000"
+  },
+  {
+    "_id": "6a7e251bf6c99942f39edba9",
+    "participants": [
+      "6a7e2233f6c99942f39edb9a",
+      "6a7e2299f6c99942f39edb9b"
+    ],
+    "connection_request_id": "6a7e24cbf6c99942f39edba8",
+    "status": "closed",
+    "closed_reason": "user_blocked",
+    "last_risk_check": "2026-08-13T20:12:11.607000"
+  }
+]
