@@ -39,6 +39,7 @@ from pymongo.errors import DuplicateKeyError
 
 import db as _db
 from utils.crisis_check import check_crisis_keywords
+from utils.tz_util import now_ist, to_ist_iso, to_ist, IST
 
 # ── Display-name generation ────────────────────────────────────────────────
 # 50 calm/nature words — enough randomness to keep collision rate low
@@ -263,7 +264,7 @@ def _build_candidate_list(requester_id_str: str) -> list[dict]:
     scored.sort(
         key=lambda x: (
             -x["match_fraction"],
-            x["matching_started_at"] or datetime.max.replace(tzinfo=timezone.utc),
+            x["matching_started_at"] or datetime.max.replace(tzinfo=IST),
         )
     )
 
@@ -294,7 +295,7 @@ def consent_to_peer_connect():
     Returns the resulting peer_consent object.
     """
     user_id = get_jwt_identity()
-    now = datetime.now(timezone.utc)
+    now = now_ist()
 
     new_consent = {
         "accepted":    True,
@@ -332,7 +333,7 @@ def consent_to_peer_connect():
 
     response_consent = {
         "accepted":    new_consent["accepted"],
-        "accepted_at": new_consent["accepted_at"].isoformat(),
+        "accepted_at": to_ist_iso(new_consent["accepted_at"]),
         "version":     new_consent["version"],
     }
     if generated_name:
@@ -373,7 +374,7 @@ def opt_in():
         }), 403
 
     # ── Update DB (idempotent) ─────────────────────────────────────────────
-    now = datetime.now(timezone.utc)
+    now = now_ist()
 
     # Set available_for_matching = True.
     # Set matching_started_at only if not already set (preserve original wait time).
@@ -517,9 +518,8 @@ def _check_lazy_expiry(req: dict) -> dict | None:
     if req.get("status") != "pending":
         return None
     expires_at = req.get("expires_at")
-    if expires_at and datetime.now(timezone.utc) > expires_at.replace(tzinfo=timezone.utc
-            if expires_at.tzinfo is None else expires_at.tzinfo):
-        now = datetime.now(timezone.utc)
+    if expires_at and now_ist() > (to_ist(expires_at) or now_ist()):
+        now = now_ist()
         try:
             updated = _db.connection_requests_collection.find_one_and_update(
                 {"_id": req["_id"], "status": "pending"},
@@ -546,9 +546,9 @@ def _serialize_request(req: dict, caller_id: str) -> dict:
         "sender_id":   req.get("sender_id"),
         "receiver_id": req.get("receiver_id"),
         "status":      req.get("status"),
-        "created_at":  req["created_at"].isoformat() if req.get("created_at") else None,
-        "expires_at":  req["expires_at"].isoformat()  if req.get("expires_at")  else None,
-        "responded_at": req["responded_at"].isoformat() if req.get("responded_at") else None,
+        "created_at":  to_ist_iso(req.get("created_at")),
+        "expires_at":  to_ist_iso(req.get("expires_at")),
+        "responded_at": to_ist_iso(req.get("responded_at")),
     }
     if req.get("decline_reason"):
         out["decline_reason"] = req["decline_reason"]
@@ -679,7 +679,7 @@ def send_request():
         current_app.logger.error(f"[PEER_REQ] DB error fetching sender: {e}")
         return jsonify({"error": "Database error"}), 500
 
-    now        = datetime.now(timezone.utc)
+    now        = now_ist()
     expires_at = now + timedelta(hours=REQUEST_TTL_HOURS)
 
     new_req = {
@@ -764,7 +764,7 @@ def accept_request(request_id: str):
     receiver_risk = (receiver_doc or {}).get("current_risk_level", "")
 
     if sender_risk == "High" or receiver_risk == "High":
-        now = datetime.now(timezone.utc)
+        now = now_ist()
         try:
             _db.connection_requests_collection.update_one(
                 {"_id": ObjectId(request_id), "status": "pending"},
@@ -789,7 +789,7 @@ def accept_request(request_id: str):
         return jsonify(resp_data), 409
 
     # 3. Accept
-    now = datetime.now(timezone.utc)
+    now = now_ist()
     try:
         _db.connection_requests_collection.update_one(
             {"_id": ObjectId(request_id), "status": "pending"},
@@ -860,7 +860,7 @@ def decline_request(request_id: str):
             "message": "This connection request already expired.",
         }), 410
 
-    now = datetime.now(timezone.utc)
+    now = now_ist()
     try:
         _db.connection_requests_collection.update_one(
             {"_id": ObjectId(request_id), "status": "pending"},
@@ -1033,7 +1033,7 @@ def send_message(conv_id):
     
     # Keyword check
     is_flagged, kw_hits = check_crisis_keywords(content)
-    now = datetime.now(timezone.utc)
+    now = now_ist()
     
     msg_doc = {
         "conversation_id": str(conv_id),
@@ -1047,7 +1047,7 @@ def send_message(conv_id):
     try:
         res = _db.messages_collection.insert_one(msg_doc)
         msg_doc["_id"] = str(res.inserted_id)
-        msg_doc["created_at"] = msg_doc["created_at"].isoformat()
+        msg_doc["created_at"] = to_ist_iso(msg_doc["created_at"])
     except Exception as e:
         current_app.logger.error(f"[PEER_MSG] DB insert error: {e}")
         return jsonify({"error": "Database error"}), 500
@@ -1115,8 +1115,8 @@ def list_messages(conv_id):
     result = []
     for d in docs:
         d["id"] = str(d.pop("_id"))
-        if "created_at" in d and isinstance(d["created_at"], datetime):
-            d["created_at"] = d["created_at"].isoformat()
+        if "created_at" in d:
+            d["created_at"] = to_ist_iso(d["created_at"])
         if d.get("sender_id") != caller_id:
             d.pop("crisis_flagged", None)
             d.pop("crisis_keywords_hit", None)
@@ -1193,7 +1193,7 @@ def report_peer(conv_id):
         "conversation_id": str(conv_id),
         "reason": reason,
         "details": details,
-        "created_at": datetime.now(timezone.utc),
+        "created_at": now_ist(),
     }
 
     try:

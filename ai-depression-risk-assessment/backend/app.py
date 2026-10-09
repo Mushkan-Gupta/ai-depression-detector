@@ -4,6 +4,7 @@ from flask_jwt_extended import JWTManager, get_jwt_identity, verify_jwt_in_reque
 import pickle
 import os
 from datetime import datetime, timezone
+from utils.tz_util import now_ist
 
 from config import Config
 import db as _db
@@ -369,7 +370,7 @@ def predict():
                     "journal":    journal,
                     "risk":       risk,
                     "confidence": confidence,
-                    "created_at": datetime.now(timezone.utc),
+                    "created_at": now_ist(),
                 })
             except Exception as db_err:
                 print(f"[WARN] Failed to save prediction history: {db_err}")
@@ -382,7 +383,7 @@ def predict():
                 update_doc = {
                     "$set": {
                         "current_risk_level":   risk,
-                        "risk_level_updated_at": datetime.now(timezone.utc),
+                        "risk_level_updated_at": now_ist(),
                     }
                 }
                 if detected_themes:

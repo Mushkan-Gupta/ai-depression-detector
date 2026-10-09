@@ -254,7 +254,7 @@ function formatDate(isoString) {
     if (diffH < 24) return `${Math.floor(diffH)}h ago`;
     if (diffD < 7)  return `${Math.floor(diffD)}d ago`;
 
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', month: 'short', day: 'numeric', year: 'numeric' });
   } catch { return '—'; }
 }
 

@@ -25,6 +25,7 @@ from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from utils.tz_util import now_ist, to_ist_iso
 import db as _db
 
 # ── Blueprint ──────────────────────────────────────────────────────────────
@@ -41,9 +42,7 @@ def _user_to_dict(user: dict) -> dict:
         "email":         user.get("email", ""),
         "picture":       user.get("picture", ""),
         "auth_provider": user.get("auth_provider", "email"),
-        "created_at":    user.get("created_at", "").isoformat()
-                         if isinstance(user.get("created_at"), datetime)
-                         else str(user.get("created_at", "")),
+        "created_at":    to_ist_iso(user.get("created_at")),
     }
 
 
@@ -144,7 +143,7 @@ def register():
         "name":          name,
         "email":         email,
         "password_hash": password_hash,
-        "created_at":    datetime.now(timezone.utc),
+        "created_at":    now_ist(),
     }
 
     try:
@@ -403,7 +402,7 @@ def google_signin():
     except Exception:
         return jsonify({"error": "Database error. Please try again later."}), 500
 
-    now = datetime.now(timezone.utc)
+    now = now_ist()
 
     if existing:
         # Merge Google identity onto the existing account.

@@ -14,6 +14,7 @@ from bson import ObjectId
 from bson.errors import InvalidId
 from pymongo.errors import PyMongoError
 
+from utils.tz_util import to_ist_iso
 import db as _db
 
 # ── Blueprint ──────────────────────────────────────────────────────────────
@@ -30,7 +31,7 @@ def _entry_to_dict(entry: dict) -> dict:
         "journal":    entry.get("journal", ""),
         "risk":       entry.get("risk", ""),
         "confidence": entry.get("confidence"),
-        "created_at": created_at.isoformat() if isinstance(created_at, datetime) else str(created_at or ""),
+        "created_at": to_ist_iso(created_at),
     }
 
 

@@ -305,7 +305,7 @@ function renderIncomingRequests(requests) {
     <div class="request-card" data-request-id="${r.id}">
       <div class="candidate-info">
         <h4>${_safeName(r.other_participant_name)}</h4>
-        <span style="font-size:0.8rem; color:var(--text-secondary);">Sent ${new Date(r.created_at).toLocaleDateString()}</span>
+        <span style="font-size:0.8rem; color:var(--text-secondary);">Sent ${formatISTDate(r.created_at, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
       </div>
       <div class="btn-group">
         <button class="accept-btn" onclick="handleRequest('${r.id}', 'accept')">Accept</button>
@@ -326,7 +326,7 @@ function renderSentRequests(requests) {
     <div class="request-card" data-request-id="${r.id}">
       <div class="candidate-info">
         <h4>${_safeName(r.other_participant_name)}</h4>
-        <span style="font-size:0.8rem; color:var(--text-secondary);">Sent ${new Date(r.created_at).toLocaleDateString()}</span>
+        <span style="font-size:0.8rem; color:var(--text-secondary);">Sent ${formatISTDate(r.created_at, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
       </div>
       <span style="color:var(--text-secondary); font-size:0.9rem;">Pending</span>
     </div>

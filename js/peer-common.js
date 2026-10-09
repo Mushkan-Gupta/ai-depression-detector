@@ -36,3 +36,19 @@ async function peerFetch(endpoint, options = {}) {
 function _safeName(name) {
   return (name && name !== 'undefined' && name !== 'null') ? name : 'Anonymous';
 }
+
+// Indian Standard Time (IST, UTC+5:30) Formatters
+function formatISTDate(dateInput, options = {}) {
+  if (!dateInput) return '';
+  const d = (dateInput instanceof Date) ? dateInput : new Date(dateInput);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', ...options });
+}
+
+function formatISTTime(dateInput, options = {}) {
+  if (!dateInput) return '';
+  const d = (dateInput instanceof Date) ? dateInput : new Date(dateInput);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true, ...options });
+}
+

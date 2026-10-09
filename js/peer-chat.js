@@ -213,7 +213,7 @@ function appendMessage(msgData, isOptimistic = false) {
 
   const isSentByMe = msgData.sender_id === currentUserId;
   const msgDateObj = msgData.created_at ? new Date(msgData.created_at) : new Date();
-  const dateStr = msgData.created_at ? msgDateObj.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' }) : null;
+  const dateStr = msgData.created_at ? formatISTDate(msgDateObj, { weekday: 'short', month: 'short', day: 'numeric' }) : null;
 
   // Date Separator (shown centered, small muted text, whenever day changes)
   if (dateStr && dateStr !== lastMessageDateStr) {
@@ -243,7 +243,7 @@ function appendMessage(msgData, isOptimistic = false) {
     wrapper.id = `msg-${msgData.tempId}`;
   }
 
-  const timeStr = msgData.created_at ? msgDateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now';
+  const timeStr = msgData.created_at ? formatISTTime(msgDateObj) : 'Just now';
   const bubbleClass = `message-bubble ${isOptimistic ? 'sending' : ''}`;
   const escapedContent = msgData.content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
   
