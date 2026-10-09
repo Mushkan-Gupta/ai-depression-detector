@@ -126,6 +126,14 @@ def _ensure_indexes() -> None:
             name="idx_users_email_unique",
         )
 
+        # users: enforce unique peer anonymous display names
+        users_collection.create_index(
+            [("peer_display_name", ASCENDING)],
+            unique=True,
+            partialFilterExpression={"peer_display_name": {"$type": "string"}},
+            name="idx_users_peer_display_name_unique",
+        )
+
         # journal_entries: fast lookup of all entries for a user,
         # sorted newest-first (used by the paginated history endpoint).
         journal_entries_collection.create_index(

@@ -58,8 +58,25 @@ _DISPLAY_NAME_WORDS = [
 
 
 def _generate_display_name() -> str:
-    """Return 'Anonymous <Word>' using a randomly chosen word from the pool."""
-    return f"Anonymous {random.choice(_DISPLAY_NAME_WORDS)}"
+    """Return a unique 'Anonymous <Word>' ensuring no collisions with existing users."""
+    try:
+        taken = set(
+            u.get("peer_display_name")
+            for u in _db.users_collection.find({}, {"peer_display_name": 1})
+            if u.get("peer_display_name")
+        )
+    except Exception:
+        taken = set()
+
+    available = [f"Anonymous {w}" for w in _DISPLAY_NAME_WORDS if f"Anonymous {w}" not in taken]
+    if available:
+        return random.choice(available)
+    # If pool is exhausted, append random suffix ensuring uniqueness
+    for _ in range(100):
+        candidate = f"Anonymous {random.choice(_DISPLAY_NAME_WORDS)} {random.randint(2, 999)}"
+        if candidate not in taken:
+            return candidate
+    return f"Anonymous User {random.randint(1000, 9999)}"
 
 # ── Blueprint ──────────────────────────────────────────────────────────────
 peer_bp = Blueprint("peer", __name__, url_prefix="/peer")
